@@ -21,13 +21,34 @@ const schema = await request(`query CheckMockSchema {
     mutationType { fields { name args { name type { kind name ofType { kind name ofType { kind name } } } } } }
   }
 }`);
-console.log(JSON.stringify(schema, null, 2));
+function typeName(type) {
+  if (type.kind === 'NON_NULL') return typeName(type.ofType) + '!';
+  if (type.kind === 'LIST') return '[' + typeName(type.ofType) + ']';
+  return type.name;
+}
+const mutations = schema.__schema.mutationType.fields;
+for (const [name, expected] of Object.entries({
+  createTeam: { trainer_id: 'ID!', name: 'String!', pokemon_ids: '[Int]!', created_at: 'String!' },
+  removeTeam: { id: 'ID!' },
+})) {
+  const field = mutations.find((field) => field.name === name);
+  assert.ok(field, `Missing ${name} mutation`);
+  const argumentsByName = Object.fromEntries(
+    field.args.map((argument) => [argument.name, typeName(argument.type)]),
+  );
+  assert.deepEqual(argumentsByName, expected);
+  console.log(
+    `Verified ${name}(${Object.entries(expected)
+      .map(([key, type]) => key + ': ' + type)
+      .join(', ')})`,
+  );
+}
 const listed = await request(
-  'query CheckTeams { allTeams { id name trainer_id pokemon_ids created_at } }',
+  'query CheckTeams($page: Int!, $perPage: Int!) { allTeams(page: $page, perPage: $perPage, sortField: "id", sortOrder: "asc") { id name trainer_id pokemon_ids created_at } _allTeamsMeta { count } }',
+  { page: 0, perPage: 100 },
 );
 assert.ok(Array.isArray(listed.allTeams));
 console.log(`Read ${listed.allTeams.length} seeded teams`);
-// Mutation verification is added after inspecting the generated argument types.
 
 const created = await request(
   `mutation VerifyCreate($trainerId: ID!, $name: String!, $pokemonIds: [Int]!, $createdAt: String!) {
@@ -56,6 +77,8 @@ try {
   });
   assert.equal(removed.removeTeam.id, team.id);
 }
-const after = await request('query VerifyCleanup { allTeams { id } }');
-assert.ok(!after.allTeams.some((item) => item.id === team.id));
+const after = await request('query VerifyCleanup($id: ID!) { Team(id: $id) { id } }', {
+  id: team.id,
+});
+assert.equal(after.Team, null);
 console.log('PASS: live team query, create, read-back, delete and cleanup');
