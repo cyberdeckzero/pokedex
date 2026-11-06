@@ -50,6 +50,14 @@ npm run check:poke     # live pagination, seeded-team IDs, stats/sprites, and ab
 
 The detail panel is a **non-modal** drawer, so another table row can be selected while it stays open. It focuses its close button on opening, closes on Escape, and returns focus to the selected row (or search if that row is no longer visible). The autocomplete supports arrows, Enter, Escape, and Tab.
 
+## Pokédex device interface
+
+The red enclosure, cyan lens, green LCD screens, hinge, and tactile controls carry through the catalogue, team roster, builder, autocomplete, and detail drawer. The D-pad steps through the cached national catalogue, focuses search, or focuses the team builder. Inspect an entry to open its stats, abilities, and animated radar.
+
+Portraits use official PokéAPI artwork, then the cached sprite and a local fallback. Bounded pointer tilt and a short pixel transition adapt React Bits interaction patterns to Angular without adding React or an animation library. Reduced-motion preferences disable these effects. Fonts and their licenses are included locally.
+
+[DESIGN.md](DESIGN.md) records the Behance, Dribbble, and React Bits references, tokens, and component decisions. Narrow screens stack the device halves and keep the complete stats table horizontally scrollable.
+
 ## Fetching and pagination tradeoff
 
 The catalogue is fetched in **100-record API pages**, using the aggregate count and at most **two catalogue requests at once**. There is no generation or ID cutoff; alternate forms returned by the API are included. Only `front_default` is requested from the sprite JSON to reduce payload size; missing or failed sprites use a local fallback.
@@ -83,6 +91,6 @@ Team queries use 100-record pages because the generated `allTeams` resolver defa
 
 ## Verification and limits
 
-See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 29 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. Browser visual/offline checks remain unverified because the browser automation host was unavailable. The application does not substitute fixture data during an API outage.
+See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 32 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. Browser visual/offline checks remain unverified because the browser automation host was unavailable. The application does not substitute fixture data during an API outage.
 
 With more time: run browser accessibility/responsive checks against a healthy API; add a small browser regression suite; and, if catalogue size grows substantially, move global querying/pagination to the API. For a real multi-user backend, enforce uniqueness server-side and reconcile ambiguous mutation timeouts before resubmission. No optional bonus or unrelated feature is included.

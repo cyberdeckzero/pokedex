@@ -8,8 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "mock": "json-graphql-server mock/db.cjs --port 4000",
-    "format": "prettier --write src scripts mock docs *.json *.cjs README.md",
-    "format:check": "prettier --check src scripts mock docs *.json *.cjs README.md",
+    "format": "prettier --write src scripts mock docs *.json *.cjs *.md",
+    "format:check": "prettier --check src scripts mock docs *.json *.cjs *.md",
     "check:mock": "node scripts/check-mock.mjs",
     "prepare": "node scripts/setup-hooks.mjs",
     "check:poke": "node scripts/check-poke.mjs"
