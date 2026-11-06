@@ -45,10 +45,7 @@
         } @else {
           @let memberState = hydration();
           @if (memberState.status === 'loading') {
-            <div class="status teams__member-status" role="status">
-              <span class="spinner" aria-hidden="true"></span>
-              <p>Loading team Pokémon…</p>
-            </div>
+            <p class="visually-hidden" role="status">Loading team Pokémon…</p>
           } @else if (memberState.status === 'error') {
             <div class="status status--error teams__member-status" role="alert">
               <p>{{ memberState.message }}</p>
@@ -61,7 +58,7 @@
             <article
               class="teams__card"
               [class.teams__card--selected]="selectedTeamId() === team.id"
-              [attr.aria-busy]="team.pending || false"
+              [attr.aria-busy]="team.pending || memberState.status === 'loading'"
             >
               <div class="teams__card-heading">
                 <button
@@ -99,6 +96,8 @@
                 <span>{{ team.pokemonIds.length }} / 6 Pokémon</span>
                 @if (team.pending) {
                   <span role="status">Saving…</span>
+                } @else if (memberState.status === 'loading') {
+                  <span>Loading Pokémon…</span>
                 } @else if (selectedTeamId() === team.id) {
                   <span>Selected</span>
                 }
@@ -125,12 +124,24 @@
     </div>
   }
   @if (selectedTeam(); as team) {
-    @if (hydration().status === 'success') {
-      <section class="teams__summary" aria-label="Selected team overview">
-        <div class="teams__summary-heading">
-          <h3>{{ team.name }}</h3>
-          <span>Overview</span>
+    <section class="teams__summary" aria-label="Selected team overview">
+      <div class="teams__summary-heading">
+        <h3>{{ team.name }}</h3>
+        <span>Overview</span>
+      </div>
+      @if (hydration().status === 'loading') {
+        <div class="status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>Loading team overview…</p>
         </div>
+      } @else if (hydration().status === 'error') {
+        <div class="status status--error">
+          <p>The team overview is unavailable until its Pokémon load.</p>
+          <button class="button button--small" type="button" (click)="retryHydration()">
+            Retry overview
+          </button>
+        </div>
+      } @else {
         <dl class="teams__totals">
           <div>
             <dt>Pokémon</dt>
@@ -152,8 +163,8 @@
           }
         </div>
         <p class="teams__note">Dual types count toward both types.</p>
-      </section>
-    }
+      }
+    </section>
   }
   <app-team-builder (created)="selectedTeamId.set($event)" (reloadTeams)="retryTeams()" />
 </aside>

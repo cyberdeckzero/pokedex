@@ -33,7 +33,7 @@
     font-weight: 750;
   }
   &__list {
-    min-height: 160px;
+    min-height: 246px;
     padding: 0 22px 18px;
   }
   &__card {
@@ -102,6 +102,7 @@
     }
   }
   &__summary {
+    min-height: 236px;
     padding: 18px 22px;
     border-top: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
