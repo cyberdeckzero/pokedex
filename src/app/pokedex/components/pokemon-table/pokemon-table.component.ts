@@ -52,14 +52,14 @@ export class PokemonTableComponent {
     startWith(''),
     debounceTime(300),
     distinctUntilChanged(),
-    tap(() => this.updateOptions({ page: 1 })),
-    switchMap((query) =>
-      this.store.loadCatalogue$().pipe(
+    switchMap((query) => {
+      this.updateOptions({ page: 1 });
+      return this.store.loadCatalogue$().pipe(
         map(() => query),
         startWith(query),
         catchError(() => of(query)),
-      ),
-    ),
+      );
+    }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
   private readonly selectors = createPokemonSelectors(

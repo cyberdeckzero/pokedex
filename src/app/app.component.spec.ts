@@ -51,14 +51,12 @@ describe('application team-building flow', () => {
       .expectOne((request) => request.body.operationName === 'GetPokemonByIds')
       .flush({ data: { pokemon_v2_pokemon: [apiPokemon] } });
     await vi.advanceTimersByTimeAsync(300);
-    http
-      .expectOne(POKE_API_URL)
-      .flush({
-        data: {
-          pokemon_v2_pokemon: [apiPokemon],
-          pokemon_v2_pokemon_aggregate: { aggregate: { count: 1 } },
-        },
-      });
+    http.expectOne(POKE_API_URL).flush({
+      data: {
+        pokemon_v2_pokemon: [apiPokemon],
+        pokemon_v2_pokemon_aggregate: { aggregate: { count: 1 } },
+      },
+    });
     fixture.detectChanges();
     expect(element.querySelector('tbody')?.textContent).toContain('Pikachu');
     expect(element.textContent).toContain('Kanto Starters');
