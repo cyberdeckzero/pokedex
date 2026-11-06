@@ -28,3 +28,34 @@ const listed = await request(
 assert.ok(Array.isArray(listed.allTeams));
 console.log(`Read ${listed.allTeams.length} seeded teams`);
 // Mutation verification is added after inspecting the generated argument types.
+
+const created = await request(
+  `mutation VerifyCreate($trainerId: ID!, $name: String!, $pokemonIds: [Int]!, $createdAt: String!) {
+  createTeam(trainer_id: $trainerId, name: $name, pokemon_ids: $pokemonIds, created_at: $createdAt) {
+    id trainer_id name pokemon_ids created_at
+  }
+}`,
+  {
+    trainerId: '1',
+    name: 'Endpoint verification',
+    pokemonIds: [25, 157],
+    createdAt: new Date().toISOString(),
+  },
+);
+const team = created.createTeam;
+assert.equal(team.name, 'Endpoint verification');
+assert.deepEqual(team.pokemon_ids, [25, 157]);
+try {
+  const saved = await request('query VerifySaved($id: ID!) { Team(id: $id) { id name } }', {
+    id: team.id,
+  });
+  assert.equal(saved.Team.id, team.id);
+} finally {
+  const removed = await request('mutation VerifyDelete($id: ID!) { removeTeam(id: $id) { id } }', {
+    id: team.id,
+  });
+  assert.equal(removed.removeTeam.id, team.id);
+}
+const after = await request('query VerifyCleanup { allTeams { id } }');
+assert.ok(!after.allTeams.some((item) => item.id === team.id));
+console.log('PASS: live team query, create, read-back, delete and cleanup');
