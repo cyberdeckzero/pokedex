@@ -1,48 +1,56 @@
 .picker {
   position: relative;
+  input {
+    font-size: 0.8rem;
+  }
   &__help {
-    color: var(--color-muted);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+    color: var(--screen-muted);
     margin: 6px 0 0;
   }
   &__dropdown {
     position: absolute;
-    z-index: 5;
-    top: 72px;
+    top: 70px;
     width: 100%;
     max-height: 340px;
     overflow-y: auto;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    background: var(--color-surface);
-    box-shadow: 0 8px 26px #18263c26;
+    z-index: var(--layer-dropdown);
+    border: 2px solid var(--screen-ink);
+    border-radius: 5px;
+    background: var(--screen-light);
+    box-shadow: 0 4px 0 #173c3440;
   }
   &__option {
     width: 100%;
-    border: 0;
-    border-radius: 0;
-    border-bottom: 1px solid var(--color-border);
-    padding: 7px 10px;
+    min-height: 55px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: var(--color-surface);
+    gap: 7px;
+    padding: 8px;
+    border: 0;
+    border-radius: 0;
+    border-bottom: 1px solid var(--screen-line);
+    background: var(--screen-light);
+    color: var(--screen-ink);
     text-align: left;
-    font-size: 0.8rem;
-    color: var(--color-text);
-    span {
+    font-size: 0.76rem;
+    > span {
       flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    app-type-badges {
+      max-width: 100px;
     }
     small {
       display: block;
-      font:
-        0.65rem ui-monospace,
-        monospace;
-      color: var(--color-muted);
+      font: 0.6rem var(--font-data);
+      color: var(--screen-muted);
+      margin-top: 2px;
     }
     &:hover,
     &--active {
-      background: var(--color-primary-soft);
+      background: #bbd59f;
     }
   }
   &__status {
@@ -51,9 +59,10 @@
     font-size: 0.8rem;
   }
   &__hint {
-    font-size: 0.65rem;
-    color: var(--color-muted);
-    padding: 8px;
+    font-size: 0.62rem;
+    color: var(--screen-muted);
+    padding: 9px;
     margin: 0;
+    background: var(--screen-deep);
   }
 }

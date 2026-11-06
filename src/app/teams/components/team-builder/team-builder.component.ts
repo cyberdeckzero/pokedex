@@ -60,6 +60,12 @@ export class TeamBuilderComponent {
       return pokemon ? [pokemon] : [];
     }),
   );
+  readonly emptySlots = computed(() =>
+    Array.from(
+      { length: Math.max(0, 6 - this.selectedIds().length) },
+      (_, index) => this.selectedIds().length + index + 1,
+    ),
+  );
   readonly canSubmit = computed(
     () =>
       this.formStatus() === 'VALID' &&

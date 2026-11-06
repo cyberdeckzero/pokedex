@@ -13,7 +13,7 @@
   </header>
   <div class="detail__identity">
     <span class="detail__number">#{{ displayed().id.toString().padStart(4, '0') }}</span>
-    <app-pokemon-sprite [url]="displayed().sprite" [size]="144" />
+    <app-pokemon-portrait [pokemon]="displayed()" />
     <h2 id="detail-title">{{ displayed().name | titlecase }}</h2>
     <app-type-badges [types]="displayed().types" />
   </div>

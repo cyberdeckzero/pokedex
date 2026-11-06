@@ -1,0 +1,15 @@
+<header class="device-header">
+  <div class="device-header__instruments" aria-hidden="true">
+    <span class="device-header__lens"></span
+    ><span class="device-header__led device-header__led--red"></span
+    ><span class="device-header__led device-header__led--amber"></span
+    ><span class="device-header__led device-header__led--green"></span>
+  </div>
+  <div class="device-header__identity">
+    <h1>POKÉDEX</h1>
+    <p>Pokémon research terminal</p>
+  </div>
+  <div class="device-header__connection" [attr.data-status]="status()" role="status">
+    <span aria-hidden="true"></span>{{ label() }}<small>National database</small>
+  </div>
+</header>

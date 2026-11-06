@@ -1,0 +1,107 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.portrait {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 200px;
+  isolation: isolate;
+  transform: perspective(850px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 180ms ease-out;
+  transform-style: preserve-3d;
+  &__target {
+    position: absolute;
+    width: 76%;
+    aspect-ratio: 1;
+    max-width: 210px;
+    border: 1px solid var(--screen-line);
+    border-radius: 50%;
+    opacity: 0.75;
+    display: grid;
+    place-items: center;
+    span {
+      width: 72%;
+      height: 72%;
+      border: 1px dashed var(--screen-line);
+      border-radius: 50%;
+    }
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: var(--screen-line);
+    }
+    &::before {
+      width: 116%;
+      height: 1px;
+    }
+    &::after {
+      height: 116%;
+      width: 1px;
+    }
+  }
+  &__image {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    object-fit: contain;
+    transform: translateZ(22px);
+    filter: drop-shadow(0 9px 0 #173c341c);
+  }
+  &__pixels {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    pointer-events: none;
+    i {
+      opacity: 0;
+      background: var(--screen-ink);
+      animation: pixel-read 240ms steps(3, end) both;
+    }
+  }
+  &__corner {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-color: var(--screen-ink);
+    opacity: 0.5;
+    &--top {
+      left: 7px;
+      top: 7px;
+      border-left: 2px solid;
+      border-top: 2px solid;
+    }
+    &--bottom {
+      right: 7px;
+      bottom: 7px;
+      border-right: 2px solid;
+      border-bottom: 2px solid;
+    }
+  }
+}
+@keyframes pixel-read {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portrait {
+    transform: none;
+    transition: none;
+    &__pixels {
+      display: none;
+    }
+  }
+}

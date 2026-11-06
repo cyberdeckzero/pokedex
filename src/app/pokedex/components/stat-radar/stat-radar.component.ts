@@ -48,6 +48,9 @@ export class StatRadarComponent {
         return;
       }
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const styles = getComputedStyle(canvas);
+      const color = (name: string, fallback: string) =>
+        styles.getPropertyValue(name).trim() || fallback;
       this.chart = new Chart(canvas, {
         type: 'radar',
         data: {
@@ -56,9 +59,9 @@ export class StatRadarComponent {
             {
               label: pokemon.name,
               data: values,
-              borderColor: '#2257c9',
-              backgroundColor: 'rgba(34,87,201,.14)',
-              pointBackgroundColor: '#2257c9',
+              borderColor: color('--chart-stroke', '#24573c'),
+              backgroundColor: color('--chart-fill', '#24573c26'),
+              pointBackgroundColor: color('--chart-stroke', '#24573c'),
               pointRadius: 3,
               borderWidth: 2,
               fill: true,
@@ -74,9 +77,12 @@ export class StatRadarComponent {
               min: 0,
               max: 255,
               ticks: { display: false, stepSize: 51 },
-              grid: { color: '#dce3ed' },
-              angleLines: { color: '#dce3ed' },
-              pointLabels: { color: '#57667c', font: { size: 11 } },
+              grid: { color: color('--chart-grid', '#9eb28e') },
+              angleLines: { color: color('--chart-grid', '#9eb28e') },
+              pointLabels: {
+                color: color('--chart-label', '#3e5846'),
+                font: { size: 11, family: 'IBM Plex Mono, monospace' },
+              },
             },
           },
           plugins: { tooltip: { enabled: true } },

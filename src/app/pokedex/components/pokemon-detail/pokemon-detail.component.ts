@@ -16,7 +16,7 @@ import { LoadResult } from '../../../common/models/request-state.model';
 import { STAT_COLUMNS } from '../../constants/pokemon.constants';
 import { Pokemon, PokemonDetail } from '../../models/pokemon.model';
 import { PokemonStore } from '../../state/pokemon.store';
-import { PokemonSpriteComponent } from '../pokemon-sprite/pokemon-sprite.component';
+import { PokemonPortraitComponent } from '../pokemon-portrait/pokemon-portrait.component';
 import { TypeBadgesComponent } from '../type-badges/type-badges.component';
 import { StatRadarComponent } from '../stat-radar/stat-radar.component';
 
@@ -26,7 +26,7 @@ import { StatRadarComponent } from '../stat-radar/stat-radar.component';
   imports: [
     TitleCasePipe,
     DecimalPipe,
-    PokemonSpriteComponent,
+    PokemonPortraitComponent,
     TypeBadgesComponent,
     StatRadarComponent,
   ],

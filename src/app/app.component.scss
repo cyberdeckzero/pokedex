@@ -1,115 +1,175 @@
 .shell {
+  max-width: 1580px;
+  margin: 0 auto;
+  padding: 0 32px 18px;
   &__skip {
     position: fixed;
     top: -70px;
     left: 16px;
-    z-index: 30;
+    z-index: 20;
     padding: 12px;
-    color: white;
-    background: var(--color-primary);
+    color: var(--screen-ink);
+    background: var(--screen);
     &:focus {
       top: 12px;
     }
   }
-  &__header {
-    min-height: 78px;
-    padding: 16px 32px;
+  &__topbar {
+    min-height: 90px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    background: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
+    color: #d4e4d9;
     nav {
       display: flex;
-      gap: 24px;
+      gap: 26px;
       a {
+        color: #d4e4d9;
         font-size: 0.8rem;
         text-decoration: none;
-        color: var(--color-muted);
         &:hover {
-          color: var(--color-primary);
+          color: var(--lens);
         }
       }
     }
   }
   &__brand {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 10px;
-    color: var(--color-text);
+    gap: 12px;
+    color: #f1f4e9;
     text-decoration: none;
-    font-size: 1.15rem;
-    letter-spacing: -0.04em;
-    span {
-      font-weight: 400;
-    }
-    b {
-      font-weight: 750;
-    }
+    font: 600 1.18rem var(--font-heading);
   }
-  &__main {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 30px 32px 18px;
+  &__brand-note {
+    display: block;
+    color: #b1c6b8;
+    font: 0.64rem var(--font-data);
+    margin-top: 1px;
   }
-  &__intro {
-    margin-bottom: 26px;
-    h1 {
-      font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
-      font-size: clamp(1.5rem, 2.3vw, 2rem);
-      letter-spacing: -0.035em;
-      margin: 0 0 8px;
-    }
-    p {
-      color: var(--color-muted);
-      font-size: 0.85rem;
-      margin: 0;
-    }
+  &__hint {
+    margin: 24px 0 0;
+    text-align: center;
+    color: #b1c6b8;
+    font-size: 0.78rem;
   }
-  &__workspace {
+}
+.device {
+  position: relative;
+  border: 3px solid var(--case-shadow);
+  border-radius: 18px 18px 44px 18px;
+  background: var(--case);
+  box-shadow:
+    0 8px 0 #0c1c1b,
+    inset 0 2px 0 #f97683;
+
+  &__body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 360px;
-    gap: 24px;
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr) 22px 354px;
+    gap: 16px;
+    padding: 24px;
+    align-items: stretch;
+  }
+  &__left {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  &__right {
+    min-width: 0;
+  }
+  &__hinge {
+    position: relative;
+    background: linear-gradient(90deg, #a31c35, #ed596b 38%, #ca2b45 62%, #8c1b31);
+    border: 2px solid var(--case-shadow);
+    border-radius: 9px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 70px 0;
+    box-shadow: 2px 0 0 #e95a6c;
+    i {
+      height: 13px;
+      margin: 0 -3px;
+      border-top: 3px solid var(--case-shadow);
+      border-bottom: 2px solid var(--case-shadow);
+      background: #bd2b44;
+    }
+  }
+  &__secondary-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px 12px;
+    color: var(--case-print);
+    font: 0.62rem var(--font-data);
+    letter-spacing: 0.06em;
   }
   &__footer {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
     flex-wrap: wrap;
-    gap: 12px;
+    padding: 0 26px 24px;
+    color: var(--case-print);
     font-size: 0.65rem;
-    padding: 20px 0 0;
-    color: var(--color-muted);
     a {
       color: inherit;
     }
   }
-  @media (max-width: 1100px) {
-    &__workspace {
-      grid-template-columns: minmax(0, 1fr) 330px;
-      gap: 16px;
-    }
-    &__main {
-      padding: 24px;
+  &__serial {
+    margin-left: auto;
+    font-family: var(--font-data);
+    font-size: 0.6rem;
+    letter-spacing: 0.07em;
+  }
+}
+
+@media (max-width: 1200px) {
+  .shell {
+    padding: 0 20px 18px;
+  }
+  .device {
+    &__body {
+      grid-template-columns: minmax(0, 1fr) 16px 320px;
+      gap: 12px;
+      padding: 18px;
     }
   }
-  @media (max-width: 850px) {
-    &__workspace {
-      grid-template-columns: 1fr;
-      gap: 24px;
+}
+@media (max-width: 1000px) {
+  .device {
+    &__body {
+      grid-template-columns: minmax(0, 1fr);
     }
-    &__header {
-      padding: 16px 20px;
+    &__hinge {
+      height: 18px;
+      min-height: 18px;
+      padding: 0 50px;
+      flex-direction: row;
+      background: linear-gradient(180deg, #a31c35, #ed596b 38%, #8c1b31);
+      i {
+        width: 12px;
+        height: auto;
+        margin: -3px 0;
+        border: 0;
+        border-left: 2px solid var(--case-shadow);
+        border-right: 2px solid var(--case-shadow);
+      }
     }
-    &__main {
-      padding: 24px 16px;
+    &__right {
+      padding-top: 4px;
     }
   }
-  @media (max-width: 500px) {
-    &__header {
+}
+@media (max-width: 600px) {
+  .shell {
+    padding: 0 10px 14px;
+    &__topbar {
+      min-height: 74px;
       nav {
-        gap: 16px;
+        gap: 14px;
         a {
           font-size: 0.7rem;
           &:first-child {
@@ -120,11 +180,30 @@
     }
     &__brand {
       font-size: 1rem;
-      gap: 6px;
-      img {
-        width: 30px;
-        height: 30px;
-      }
+      gap: 9px;
+    }
+    &__hint {
+      font-size: 0.7rem;
+      padding: 0 12px;
+    }
+  }
+  .device {
+    border-width: 2px;
+    border-radius: 13px 13px 26px 13px;
+
+    &__body {
+      padding: 12px;
+    }
+    &__left {
+      gap: 18px;
+    }
+    &__footer {
+      padding: 6px 16px 20px;
+      font-size: 0.6rem;
+      gap: 8px;
+    }
+    &__serial {
+      display: none;
     }
   }
 }

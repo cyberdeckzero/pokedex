@@ -1,32 +1,50 @@
 <a class="shell__skip" href="#main">Skip to Pokédex</a>
-<header class="shell__header">
-  <a class="shell__brand" href="#main"
-    ><img src="/assets/pokemon-fallback.svg" width="36" height="36" alt="" /><span
-      >Mini <b>Pokédex</b></span
-    ></a
-  >
-  <nav aria-label="Main navigation">
-    <a href="#pokedex-title">Browse Pokémon</a><a href="#teams-title">Your teams</a>
-  </nav>
-</header>
-<main class="shell__main" id="main">
-  <div class="shell__intro">
-    <h1>Browse Pokémon. Build your team.</h1>
-    <p>Explore base stats, discover abilities, and find your six.</p>
-  </div>
-  <div class="shell__workspace">
-    <app-pokemon-table
-      [selectedId]="panelOpen() ? (selectedPokemon()?.id ?? null) : null"
-      (selected)="selectPokemon($event)"
-    /><app-team-panel />
-  </div>
-  <footer class="shell__footer">
-    <span
-      >Pokémon data from
-      <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer">PokéAPI</a></span
-    ><span>Team data is kept until the mock server restarts.</span>
-  </footer>
-</main>
+<div class="shell">
+  <header class="shell__topbar">
+    <a class="shell__brand" href="#main"
+      ><span class="pokeball-mark" aria-hidden="true"></span
+      ><span>Pokédex<span class="shell__brand-note">National edition</span></span></a
+    >
+    <nav aria-label="Main navigation">
+      <a href="#pokedex-title">Browse entries</a
+      ><a href="#teams-title">Your teams <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main class="device" id="main">
+    <app-pokedex-header [status]="catalogue().status" />
+    <div class="device__body">
+      <div class="device__left">
+        <app-pokemon-scanner
+          [catalogue]="catalogue()"
+          [pokemon]="currentPokemon()"
+          (inspect)="selectPokemon($event)"
+          (step)="movePokemon($event)"
+          (search)="focusSearch()"
+          (buildTeam)="focusTeamBuilder()"
+        />
+        <app-pokemon-table
+          [selectedId]="panelOpen() ? (selectedPokemon()?.id ?? null) : null"
+          (selected)="selectPokemon($event)"
+        />
+      </div>
+      <div class="device__hinge" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="device__right">
+        <div class="device__secondary-label">
+          <span>TRAINER MODULE</span><span aria-hidden="true">● ●</span>
+        </div>
+        <app-team-panel />
+      </div>
+    </div>
+    <footer class="device__footer">
+      <span
+        >Data by
+        <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer">PokéAPI</a></span
+      ><span>Team data lasts until the mock server restarts.</span
+      ><span class="device__serial">POKÉDEX · NATIONAL</span>
+    </footer>
+  </main>
+  <p class="shell__hint">A whole world of Pokémon. One team that's yours.</p>
+</div>
 @if (panelOpen()) {
   @if (selectedPokemon(); as pokemon) {
     <app-pokemon-detail id="pokemon-detail" [pokemon]="pokemon" (close)="closeDetails()" />

@@ -61,10 +61,15 @@
             </button></span
           >
         }
-        @if (!selectedIds().length) {
-          <p class="builder__empty">Your team starts with one Pokémon.</p>
+        @for (slot of emptySlots(); track slot) {
+          <span class="builder__slot" aria-hidden="true"
+            ><span></span>{{ slot.toString().padStart(2, '0') }} — empty</span
+          >
         }
       </div>
+      @if (!selectedIds().length) {
+        <p class="builder__empty">Your team starts with one Pokémon.</p>
+      }
       @if (
         (form.controls.pokemonIds.dirty || form.controls.pokemonIds.touched) &&
         form.controls.pokemonIds.invalid
