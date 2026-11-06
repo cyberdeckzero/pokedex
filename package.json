@@ -1,0 +1,45 @@
+{
+  "name": "mini-pokedex",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --host 127.0.0.1 --port 4200",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test --watch=false",
+    "mock": "json-graphql-server mock/db.cjs --port 4000",
+    "format": "prettier --write src scripts mock docs *.json *.cjs README.md",
+    "format:check": "prettier --check src scripts mock docs *.json *.cjs README.md",
+    "check:mock": "node scripts/check-mock.mjs",
+    "prepare": "node scripts/setup-hooks.mjs",
+    "check:poke": "node scripts/check-poke.mjs"
+  },
+  "private": true,
+  "packageManager": "npm@11.6.4",
+  "dependencies": {
+    "@angular/common": "21.2.26",
+    "@angular/compiler": "21.2.26",
+    "@angular/core": "21.2.26",
+    "@angular/forms": "21.2.26",
+    "@angular/platform-browser": "21.2.26",
+    "chart.js": "4.6.1",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "21.2.29",
+    "@angular/cli": "21.2.29",
+    "@angular/compiler-cli": "21.2.26",
+    "@commitlint/cli": "20.1.0",
+    "@commitlint/config-conventional": "20.0.0",
+    "jsdom": "27.4.0",
+    "json-graphql-server": "2.4.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2",
+    "vitest": "4.1.12"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || ^24.0.0",
+    "npm": ">=11.6.4"
+  }
+}
