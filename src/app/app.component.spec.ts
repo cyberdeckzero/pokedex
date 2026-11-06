@@ -17,16 +17,11 @@ const apiPokemon = {
   name: 'pikachu',
   height: 4,
   weight: 60,
-  pokemon_v2_pokemontypes: [{ pokemon_v2_type: { name: 'electric' } }],
-  pokemon_v2_pokemonstats: [
-    'hp',
-    'attack',
-    'defense',
-    'special-attack',
-    'special-defense',
-    'speed',
-  ].map((name) => ({ base_stat: 50, pokemon_v2_stat: { name } })),
-  pokemon_v2_pokemonsprites: [{ sprites: null }],
+  pokemontypes: [{ type: { name: 'electric' } }],
+  pokemonstats: ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'].map(
+    (name) => ({ base_stat: 50, stat: { name } }),
+  ),
+  pokemonsprites: [{ sprites: null }],
 };
 
 describe('application team-building flow', () => {
@@ -49,12 +44,12 @@ describe('application team-building flow', () => {
     http.expectOne(TEAM_API_URL).flush({ data: { allTeams: [row], _allTeamsMeta: { count: 1 } } });
     http
       .expectOne((request) => request.body.operationName === 'GetPokemonByIds')
-      .flush({ data: { pokemon_v2_pokemon: [apiPokemon] } });
+      .flush({ data: { pokemon: [apiPokemon] } });
     await vi.advanceTimersByTimeAsync(300);
     http.expectOne(POKE_API_URL).flush({
       data: {
-        pokemon_v2_pokemon: [apiPokemon],
-        pokemon_v2_pokemon_aggregate: { aggregate: { count: 1 } },
+        pokemon: [apiPokemon],
+        pokemon_aggregate: { aggregate: { count: 1 } },
       },
     });
     fixture.detectChanges();

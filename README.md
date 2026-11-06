@@ -23,7 +23,9 @@ npm start
 # http://127.0.0.1:4200/
 ```
 
-The app uses `https://beta.pokeapi.co/graphql/v1beta` directly. No credentials, environment file, proxy, or API key is required. `npm run ng -- serve` also works with Angular's default port 4200.
+The app uses `https://graphql.pokeapi.co/v1beta2` directly. No credentials, environment file, proxy, or API key is required. `npm run ng -- serve` also works with Angular's default port 4200.
+
+The assessment specifies `https://beta.pokeapi.co/graphql/v1beta`, which was removed in November 2026. The app uses its public replacement and the renamed GraphQL fields (`pokemon`, `pokemontypes`, `pokemonstats`, `pokemonability`, etc.). This compatibility change follows the [official PokéAPI migration documentation](https://pokeapi.co/docs/graphql).
 
 ## Checks
 
@@ -32,7 +34,7 @@ npm run build          # production output: dist/mini-pokedex/browser/
 npm test               # Angular CLI + Vitest, one deterministic run; no live network
 npm run format:check   # Prettier; no separate ESLint setup
 npm run check:mock     # live schema introspection + create/read/delete; cleans its test team
-npm run check:poke     # independently probes catalogue fields, sprites, count, and abilities
+npm run check:poke     # live pagination, seeded-team IDs, stats/sprites, and abilities
 ```
 
 `npm run format` formats the source. Installation configures a small Git `commit-msg` hook using commitlint; messages follow `type(scope): lowercase imperative subject`, maximum 100 characters. No remote is configured.
@@ -52,7 +54,7 @@ The detail panel is a **non-modal** drawer, so another table row can be selected
 
 The catalogue is fetched in **100-record API pages**, using the aggregate count and at most **two catalogue requests at once**. There is no generation or ID cutoff; alternate forms returned by the API are included. Only `front_default` is requested from the sprite JSON to reduce payload size; missing or failed sprites use a local fallback.
 
-The table reserves space and shows progress until the catalogue is complete. Search, type filtering, all seven sortable stat columns, and page sizes 10/25/50 then operate on that full cached collection. This avoids misleading results based on only the visible page, at the cost of a longer first load. Completed pages survive failures in memory; Retry fetches missing pages. A browser reload clears this cache.
+The table reserves space and shows progress until the catalogue is complete. Search, type filtering, all seven sortable stat columns, and page sizes 10/25/50 then operate on that full cached collection. This avoids misleading results based on only the visible page, at the cost of a longer first load. Completed pages survive failures in memory; Retry fetches missing pages. A browser reload clears this cache. PokéAPI documents a limit of 100 GraphQL requests per hour per IP; repeated reloads can exhaust that allowance, while searches within the completed cache make no extra requests.
 
 Both name searches use `debounceTime(300) → distinctUntilChanged() → switchMap(...)`. Autocomplete shows at most ten matching, unselected Pokémon. Detail and search streams catch errors inside their switch, so errors do not terminate future searches or Retry. Team-name uniqueness validation normalizes whitespace, compares names case-insensitively across **all trainers' teams**, debounces for 300 ms, and completes. Unavailable team data blocks saving and exposes Retry.
 
@@ -81,6 +83,6 @@ Team queries use 100-record pages because the generated `allTeams` resolver defa
 
 ## Verification and limits
 
-See [verification notes](docs/verification.md) for commands and observed results. The required public endpoint returned **HTTP 522** during verification. Its live successful responses and browser visual/offline checks could not be verified here; the browser automation host was unavailable. Network access in all unit/DOM tests is mocked, including full form/create/delete recovery and stale-response tests. The application does not substitute fixture data during a live API outage.
+See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 29 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. Browser visual/offline checks remain unverified because the browser automation host was unavailable. The application does not substitute fixture data during an API outage.
 
 With more time: run browser accessibility/responsive checks against a healthy API; add a small browser regression suite; and, if catalogue size grows substantially, move global querying/pagination to the API. For a real multi-user backend, enforce uniqueness server-side and reconcile ambiguous mutation timeouts before resubmission. No optional bonus or unrelated feature is included.

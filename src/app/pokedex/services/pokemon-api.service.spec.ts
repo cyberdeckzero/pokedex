@@ -10,21 +10,16 @@ const apiPokemon = {
   name: 'pikachu',
   height: 4,
   weight: 60,
-  pokemon_v2_pokemontypes: [{ pokemon_v2_type: { name: 'electric' } }],
-  pokemon_v2_pokemonstats: [
-    'hp',
-    'attack',
-    'defense',
-    'special-attack',
-    'special-defense',
-    'speed',
-  ].map((name, i) => ({ base_stat: 30 + i, pokemon_v2_stat: { name } })),
-  pokemon_v2_pokemonsprites: [{ sprites: null }],
+  pokemontypes: [{ type: { name: 'electric' } }],
+  pokemonstats: ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'].map(
+    (name, i) => ({ base_stat: 30 + i, stat: { name } }),
+  ),
+  pokemonsprites: [{ sprites: null }],
 };
 const page = {
   data: {
-    pokemon_v2_pokemon: [apiPokemon],
-    pokemon_v2_pokemon_aggregate: { aggregate: { count: 1 } },
+    pokemon: [apiPokemon],
+    pokemon_aggregate: { aggregate: { count: 1 } },
   },
 };
 
@@ -56,6 +51,77 @@ describe('PokemonApiService', () => {
       total: 1,
       items: [{ id: 25, total: 195, sprite: SPRITE_FALLBACK }],
     });
+  });
+
+  it('uses the public v1beta2 endpoint and maps sprites from paginated catalogue data', async () => {
+    const result = firstValueFrom(api.getPage$(25, 100));
+    const request = http.expectOne(POKE_API_URL);
+    request.flush({
+      data: {
+        pokemon: [
+          { ...apiPokemon, pokemonsprites: [{ sprites: 'https://example.com/pikachu.png' }] },
+        ],
+        pokemon_aggregate: { aggregate: { count: 1351 } },
+      },
+    });
+    const page = await result;
+    expect(request.request.url).toBe('https://graphql.pokeapi.co/v1beta2');
+    expect(request.request.headers.has('Authorization')).toBe(false);
+    expect(request.request.body.variables).toEqual({ limit: 25, offset: 100 });
+    expect(request.request.body.query).not.toContain('pokemon_v2_');
+    expect(page).toMatchObject({
+      total: 1351,
+      items: [
+        {
+          id: 25,
+          types: ['electric'],
+          stats: { attack: 31 },
+          sprite: 'https://example.com/pikachu.png',
+        },
+      ],
+    });
+  });
+
+  it('hydrates team IDs using the new pokemon root', async () => {
+    const result = firstValueFrom(api.getByIds$([25, 157]));
+    const request = http.expectOne(POKE_API_URL);
+    request.flush({
+      data: { pokemon: [apiPokemon, { ...apiPokemon, id: 157, name: 'typhlosion' }] },
+    });
+    expect((await result).map((pokemon) => pokemon.id)).toEqual([25, 157]);
+    expect(request.request.body.operationName).toBe('GetPokemonByIds');
+    expect(request.request.body.variables).toEqual({ ids: [25, 157] });
+    expect(request.request.body.query).not.toContain('pokemon_v2_');
+  });
+
+  it('maps the renamed ability relations, hidden flags, and missing English descriptions', async () => {
+    const result = firstValueFrom(api.getDetail$(25));
+    const request = http.expectOne(POKE_API_URL);
+    request.flush({
+      data: {
+        pokemon: [apiPokemon],
+        pokemonability: [
+          {
+            is_hidden: false,
+            ability: {
+              name: 'static',
+              abilityeffecttexts: [{ short_effect: 'May paralyze on contact.' }],
+            },
+          },
+          { is_hidden: true, ability: { name: 'lightning-rod', abilityeffecttexts: [] } },
+        ],
+      },
+    });
+    expect(await result).toMatchObject({
+      pokemon: { id: 25, name: 'pikachu' },
+      abilities: [
+        { name: 'static', effect: 'May paralyze on contact.', hidden: false },
+        { name: 'lightning-rod', effect: 'No English description is available.', hidden: true },
+      ],
+    });
+    expect(request.request.body.operationName).toBe('GetPokemonDetail');
+    expect(request.request.body.variables).toEqual({ id: 25 });
+    expect(request.request.body.query).not.toContain('pokemon_v2_');
   });
 
   it('surfaces an error after two bounded retries and permits a fresh request', async () => {

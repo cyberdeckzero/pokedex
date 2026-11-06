@@ -1,6 +1,6 @@
 import { StatKey } from '../models/pokemon.model';
 
-export const POKE_API_URL = 'https://beta.pokeapi.co/graphql/v1beta';
+export const POKE_API_URL = 'https://graphql.pokeapi.co/v1beta2';
 export const CATALOGUE_BATCH_SIZE = 100;
 export const STAT_COLUMNS: readonly { key: StatKey | 'total'; label: string }[] = [
   { key: 'hp', label: 'HP' },
