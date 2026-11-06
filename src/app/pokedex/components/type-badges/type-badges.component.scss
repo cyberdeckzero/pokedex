@@ -1,0 +1,72 @@
+.types {
+  display: inline-flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  &__badge {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.65rem;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: 0.035em;
+    background: #e9edf2;
+    color: #455265;
+    &[data-type='grass'],
+    &[data-type='bug'] {
+      background: #e5f3df;
+      color: #365d25;
+    }
+    &[data-type='poison'] {
+      background: #f1e5fa;
+      color: #7a388b;
+    }
+    &[data-type='fire'] {
+      background: #ffeadf;
+      color: #9b3e13;
+    }
+    &[data-type='water'] {
+      background: #e1efff;
+      color: #205694;
+    }
+    &[data-type='electric'] {
+      background: #fff2c6;
+      color: #795a00;
+    }
+    &[data-type='flying'] {
+      background: #eaeaff;
+      color: #53518f;
+    }
+    &[data-type='ice'] {
+      background: #dcf5f6;
+      color: #1d6269;
+    }
+    &[data-type='ground'],
+    &[data-type='rock'] {
+      background: #efe8d9;
+      color: #695123;
+    }
+    &[data-type='fighting'] {
+      background: #f8e3df;
+      color: #993d31;
+    }
+    &[data-type='psychic'],
+    &[data-type='fairy'] {
+      background: #fbe4f0;
+      color: #963e6d;
+    }
+    &[data-type='ghost'],
+    &[data-type='dragon'] {
+      background: #eae2fa;
+      color: #644395;
+    }
+    &[data-type='steel'] {
+      background: #e3edf0;
+      color: #3b5963;
+    }
+    &[data-type='dark'] {
+      background: #dedfe7;
+      color: #3e4057;
+    }
+  }
+}

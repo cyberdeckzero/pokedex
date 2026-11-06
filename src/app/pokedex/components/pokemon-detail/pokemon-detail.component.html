@@ -1,0 +1,92 @@
+<aside class="detail" role="dialog" aria-modal="false" aria-labelledby="detail-title">
+  <header class="detail__header">
+    <span>Pokémon details</span
+    ><button
+      #closeButton
+      class="button button--small"
+      type="button"
+      (click)="close.emit()"
+      aria-label="Close Pokémon details"
+    >
+      Close ×
+    </button>
+  </header>
+  <div class="detail__identity">
+    <span class="detail__number">#{{ displayed().id.toString().padStart(4, '0') }}</span>
+    <app-pokemon-sprite [url]="displayed().sprite" [size]="144" />
+    <h2 id="detail-title">{{ displayed().name | titlecase }}</h2>
+    <app-type-badges [types]="displayed().types" />
+  </div>
+  <dl class="detail__measurements">
+    <div>
+      <dt>Height</dt>
+      <dd>{{ displayed().height / 10 | number: '1.1-1' }} m</dd>
+    </div>
+    <div>
+      <dt>Weight</dt>
+      <dd>{{ displayed().weight / 10 | number: '1.1-1' }} kg</dd>
+    </div>
+    <div>
+      <dt>Base total</dt>
+      <dd>{{ displayed().total }}</dd>
+    </div>
+  </dl>
+  <section class="detail__section" aria-labelledby="stats-title">
+    <h3 id="stats-title">Base stats</h3>
+    <app-stat-radar [pokemon]="displayed()" />
+    <dl class="detail__stats">
+      @for (stat of statColumns; track stat.key) {
+        @if (stat.key !== 'total') {
+          <div>
+            <dt>{{ stat.label }}</dt>
+            <dd>{{ displayed().stats[stat.key] }}</dd>
+          </div>
+        }
+      }
+    </dl>
+  </section>
+  <section
+    class="detail__section detail__abilities"
+    aria-labelledby="abilities-title"
+    [attr.aria-busy]="detail().status === 'loading'"
+  >
+    <h3 id="abilities-title">Abilities</h3>
+    @let state = detail();
+    @switch (state.status) {
+      @case ('loading') {
+        <div class="status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>Loading abilities…</p>
+        </div>
+      }
+      @case ('error') {
+        <div class="status status--error" role="alert">
+          <p>{{ state.message }}</p>
+          <button class="button" type="button" (click)="retry()">Retry details</button>
+        </div>
+      }
+      @case ('success') {
+        @if (!state.data) {
+          <div class="status">
+            <p>No details were found for this Pokémon.</p>
+            <button class="button" type="button" (click)="retry()">Retry details</button>
+          </div>
+        } @else {
+          @for (ability of state.data.abilities; track ability.name) {
+            <article class="detail__ability">
+              <h4>
+                {{ ability.name.replaceAll('-', ' ') | titlecase }}
+                @if (ability.hidden) {
+                  <span>Hidden</span>
+                }
+              </h4>
+              <p>{{ ability.effect }}</p>
+            </article>
+          } @empty {
+            <p class="muted">No abilities are listed for this Pokémon.</p>
+          }
+        }
+      }
+    }
+  </section>
+</aside>

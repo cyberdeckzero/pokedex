@@ -1,0 +1,9 @@
+<img
+  class="sprite"
+  [src]="failed() ? fallback : url() || fallback"
+  [width]="size()"
+  [height]="size()"
+  alt=""
+  loading="lazy"
+  (error)="failed.set(true)"
+/>

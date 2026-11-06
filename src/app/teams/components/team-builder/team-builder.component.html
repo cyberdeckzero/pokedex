@@ -1,0 +1,91 @@
+<section class="builder" aria-labelledby="builder-title">
+  <header class="builder__heading">
+    <h3 id="builder-title">Build a team</h3>
+    <span>{{ selectedIds().length }} / 6</span>
+  </header>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <fieldset [disabled]="isSubmitting() || teamState().busy" class="builder__fields">
+      <div class="builder__field">
+        <label for="team-name">Team name</label
+        ><input
+          id="team-name"
+          type="text"
+          formControlName="name"
+          placeholder="e.g. Weekend challengers"
+          autocomplete="off"
+          (blur)="normalizeName()"
+          aria-describedby="team-name-feedback"
+          [attr.aria-invalid]="
+            (form.controls.name.dirty || form.controls.name.touched) && form.controls.name.invalid
+          "
+        />
+        <div id="team-name-feedback" aria-live="polite">
+          @if (form.controls.name.dirty || form.controls.name.touched) {
+            @if (form.controls.name.pending) {
+              <p class="builder__hint">Checking team name…</p>
+            }
+            @if (form.controls.name.hasError('required')) {
+              <p class="field-error">Team name is required.</p>
+            } @else if (
+              form.controls.name.hasError('minlength') || form.controls.name.hasError('maxlength')
+            ) {
+              <p class="field-error">Use 3–30 characters, excluding extra spaces.</p>
+            } @else if (form.controls.name.hasError('nameTaken')) {
+              <p class="field-error">A team with this name already exists.</p>
+            } @else if (form.controls.name.hasError('teamsUnavailable')) {
+              <p class="field-error">Load teams to check this name.</p>
+              <button class="button button--small" type="button" (click)="reloadTeams.emit()">
+                Retry teams
+              </button>
+            }
+          }
+        </div>
+      </div>
+      <app-pokemon-picker
+        [selectedIds]="selectedIds()"
+        [disabled]="isSubmitting() || teamState().busy || selectedIds().length >= 6"
+        (chosen)="addPokemon($event)"
+      />
+      <div class="builder__slots" aria-label="Selected Pokémon">
+        @for (pokemon of selectedPokemon(); track pokemon.id) {
+          <span class="builder__chip"
+            ><app-pokemon-sprite [url]="pokemon.sprite" [size]="30" /><span>{{
+              pokemon.name | titlecase
+            }}</span
+            ><button
+              type="button"
+              [attr.aria-label]="'Remove ' + pokemon.name + ' from team'"
+              (click)="removePokemon(pokemon.id)"
+            >
+              ×
+            </button></span
+          >
+        }
+        @if (!selectedIds().length) {
+          <p class="builder__empty">Your team starts with one Pokémon.</p>
+        }
+      </div>
+      @if (
+        (form.controls.pokemonIds.dirty || form.controls.pokemonIds.touched) &&
+        form.controls.pokemonIds.invalid
+      ) {
+        <p class="field-error" role="status">Choose one to six different Pokémon.</p>
+      }
+    </fieldset>
+    @if (teamState().status !== 'success') {
+      <p class="builder__hint">Teams must load before you can save a new team.</p>
+    }
+    <button class="button button--primary builder__submit" type="submit" [disabled]="!canSubmit()">
+      {{
+        isSubmitting()
+          ? 'Saving team…'
+          : teamState().mutationError && !teamState().failedDeleteId
+            ? 'Retry save'
+            : 'Save team'
+      }}
+    </button>
+    @if (savedMessage()) {
+      <p class="builder__saved" role="status">{{ savedMessage() }}</p>
+    }
+  </form>
+</section>

@@ -1,0 +1,159 @@
+<aside class="teams" aria-labelledby="teams-title">
+  <header class="teams__heading">
+    <div>
+      <h2 id="teams-title">Your teams</h2>
+      <p>
+        <span class="teams__avatar" aria-hidden="true">AK</span> Ash Ketchum
+        <span class="muted">· Kanto</span>
+      </p>
+    </div>
+    <button
+      class="button button--small"
+      type="button"
+      (click)="retryTeams()"
+      [disabled]="state().busy || state().status === 'loading'"
+      aria-label="Reload teams"
+    >
+      ↻
+    </button>
+  </header>
+  <div class="teams__list" [attr.aria-busy]="state().status === 'loading'">
+    @switch (state().status) {
+      @case ('idle') {
+        <div class="status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>Preparing teams…</p>
+        </div>
+      }
+      @case ('loading') {
+        <div class="status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>Loading your teams…</p>
+        </div>
+      }
+      @case ('error') {
+        <div class="status status--error" role="alert">
+          <p>{{ state().error }}</p>
+          <button class="button" type="button" (click)="retryTeams()">Retry teams</button>
+        </div>
+      }
+      @case ('success') {
+        @if (!teams().length) {
+          <div class="status" role="status">
+            <p>No teams yet. Choose a name and add your first Pokémon below.</p>
+          </div>
+        } @else {
+          @let memberState = hydration();
+          @if (memberState.status === 'loading') {
+            <div class="status teams__member-status" role="status">
+              <span class="spinner" aria-hidden="true"></span>
+              <p>Loading team Pokémon…</p>
+            </div>
+          } @else if (memberState.status === 'error') {
+            <div class="status status--error teams__member-status" role="alert">
+              <p>{{ memberState.message }}</p>
+              <button class="button button--small" type="button" (click)="retryHydration()">
+                Retry team Pokémon
+              </button>
+            </div>
+          }
+          @for (team of teams(); track team.id) {
+            <article
+              class="teams__card"
+              [class.teams__card--selected]="selectedTeamId() === team.id"
+              [attr.aria-busy]="team.pending || false"
+            >
+              <div class="teams__card-heading">
+                <button
+                  class="teams__select"
+                  type="button"
+                  [attr.aria-pressed]="selectedTeamId() === team.id"
+                  [disabled]="state().busy || team.pending"
+                  (click)="selectTeam(team.id)"
+                >
+                  {{ team.name }}</button
+                ><button
+                  class="teams__delete"
+                  type="button"
+                  [disabled]="state().busy || team.pending"
+                  [attr.aria-label]="'Delete team ' + team.name"
+                  (click)="deleteTeam(team.id)"
+                >
+                  ×
+                </button>
+              </div>
+              <div class="teams__sprites" [attr.aria-label]="team.name + ' members'">
+                @if (memberState.status === 'success') {
+                  @for (pokemon of membersFor(team); track pokemon.id) {
+                    <span role="img" [title]="pokemon.name" [attr.aria-label]="pokemon.name"
+                      ><app-pokemon-sprite [url]="pokemon.sprite" [size]="36"
+                    /></span>
+                  }
+                } @else {
+                  @for (id of team.pokemonIds; track id) {
+                    <span class="teams__placeholder" aria-hidden="true"></span>
+                  }
+                }
+              </div>
+              <footer class="teams__card-footer">
+                <span>{{ team.pokemonIds.length }} / 6 Pokémon</span>
+                @if (team.pending) {
+                  <span role="status">Saving…</span>
+                } @else if (selectedTeamId() === team.id) {
+                  <span>Selected</span>
+                }
+              </footer>
+            </article>
+          }
+        }
+      }
+    }
+  </div>
+  @if (state().mutationError) {
+    <div class="feedback feedback--error teams__feedback" role="alert">
+      <p>{{ state().mutationError }}</p>
+      @if (state().failedDeleteId; as id) {
+        <button
+          class="button button--small"
+          type="button"
+          [disabled]="state().busy"
+          (click)="deleteTeam(id)"
+        >
+          Retry delete
+        </button>
+      }
+    </div>
+  }
+  @if (selectedTeam(); as team) {
+    @if (hydration().status === 'success') {
+      <section class="teams__summary" aria-label="Selected team overview">
+        <div class="teams__summary-heading">
+          <h3>{{ team.name }}</h3>
+          <span>Overview</span>
+        </div>
+        <dl class="teams__totals">
+          <div>
+            <dt>Pokémon</dt>
+            <dd>{{ team.pokemonIds.length }}<small> / 6</small></dd>
+          </div>
+          <div>
+            <dt>Total base stats</dt>
+            <dd>{{ totalBaseStats() }}</dd>
+          </div>
+        </dl>
+        <h4>Type distribution</h4>
+        <div class="teams__distribution">
+          @for (item of typeDistribution(); track item.type) {
+            <span
+              >{{ item.type | titlecase }} <b>{{ item.count }}</b></span
+            >
+          } @empty {
+            <p class="muted">Add Pokémon to see their types.</p>
+          }
+        </div>
+        <p class="teams__note">Dual types count toward both types.</p>
+      </section>
+    }
+  }
+  <app-team-builder (created)="selectedTeamId.set($event)" (reloadTeams)="retryTeams()" />
+</aside>

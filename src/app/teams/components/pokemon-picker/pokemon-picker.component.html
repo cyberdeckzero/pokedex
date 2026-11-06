@@ -1,0 +1,85 @@
+<div class="picker" (focusout)="onBlur($event)">
+  <label for="team-pokemon-search">Add Pokémon</label>
+  <input
+    id="team-pokemon-search"
+    type="text"
+    role="combobox"
+    autocomplete="off"
+    placeholder="Search Pokémon to add…"
+    [formControl]="search"
+    aria-autocomplete="list"
+    aria-controls="pokemon-suggestions"
+    [attr.aria-expanded]="open()"
+    [attr.aria-activedescendant]="
+      open() && activeIndex() >= 0 && suggestions()[activeIndex()]
+        ? 'pokemon-option-' + suggestions()[activeIndex()].id
+        : null
+    "
+    (focus)="open.set(true)"
+    (input)="open.set(true)"
+    (keydown)="onKeydown($event)"
+    aria-describedby="picker-help"
+  />
+  <p class="picker__help" id="picker-help">
+    {{
+      selectedIds().length >= 6
+        ? 'Your team is full. Remove a Pokémon to add another.'
+        : 'Choose 1–6 Pokémon. Use ↑ ↓ and Enter to select.'
+    }}
+  </p>
+  @if (open() && !disabled()) {
+    <div class="picker__dropdown">
+      @let state = results();
+      @switch (state.status) {
+        @case ('loading') {
+          <div class="status picker__status" role="status">
+            <span class="spinner" aria-hidden="true"></span>
+            <p>Searching Pokémon…</p>
+          </div>
+        }
+        @case ('error') {
+          <div class="status status--error picker__status" role="alert">
+            <p>{{ state.message }}</p>
+            <button class="button button--small" type="button" (click)="retry()">
+              Retry suggestions
+            </button>
+          </div>
+        }
+        @case ('success') {
+          @if (!suggestions().length) {
+            <div class="status picker__status" role="status">
+              <p>
+                {{
+                  search.value.trim()
+                    ? 'No available Pokémon match. Try another name.'
+                    : 'Start typing a Pokémon name.'
+                }}
+              </p>
+            </div>
+          } @else {
+            <div id="pokemon-suggestions" role="listbox" aria-label="Pokémon suggestions">
+              @for (pokemon of suggestions(); track pokemon.id; let index = $index) {
+                <button
+                  class="picker__option"
+                  type="button"
+                  role="option"
+                  tabindex="-1"
+                  [id]="'pokemon-option-' + pokemon.id"
+                  [attr.aria-selected]="index === activeIndex()"
+                  [class.picker__option--active]="index === activeIndex()"
+                  (mousedown)="$event.preventDefault()"
+                  (click)="choose(pokemon)"
+                >
+                  <app-pokemon-sprite [url]="pokemon.sprite" [size]="36" /><span
+                    >{{ pokemon.name | titlecase }}<small>#{{ pokemon.id }}</small></span
+                  ><app-type-badges [types]="pokemon.types" />
+                </button>
+              }
+            </div>
+            <p class="picker__hint">Up to 10 matches. Keep typing to narrow your search.</p>
+          }
+        }
+      }
+    </div>
+  }
+</div>

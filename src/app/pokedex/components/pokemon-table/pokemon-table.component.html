@@ -1,0 +1,199 @@
+<section class="pokedex" aria-labelledby="pokedex-title">
+  <header class="pokedex__heading">
+    <div>
+      <h2 id="pokedex-title">Pokédex</h2>
+      <p>Find your next team member.</p>
+    </div>
+    <span class="pokedex__count"
+      >{{
+        catalogue().status === 'success' ? catalogue().items.length : catalogue().total || '…'
+      }}
+      Pokémon</span
+    >
+  </header>
+  <div class="pokedex__filters">
+    <div class="pokedex__search">
+      <label for="pokemon-search">Search Pokémon</label
+      ><input
+        id="pokemon-search"
+        type="search"
+        placeholder="Search by name…"
+        [formControl]="search"
+        autocomplete="off"
+      />
+    </div>
+    <div>
+      <label for="type-filter">Type</label
+      ><select id="type-filter" [formControl]="type">
+        <option value="">All types</option>
+        @for (type of types; track type) {
+          <option [value]="type">{{ type | titlecase }}</option>
+        }
+      </select>
+    </div>
+  </div>
+  <div
+    class="pokedex__body"
+    [attr.aria-busy]="catalogue().status === 'loading' || catalogue().status === 'idle'"
+  >
+    @switch (catalogue().status) {
+      @case ('idle') {
+        <div class="status pokedex__status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>Preparing your Pokédex…</p>
+        </div>
+      }
+      @case ('loading') {
+        <div class="status pokedex__status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>Loading the Pokémon catalogue…</p>
+          @if (catalogue().total) {
+            <progress
+              [value]="catalogue().items.length"
+              [max]="catalogue().total"
+              aria-label="Pokémon loaded"
+            ></progress
+            ><small>{{ catalogue().items.length }} of {{ catalogue().total }} loaded</small>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="status status--error pokedex__status" role="alert">
+          <p>{{ catalogue().error }}</p>
+          <button class="button" type="button" (click)="retry()">Retry Pokédex</button>
+        </div>
+      }
+      @case ('success') {
+        @if (!page().total) {
+          <div class="status pokedex__status" role="status">
+            <h3>
+              {{
+                catalogue().items.length
+                  ? 'No Pokémon match your filters'
+                  : 'No Pokémon are available'
+              }}
+            </h3>
+            <p>
+              {{
+                catalogue().items.length
+                  ? 'Try another name or choose a different type.'
+                  : 'There are no Pokémon to browse right now. Please try again later.'
+              }}
+            </p>
+            @if (catalogue().items.length) {
+              <button class="button" type="button" (click)="clearFilters()">Clear filters</button>
+            }
+          </div>
+        } @else {
+          <div
+            class="pokedex__scroll"
+            role="region"
+            aria-label="Pokémon base stats table"
+            tabindex="0"
+          >
+            <table class="pokedex__table">
+              <caption class="visually-hidden">
+                Pokémon base stats. Select a Pokémon's name to open details. Stat headers sort the
+                full collection.
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col"><span class="visually-hidden">Sprite</span></th>
+                  <th scope="col">Pokémon</th>
+                  <th scope="col">Type</th>
+                  @for (stat of statColumns; track stat.key) {
+                    <th scope="col" [attr.aria-sort]="ariaSort(stat.key)">
+                      <button
+                        type="button"
+                        (click)="sort(stat.key)"
+                        [attr.aria-label]="
+                          'Sort by ' +
+                          stat.label +
+                          ', ' +
+                          (ariaSort(stat.key) === 'descending' ? 'ascending' : 'descending')
+                        "
+                      >
+                        {{ stat.label }}
+                        <span aria-hidden="true">{{
+                          ariaSort(stat.key) === 'ascending'
+                            ? '↑'
+                            : ariaSort(stat.key) === 'descending'
+                              ? '↓'
+                              : '↕'
+                        }}</span>
+                      </button>
+                    </th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (pokemon of page().items; track pokemon.id) {
+                  <tr
+                    (click)="selected.emit(pokemon)"
+                    [class.pokedex__row--selected]="selectedId() === pokemon.id"
+                  >
+                    <td><app-pokemon-sprite [url]="pokemon.sprite" [size]="40" /></td>
+                    <th scope="row">
+                      <span class="pokedex__number"
+                        >#{{ pokemon.id.toString().padStart(4, '0') }}</span
+                      ><button
+                        type="button"
+                        class="pokedex__name"
+                        [attr.aria-expanded]="selectedId() === pokemon.id"
+                        aria-controls="pokemon-detail"
+                        [attr.data-pokemon-id]="pokemon.id"
+                      >
+                        {{ pokemon.name | titlecase }}
+                      </button>
+                    </th>
+                    <td><app-type-badges [types]="pokemon.types" /></td>
+                    @for (stat of statColumns; track stat.key) {
+                      <td class="pokedex__stat" [class.pokedex__stat--total]="stat.key === 'total'">
+                        {{ stat.key === 'total' ? pokemon.total : pokemon.stats[stat.key] }}
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+    }
+  </div>
+  <footer class="pokedex__pagination">
+    <div class="pokedex__page-size">
+      <label for="page-size">Rows per page</label
+      ><select id="page-size" [value]="options().pageSize" (change)="setPageSize($event)">
+        @for (size of pageSizes; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+    <div class="pokedex__page-controls">
+      <span role="status">
+        @if (catalogue().status === 'success') {
+          {{ page().total }} results · Page {{ page().page }} of {{ page().pageCount }}
+        } @else {
+          {{ catalogue().status === 'error' ? 'Catalogue unavailable' : 'Loading catalogue…' }}
+        }</span
+      ><button
+        class="button button--small"
+        type="button"
+        aria-label="Previous page"
+        [disabled]="page().page <= 1 || catalogue().status !== 'success'"
+        (click)="setPage(page().page - 1)"
+      >
+        ←</button
+      ><button
+        class="button button--small"
+        type="button"
+        aria-label="Next page"
+        [disabled]="page().page >= page().pageCount || catalogue().status !== 'success'"
+        (click)="setPage(page().page + 1)"
+      >
+        →
+      </button>
+    </div>
+  </footer>
+</section>

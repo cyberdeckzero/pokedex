@@ -1,0 +1,78 @@
+.builder {
+  padding: 22px;
+  &__heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    span {
+      color: var(--color-muted);
+      font:
+        0.75rem ui-monospace,
+        monospace;
+    }
+  }
+  &__fields {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  &__field {
+    margin-bottom: 18px;
+  }
+  &__slots {
+    min-height: 70px;
+    margin-top: 14px;
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    padding: 0 4px 0 0;
+    font-size: 0.72rem;
+    button {
+      min-width: 26px;
+      min-height: 30px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--color-muted);
+      font-size: 1.1rem;
+    }
+  }
+  &__empty {
+    width: 100%;
+    border: 1px dashed var(--color-border);
+    border-radius: 6px;
+    padding: 20px 10px;
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 0.75rem;
+    margin: 0;
+  }
+  &__hint {
+    font-size: 0.72rem;
+    color: var(--color-muted);
+    margin: 6px 0;
+  }
+  &__submit {
+    width: 100%;
+    margin-top: 16px;
+  }
+  &__saved {
+    margin: 12px 0 0;
+    color: var(--color-success);
+    font-size: 0.8rem;
+  }
+}
