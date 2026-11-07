@@ -36,13 +36,9 @@
     gap: 12px;
     padding: 15px 18px 18px;
     background: var(--screen-deep);
-    label {
-      font-size: 0.7rem;
-    }
-    input,
-    select {
-      font-size: 0.8rem;
-    }
+  }
+  &__scroll-hint {
+    display: none;
   }
   &__body {
     min-height: 541px;
@@ -69,6 +65,9 @@
   &__scroll {
     overflow: auto;
     max-height: 540px;
+    &:focus-visible {
+      outline-offset: -3px;
+    }
   }
   &__table {
     width: 100%;
@@ -194,18 +193,16 @@
   }
   @media (max-width: 600px) {
     border-width: 5px;
+    &__scroll-hint {
+      display: block;
+      margin: 0;
+      padding: 0 12px 12px;
+      background: var(--screen-deep);
+      color: var(--screen-muted);
+      font-size: 0.75rem;
+    }
     &__heading {
       padding: 14px 12px 12px;
-      h2 {
-        font-size: 1.1rem;
-      }
-      p {
-        font-size: 0.68rem;
-      }
-    }
-    &__count {
-      font-size: 0.58rem;
-      padding: 4px 6px;
     }
     &__filters {
       padding: 12px;
@@ -221,6 +218,28 @@
       span {
         flex: 1;
       }
+    }
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .pokedex {
+    &__name {
+      min-height: 44px;
+    }
+    &__table {
+      font-size: 0.875rem;
+      thead button {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    }
+    &__page-size select {
+      min-height: 44px;
+    }
+    &__filters label,
+    &__pagination {
+      font-size: 0.875rem;
     }
   }
 }

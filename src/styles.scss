@@ -38,7 +38,7 @@
   --screen-deep: #c7d9b7;
   --screen-light: #edf3e3;
   --screen-ink: #173c34;
-  --screen-muted: #45604a;
+  --screen-muted: #3e5843;
   --screen-line: #a4ba93;
   --bezel: #202a2b;
   --bezel-light: #3b4947;
@@ -48,6 +48,7 @@
   --font-heading: 'Chakra Petch', 'Arial Narrow', sans-serif;
   --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   --font-data: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-control: 0.875rem;
   --color-primary: #22563d;
   --color-primary-soft: #c3d9af;
   --color-text: var(--screen-ink);
@@ -113,6 +114,7 @@ select:focus-visible,
 input,
 select {
   width: 100%;
+  font-size: var(--font-control);
   min-height: 44px;
   padding: 10px 12px;
   border: 1px solid #839b77;
@@ -306,5 +308,18 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  :root {
+    --font-control: 1rem;
+  }
+  label {
+    font-size: 0.875rem;
   }
 }

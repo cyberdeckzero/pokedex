@@ -1,6 +1,7 @@
 .scanner {
+  --key-size: 32px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 112px;
+  grid-template-columns: minmax(0, 1fr) calc(3 * var(--key-size) + 16px);
   gap: 18px;
   &__screen {
     overflow: hidden;
@@ -72,8 +73,8 @@
   }
   &__controls {
     display: grid;
-    grid-template-columns: repeat(3, 32px);
-    grid-template-rows: repeat(3, 32px);
+    grid-template-columns: repeat(3, var(--key-size));
+    grid-template-rows: repeat(3, var(--key-size));
     filter: drop-shadow(0 4px 0 #801b30);
   }
   &__key {
@@ -148,7 +149,6 @@
       height: 27px;
       border-radius: 4px;
       background: #961e35;
-      box-shadow: 1px 1px 0 #f06a78;
     }
   }
   &__status {
@@ -166,12 +166,8 @@
 }
 @media (max-width: 1200px) {
   .scanner {
-    grid-template-columns: minmax(0, 1fr) 86px;
+    --key-size: 28px;
     gap: 12px;
-    &__controls {
-      grid-template-columns: repeat(3, 28px);
-      grid-template-rows: repeat(3, 28px);
-    }
     &__entry {
       gap: 8px;
       padding-right: 10px;
@@ -186,7 +182,6 @@
 }
 @media (max-width: 1000px) {
   .scanner {
-    grid-template-columns: minmax(0, 1fr) 112px;
     &__entry {
       grid-template-columns: 40% 1fr;
     }
@@ -197,6 +192,7 @@
 }
 @media (max-width: 600px) {
   .scanner {
+    --key-size: 44px;
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     &__screen {
@@ -230,12 +226,10 @@
     }
     &__hardware {
       flex-direction: row;
+      flex-wrap: wrap;
+      gap: 12px;
       justify-content: space-around;
       padding: 2px 0;
-    }
-    &__controls {
-      grid-template-columns: repeat(3, 27px);
-      grid-template-rows: repeat(3, 27px);
     }
     &__hardware-note {
       flex-direction: row;
@@ -244,5 +238,11 @@
     &__vents {
       display: none;
     }
+  }
+}
+
+@media (pointer: coarse) {
+  .scanner {
+    --key-size: 44px;
   }
 }

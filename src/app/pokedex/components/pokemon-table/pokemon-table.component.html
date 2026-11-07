@@ -32,6 +32,9 @@
       </select>
     </div>
   </div>
+  <p class="pokedex__scroll-hint" id="table-scroll-help">
+    Scroll the table sideways to view all six stats.
+  </p>
   <div
     class="pokedex__body"
     [attr.aria-busy]="catalogue().status === 'loading' || catalogue().status === 'idle'"
@@ -89,6 +92,7 @@
             class="pokedex__scroll"
             role="region"
             aria-label="Pokémon base stats table"
+            aria-describedby="table-scroll-help"
             tabindex="0"
           >
             <table class="pokedex__table">

@@ -1,6 +1,7 @@
 <div class="picker" (focusout)="onBlur($event)">
   <label for="team-pokemon-search">Add Pokémon</label>
   <input
+    #searchInput
     id="team-pokemon-search"
     type="text"
     role="combobox"
@@ -8,7 +9,7 @@
     placeholder="Search Pokémon to add…"
     [formControl]="search"
     aria-autocomplete="list"
-    aria-controls="pokemon-suggestions"
+    [attr.aria-controls]="open() && !disabled() ? 'pokemon-suggestions' : null"
     [attr.aria-expanded]="open()"
     [attr.aria-activedescendant]="
       open() && activeIndex() >= 0 && suggestions()[activeIndex()]
@@ -29,6 +30,9 @@
   </p>
   @if (open() && !disabled()) {
     <div class="picker__dropdown">
+      @if (results().status !== 'success' || !suggestions().length) {
+        <div id="pokemon-suggestions" role="listbox" aria-label="Pokémon suggestions"></div>
+      }
       @let state = results();
       @switch (state.status) {
         @case ('loading') {
@@ -60,6 +64,7 @@
             <div id="pokemon-suggestions" role="listbox" aria-label="Pokémon suggestions">
               @for (pokemon of suggestions(); track pokemon.id; let index = $index) {
                 <button
+                  #optionButton
                   class="picker__option"
                   type="button"
                   role="option"

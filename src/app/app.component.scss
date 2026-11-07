@@ -27,6 +27,9 @@
       a {
         color: #d4e4d9;
         font-size: 0.8rem;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
         text-decoration: none;
         &:hover {
           color: var(--lens);
@@ -41,6 +44,7 @@
     color: #f1f4e9;
     text-decoration: none;
     font: 600 1.18rem var(--font-heading);
+    min-height: 44px;
   }
   &__brand-note {
     display: block;
@@ -168,13 +172,14 @@
     padding: 0 10px 14px;
     &__topbar {
       min-height: 74px;
+      flex-wrap: wrap;
+      padding: 12px 0;
+      row-gap: 8px;
       nav {
         gap: 14px;
+        margin-left: auto;
         a {
           font-size: 0.7rem;
-          &:first-child {
-            display: none;
-          }
         }
       }
     }
@@ -203,6 +208,18 @@
       gap: 8px;
     }
     &__serial {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .shell--detail {
+    margin-right: var(--panel-width);
+    .device__body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .device__hinge {
       display: none;
     }
   }

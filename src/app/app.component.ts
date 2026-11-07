@@ -28,6 +28,7 @@ export class AppComponent {
   readonly catalogue = toSignal(inject(PokemonStore).catalogue$, { requireSync: true });
   readonly selectedPokemon = signal<Pokemon | null>(null);
   readonly panelOpen = signal(false);
+  private detailOpener: HTMLElement | null = null;
 
   readonly currentPokemon = computed(
     () => this.selectedPokemon() ?? this.catalogue().items[0] ?? null,
@@ -50,6 +51,13 @@ export class AppComponent {
     this.document.querySelector<HTMLInputElement>('#team-name')?.focus();
   }
   selectPokemon(pokemon: Pokemon): void {
+    const active = this.document.activeElement;
+    if (
+      active instanceof HTMLElement &&
+      active.matches('button, a, input, select, [tabindex]') &&
+      !active.closest('app-pokemon-detail')
+    )
+      this.detailOpener = active;
     this.selectedPokemon.set(pokemon);
     this.panelOpen.set(true);
   }
@@ -59,6 +67,10 @@ export class AppComponent {
     const row = id
       ? this.document.querySelector<HTMLButtonElement>(`[data-pokemon-id="${id}"]`)
       : null;
-    (row ?? this.document.querySelector<HTMLInputElement>('#pokemon-search'))?.focus();
+    const opener =
+      this.detailOpener?.isConnected && this.detailOpener.getClientRects().length
+        ? this.detailOpener
+        : null;
+    (opener ?? row ?? this.document.querySelector<HTMLInputElement>('#pokemon-search'))?.focus();
   }
 }

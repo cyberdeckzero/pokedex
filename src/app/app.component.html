@@ -1,12 +1,12 @@
 <a class="shell__skip" href="#main">Skip to Pokédex</a>
-<div class="shell">
+<div class="shell" [class.shell--detail]="panelOpen()">
   <header class="shell__topbar">
     <a class="shell__brand" href="#main"
       ><span class="pokeball-mark" aria-hidden="true"></span
       ><span>Pokédex<span class="shell__brand-note">National edition</span></span></a
     >
     <nav aria-label="Main navigation">
-      <a href="#pokedex-title">Browse entries</a
+      <a href="#pokedex-title">Browse</a
       ><a href="#teams-title">Your teams <span aria-hidden="true">↗</span></a>
     </nav>
   </header>

@@ -26,9 +26,6 @@
   }
   &__field {
     margin-bottom: 18px;
-    input {
-      font-size: 0.8rem;
-    }
   }
   &__slots {
     display: grid;
@@ -78,7 +75,6 @@
     padding: 5px 10px;
     font: 0.6rem var(--font-data);
     color: var(--screen-muted);
-    opacity: 0.8;
     span {
       display: block;
       width: 15px;
@@ -110,5 +106,20 @@
   }
   @media (max-width: 600px) {
     padding: 20px 13px;
+    &__chip {
+      font-size: 0.8rem;
+      min-height: 48px;
+      button {
+        flex-basis: 44px;
+        min-height: 44px;
+      }
+    }
+    &__slots {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    &__hint,
+    &__empty {
+      font-size: 0.875rem;
+    }
   }
 }

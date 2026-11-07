@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { SPRITE_FALLBACK } from '../../constants/pokemon.constants';
 
@@ -8,9 +17,14 @@ import { SPRITE_FALLBACK } from '../../constants/pokemon.constants';
   templateUrl: './pokemon-portrait.component.html',
   styleUrl: './pokemon-portrait.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { tabindex: '-1' },
 })
 export class PokemonPortraitComponent {
   readonly pokemon = input.required<Pokemon>();
+  readonly imageLoaded = signal(false);
+  readonly imageUnavailable = signal(false);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly pokemonId = computed(() => this.pokemon().id);
   readonly tilt = signal({ x: 0, y: 0 });
   private readonly failedImages = signal(0);
   readonly pixels = Array.from({ length: 48 }, (_, index) => index);
@@ -22,16 +36,31 @@ export class PokemonPortraitComponent {
 
   constructor() {
     effect(() => {
-      this.pokemon().id;
+      this.imageUrl();
+      this.imageLoaded.set(false);
+    });
+    effect(() => {
+      this.pokemonId();
       this.failedImages.set(0);
+      this.imageUnavailable.set(false);
       this.resetTilt();
     });
   }
   onImageError(): void {
-    this.failedImages.update((count) => Math.min(2, count + 1));
+    if (this.failedImages() >= 2) {
+      this.imageUnavailable.set(true);
+      this.resetTilt();
+    } else this.failedImages.update((count) => count + 1);
+  }
+  retryImage(): void {
+    this.host.nativeElement.focus();
+    this.imageUnavailable.set(false);
+    this.failedImages.set(0);
+    this.imageLoaded.set(false);
   }
   onPointerMove(event: PointerEvent): void {
     if (
+      this.imageUnavailable() ||
       event.pointerType !== 'mouse' ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     )

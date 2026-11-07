@@ -2,6 +2,9 @@ import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  viewChild,
+  viewChildren,
   computed,
   effect,
   inject,
@@ -42,6 +45,8 @@ export class PokemonPickerComponent {
   readonly search = new FormControl('', { nonNullable: true });
   readonly open = signal(false);
   readonly activeIndex = signal(-1);
+  private readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
+  private readonly optionButtons = viewChildren<ElementRef<HTMLButtonElement>>('optionButton');
   private readonly store = inject(PokemonStore);
   private readonly retryRequests = new Subject<void>();
   readonly results = toSignal(
@@ -94,6 +99,8 @@ export class PokemonPickerComponent {
     });
   }
   retry(): void {
+    this.searchInput()?.nativeElement.focus();
+    this.open.set(true);
     this.retryRequests.next();
   }
   choose(pokemon: Pokemon): void {
@@ -109,7 +116,13 @@ export class PokemonPickerComponent {
     this.activeIndex.set(-1);
   }
   onKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape' || event.key === 'Tab') {
+    if (event.key === 'Escape' && this.open()) {
+      event.stopPropagation();
+      event.preventDefault();
+      this.open.set(false);
+      return;
+    }
+    if (event.key === 'Tab') {
       this.open.set(false);
       return;
     }
@@ -125,6 +138,10 @@ export class PokemonPickerComponent {
             ? count - 1
             : this.activeIndex() - 1;
       this.activeIndex.set(next % count);
+      this.optionButtons()[next % count]?.nativeElement.scrollIntoView?.({
+        block: 'nearest',
+        inline: 'nearest',
+      });
     }
     if (event.key === 'Enter' && this.open()) {
       event.preventDefault();

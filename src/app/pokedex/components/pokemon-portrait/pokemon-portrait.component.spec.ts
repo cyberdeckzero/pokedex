@@ -41,6 +41,37 @@ describe('Pokédex portrait', () => {
     expect(image.src).toContain('/other/official-artwork/25.png');
   });
 
+  it('announces image loading until the image loads and resets for another entry', () => {
+    const fixture = TestBed.createComponent(PokemonPortraitComponent);
+    fixture.componentRef.setInput('pokemon', bulbasaur);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.textContent).toContain('Loading image…');
+    element.querySelector('img')?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+    expect(element.textContent).not.toContain('Loading image…');
+    fixture.componentRef.setInput('pokemon', { ...bulbasaur, id: 25 });
+    fixture.detectChanges();
+    expect(element.textContent).toContain('Loading image…');
+  });
+
+  it('offers a fresh image request if artwork, sprite and local fallback all fail', () => {
+    const fixture = TestBed.createComponent(PokemonPortraitComponent);
+    fixture.componentRef.setInput('pokemon', bulbasaur);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    for (let failure = 0; failure < 3; failure++) {
+      element.querySelector('img')?.dispatchEvent(new Event('error'));
+      fixture.detectChanges();
+    }
+    expect(element.textContent).toContain('Image unavailable');
+    expect(element.textContent).not.toContain('Loading image…');
+    element.querySelector<HTMLButtonElement>('button')?.click();
+    fixture.detectChanges();
+    expect(element.querySelector('img')?.getAttribute('src')).toContain('/official-artwork/1.png');
+    expect(element.textContent).toContain('Loading image…');
+  });
+
   it('bounds pointer tilt, resets it on leaving, and respects reduced motion', () => {
     const matchMedia = vi.fn().mockReturnValue({ matches: false });
     vi.stubGlobal('matchMedia', matchMedia);

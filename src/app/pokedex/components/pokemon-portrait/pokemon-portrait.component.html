@@ -6,12 +6,26 @@
   (pointerleave)="resetTilt()"
 >
   <div class="portrait__target" aria-hidden="true"><span></span></div>
+  @if (imageUnavailable()) {
+    <span class="portrait__loading" role="status"
+      ><span>Image unavailable</span
+      ><button class="button button--small" type="button" (click)="retryImage()">
+        Retry image
+      </button></span
+    >
+  } @else if (!imageLoaded()) {
+    <span class="portrait__loading" role="status"
+      ><span class="spinner" aria-hidden="true"></span><span>Loading image…</span></span
+    >
+  }
   <img
     class="portrait__image"
+    [style.visibility]="imageUnavailable() ? 'hidden' : 'visible'"
     [src]="imageUrl()"
     [alt]="pokemon().name + ' illustration'"
     width="240"
     height="240"
+    (load)="imageLoaded.set(true)"
     (error)="onImageError()"
   />
   @for (record of [pokemon()]; track record.id) {

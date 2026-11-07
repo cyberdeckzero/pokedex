@@ -3,6 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  DestroyRef,
+  signal,
   afterNextRender,
   computed,
   inject,
@@ -33,11 +35,14 @@ import { StatRadarComponent } from '../stat-radar/stat-radar.component';
   templateUrl: './pokemon-detail.component.html',
   styleUrl: './pokemon-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:keydown.escape)': 'close.emit()' },
+  host: { '(document:keydown.escape)': 'onEscape($event)' },
 })
 export class PokemonDetailComponent {
   readonly pokemon = input.required<Pokemon>();
   readonly close = output<void>();
+  readonly modal = signal(false);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly panel = viewChild<ElementRef<HTMLDialogElement>>('panel');
   private readonly store = inject(PokemonStore);
   private readonly retryRequests = new Subject<void>();
   private readonly closeButton = viewChild<ElementRef<HTMLButtonElement>>('closeButton');
@@ -72,7 +77,39 @@ export class PokemonDetailComponent {
   });
 
   constructor() {
-    afterNextRender(() => this.closeButton()?.nativeElement.focus());
+    afterNextRender(() => {
+      const panel = this.panel()?.nativeElement;
+      if (!panel) return;
+      const media = window.matchMedia?.('(max-width: 1199px)');
+      const updateMode = () => {
+        const focused = panel.contains(document.activeElement) ? document.activeElement : null;
+        if (panel.open) panel.close();
+        this.modal.set(media?.matches ?? false);
+        // Native modality keeps background controls out of the narrow layout's tab order.
+        if (this.modal()) panel.showModal();
+        else if (panel.show) panel.show();
+        else panel.setAttribute('open', '');
+        if (focused instanceof HTMLElement) focused.focus();
+        else this.closeButton()?.nativeElement.focus();
+      };
+      updateMode();
+      media?.addEventListener('change', updateMode);
+      this.destroyRef.onDestroy(() => media?.removeEventListener('change', updateMode));
+    });
+  }
+  onEscape(event: Event): void {
+    if (!this.modal() && !event.defaultPrevented) {
+      event.preventDefault();
+      this.requestClose();
+    }
+  }
+  onCancel(event: Event): void {
+    event.preventDefault();
+    this.requestClose();
+  }
+  requestClose(): void {
+    this.panel()?.nativeElement.close();
+    this.close.emit();
   }
   retry(): void {
     this.retryRequests.next();

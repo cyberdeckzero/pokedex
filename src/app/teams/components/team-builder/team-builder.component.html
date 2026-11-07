@@ -6,10 +6,13 @@
   <form [formGroup]="form" (ngSubmit)="submit()">
     <fieldset [disabled]="isSubmitting() || teamState().busy" class="builder__fields">
       <div class="builder__field">
-        <label for="team-name">Team name</label
+        <label for="team-name">Team name <span class="muted">(required)</span></label
         ><input
           id="team-name"
           type="text"
+          required
+          minlength="3"
+          maxlength="30"
           formControlName="name"
           placeholder="e.g. Weekend challengers"
           autocomplete="off"
@@ -46,7 +49,7 @@
         [disabled]="isSubmitting() || teamState().busy || selectedIds().length >= 6"
         (chosen)="addPokemon($event)"
       />
-      <div class="builder__slots" aria-label="Selected Pokémon">
+      <div class="builder__slots" role="group" aria-label="Selected Pokémon">
         @for (pokemon of selectedPokemon(); track pokemon.id) {
           <span class="builder__chip"
             ><app-pokemon-sprite [url]="pokemon.sprite" [size]="30" /><span>{{

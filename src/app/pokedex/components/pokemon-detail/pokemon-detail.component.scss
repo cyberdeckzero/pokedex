@@ -3,6 +3,12 @@
 }
 .detail {
   position: fixed;
+  margin: 0;
+  left: auto;
+  height: 100dvh;
+  max-height: none;
+  max-width: 100vw;
+  color: var(--screen-ink);
   right: 0;
   top: 0;
   bottom: 0;
