@@ -5,8 +5,8 @@ Verified locally on 7 November 2026 (Asia/Kolkata), with Node 22.14.0 and npm 11
 | Check                                                   | Observed result                                                                                                                                                      |
 | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `npx --yes npm@11.6.4 ci`                               | Passed from the committed lockfile; `prepare` installed the commitlint hook. npm reported 20 moderate dependency advisories in the tooling dependency tree.          |
-| `npm run build`                                         | Passed, including strict Angular template checking and production budgets. Approximately 482 kB raw / 132 kB estimated transfer for the initial bundle.              |
-| `npm test`                                              | 32 tests passed across 15 files, with mocked network access and deterministic debounce/retry timers.                                                                 |
+| `npm run build`                                         | Passed, including strict Angular template checking and production budgets. Approximately 489 kB raw / 134 kB estimated transfer for the initial bundle.              |
+| `npm test`                                              | 34 tests passed across 15 files, with mocked network access and deterministic debounce/retry timers.                                                                 |
 | `npm run format:check`                                  | Passed. No separate ESLint target is configured.                                                                                                                     |
 | `npm start` and an HTTP GET to `http://127.0.0.1:4200/` | Development compilation passed; entry page returned HTTP 200 with the expected application title and module script.                                                  |
 | `npm run mock`                                          | Started the pinned 2.4.0 CLI with the `.cjs` seed on port 4000.                                                                                                      |
@@ -15,7 +15,7 @@ Verified locally on 7 November 2026 (Asia/Kolkata), with Node 22.14.0 and npm 11
 | Mock restart                                            | Created a disposable team, stopped/restarted the CLI, then verified that team was absent and all three seed teams were restored.                                     |
 | `git diff --check`                                      | Passed.                                                                                                                                                              |
 | `npm run check:poke`                                    | Passed against public `v1beta2`: pagination/count, six stats/types/sprites, all 12 default-trainer seed IDs, and regular/hidden abilities with English descriptions. |
-| Browser inventory                                       | Browser automation host unavailable; no browser surfaces could be opened.                                                                                            |
+| Browser inventory                                       | Native browser host unavailable; local Playwright Chromium subsequently launched and completed the UI audit.                                                         |
 
 ## Behaviors covered by automated tests
 
@@ -44,8 +44,18 @@ The running development server returned HTTP 200 for the new application entry, 
 
 Calculated WCAG contrast ratios for the main display tokens: display ink on LCD 9.37:1; muted text on the light input surface 6.13:1; muted text on the darker LCD 4.64:1. Small enclosure labels use white, which measures 4.57:1 against the brightest red header surface. These token checks do not replace a browser accessibility audit.
 
+## UI/UX audit verification
+
+A subsequent hands-on audit used local Playwright against a separately started Angular production-configuration server on port 4300. All **26 browser checks passed** across desktop/mobile Chromium. The suite uses isolated GraphQL/image fixtures and checks uncaught runtime exceptions. Four axe states per project returned no violations of the selected WCAG A/AA rules; this does not certify full accessibility.
+
+Checks cover all principal flows, independent loading/error/empty states, same-input recovery, optimistic mutations and rollback, saved selection, keyboard focus, a 30-character unbroken team name, touch targets, 320px reflow, 200% text, chart canvas reuse/pixel changes, and adaptive native dialog behavior. The final portrait unit checks also passed after preserving image layout during fallback failure.
+
+`npm run build` passed without budget warnings. `npx tsc --project e2e/tsconfig.json`, `npm run format:check`, and `git diff --check` passed. The full Angular unit suite passed **34 tests across 15 files**. Browser installation used `npx playwright install chromium`. Test-owned servers were stopped automatically; existing app/mock processes were preserved.
+
+The [audit report](ui-audit/README.md) contains eleven findings/fixes, current standards references, and **26 before/after screenshots**. A live initial browser load rendered all 1,351 catalogue records; repeatable browser checks use 56 fixture records and separate test teams, with no production fixture fallback.
+
 ## Remaining verification
 
-Browser appearance, real canvas animation, responsive overflow, screen-reader/focus behavior, and DevTools offline/throttled recovery remain manual checks. Follow the README checklist when browser access and the public endpoint are available. The app never injects test fixtures as an outage fallback.
+Screen readers, real phones/tablets, Firefox/WebKit, forced-colors mode, actual network disconnection/throttling, and low-end-device performance remain manual checks. Playwright verifies simulated network failures and recovery, screenshot appearance, responsive overflow, focus behavior, and real chart rendering in Chromium. It does not measure animation frame rate or certify full WCAG compliance. The app never injects test fixtures as an outage fallback.
 
 All changes are local Git commits. No remote repository was created and nothing was pushed; GitHub delivery is still separate. Startup commands remain unchanged.

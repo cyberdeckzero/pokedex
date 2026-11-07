@@ -40,7 +40,9 @@ The portrait interactions are original Angular implementations of these patterns
 - Type badges retain their recognizable colors with dark, contrasting text.
 - The catalogue retains the complete stat table, accessible sort buttons, and client pagination. Its screen scrolls horizontally on narrow displays.
 - Team entries are roster rows; the builder and autocomplete share the display/control vocabulary.
-- The detail drawer repeats the enclosure, screen, portrait, and radar materials.
+- The detail drawer repeats the enclosure, screen, portrait, and radar materials. It reserves space on wide screens and becomes a native modal below 1200px.
+- Form controls share a font-size token; touch controls target 44px, with 16px input/select text. Both navigation links remain available on phones.
+- Muted display ink is `#3e5843`; opacity is not used to fade informative text.
 
 ## Motion and accessibility
 

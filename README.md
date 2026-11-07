@@ -33,9 +33,12 @@ The assessment specifies `https://beta.pokeapi.co/graphql/v1beta`, which was rem
 npm run build          # production output: dist/mini-pokedex/browser/
 npm test               # Angular CLI + Vitest, one deterministic run; no live network
 npm run format:check   # Prettier; no separate ESLint setup
+npm run test:e2e       # Playwright desktop/mobile Chromium; isolated fixtures
 npm run check:mock     # live schema introspection + create/read/delete; cleans its test team
 npm run check:poke     # live pagination, seeded-team IDs, stats/sprites, and abilities
 ```
+
+Before the first browser test run, install Chromium with `npx playwright install chromium`. The browser suite starts/stops its own production-configuration app on port **4300** and intercepts GraphQL/image traffic, so it does not need the mock server or change its data. Port 4300 must be free. `npx playwright show-report` opens the generated HTML results.
 
 `npm run format` formats the source. Installation configures a small Git `commit-msg` hook using commitlint; messages follow `type(scope): lowercase imperative subject`, maximum 100 characters. No remote is configured.
 
@@ -48,7 +51,7 @@ npm run check:poke     # live pagination, seeded-team IDs, stats/sprites, and ab
 - Standalone OnPush components use `inject()`, `input()`/`output()`, typed Reactive Forms, and modern template control flow. `toSignal()` subscriptions are created once per component and cleaned up with it. RxJS handles requests and cancellation; Signals handle local interaction, submission state, computed team totals/type counts, and selection persistence.
 - `common/` holds only shared request models and GraphQL error handling. SCSS uses BEM names and CSS custom properties. Chart.js provides a six-axis radar chart, updates the existing instance with a 600 ms animation, respects reduced motion, and destroys the instance on close.
 
-The detail panel is a **non-modal** drawer, so another table row can be selected while it stays open. It focuses its close button on opening, closes on Escape, and returns focus to the selected row (or search if that row is no longer visible). The autocomplete supports arrows, Enter, Escape, and Tab.
+The detail panel is **non-modal on wide screens** (1200px and above), with room reserved so it does not cover the app. On narrower screens it uses a native modal dialog to keep background controls out of the tab order. It focuses its close button on opening, closes on Escape, and returns focus to the opener, with a row/search fallback when needed. The autocomplete supports arrows, Enter, Escape, and Tab.
 
 ## Pokédex device interface
 
@@ -91,6 +94,6 @@ Team queries use 100-record pages because the generated `allTeams` resolver defa
 
 ## Verification and limits
 
-See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 32 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. Browser visual/offline checks remain unverified because the browser automation host was unavailable. The application does not substitute fixture data during an API outage.
+See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 34 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. The [UI/UX audit](docs/ui-audit/README.md) includes before/after screenshots and 26 passing Playwright checks across desktop and mobile Chromium. Axe found no AA-rule violations in the tested states. Real-device, screen-reader, cross-browser, and actual disconnected/throttled checks remain manual. The application does not substitute fixture data during an API outage.
 
-With more time: run browser accessibility/responsive checks against a healthy API; add a small browser regression suite; and, if catalogue size grows substantially, move global querying/pagination to the API. For a real multi-user backend, enforce uniqueness server-side and reconcile ambiguous mutation timeouts before resubmission. No optional bonus or unrelated feature is included.
+With more time: extend the browser suite to Firefox/WebKit, test with assistive technologies and actual phones, measure low-end device performance, and, if catalogue size grows substantially, move global querying/pagination to the API. For a real multi-user backend, enforce uniqueness server-side and reconcile ambiguous mutation timeouts before resubmission. No optional bonus or unrelated feature is included.
