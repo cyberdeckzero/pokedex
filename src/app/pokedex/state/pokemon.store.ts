@@ -144,6 +144,9 @@ export class PokemonStore {
   private loadPage$(offset: number): Observable<number> {
     return this.api.getPage$(CATALOGUE_BATCH_SIZE, offset).pipe(
       tap((page) => {
+        const expectedCount = Math.min(CATALOGUE_BATCH_SIZE, page.total - offset);
+        if (page.items.length !== expectedCount)
+          throw new Error('The Pokémon catalogue page is incomplete.');
         this.cache(page.items);
         this.loadedOffsets.add(offset);
         this.patch({ total: page.total });

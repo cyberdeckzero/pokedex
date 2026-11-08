@@ -96,14 +96,41 @@ describe('PokemonStore cache', () => {
     expect((await firstValueFrom(store.catalogue$)).status).toBe('success');
   });
 
+  it('rejects a truncated page and retries it without discarding complete pages', async () => {
+    const firstPage = Array.from({ length: 100 }, (_, index) => ({
+      ...pikachu,
+      id: index + 1,
+      name: `pokemon-${index + 1}`,
+    }));
+    const last = { ...pikachu, id: 101, name: 'last-pokemon' };
+    api.getPage$
+      .mockReturnValueOnce(of({ items: firstPage, total: 101 }))
+      .mockReturnValueOnce(of({ items: [], total: 101 }))
+      .mockReturnValueOnce(of({ items: [last], total: 101 }));
+
+    await expect(firstValueFrom(store.loadCatalogue$())).rejects.toThrow('incomplete');
+    expect((await firstValueFrom(store.catalogue$)).status).toBe('error');
+    expect((await firstValueFrom(store.catalogue$)).items).toEqual(firstPage);
+    expect(sessionStorage.getItem(CATALOGUE_CACHE_KEY)).toBeNull();
+
+    expect(await firstValueFrom(store.loadCatalogue$())).toEqual([...firstPage, last]);
+    expect((await firstValueFrom(store.catalogue$)).status).toBe('success');
+    expect(api.getPage$.mock.calls.map((call) => call[1])).toEqual([0, 100, 100]);
+  });
+
   it('keeps successful pages and resumes only missing catalogue pages after failure', async () => {
+    const firstPage = Array.from({ length: 100 }, (_, index) => ({
+      ...pikachu,
+      id: index + 1,
+      name: `pokemon-${index + 1}`,
+    }));
     const next = { ...pikachu, id: 157, name: 'typhlosion' };
     api.getPage$.mockImplementation((_limit: number, offset: number) =>
-      offset === 0 ? of({ items: [pikachu], total: 101 }) : throwError(() => new Error('offline')),
+      offset === 0 ? of({ items: firstPage, total: 101 }) : throwError(() => new Error('offline')),
     );
     await firstValueFrom(store.loadCatalogue$()).catch(() => undefined);
     api.getPage$.mockReturnValue(of({ items: [next], total: 101 }));
-    expect(await firstValueFrom(store.loadCatalogue$())).toEqual([pikachu, next]);
+    expect(await firstValueFrom(store.loadCatalogue$())).toEqual([...firstPage, next]);
     expect(api.getPage$.mock.calls.map((call) => call[1])).toEqual([0, 100, 100]);
   });
 });
