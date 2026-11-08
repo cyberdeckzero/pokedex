@@ -183,6 +183,18 @@
       color: var(--screen-ink);
     }
   }
+  &__coverage {
+    margin-top: 12px;
+    summary {
+      padding: 8px 0;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    summary:focus-visible {
+      outline: 3px solid #08769d;
+      outline-offset: 3px;
+    }
+  }
   &__note {
     color: var(--screen-muted);
     margin: 10px 0 0;
