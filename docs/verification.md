@@ -17,6 +17,14 @@ Verified locally on 7 November 2026 (Asia/Kolkata), with Node 22.14.0 and npm 11
 | `npm run check:poke`                                    | Passed against public `v1beta2`: pagination/count, six stats/types/sprites, all 12 default-trainer seed IDs, and regular/hidden abilities with English descriptions. |
 | Browser inventory                                       | Native browser host unavailable; local Playwright Chromium subsequently launched and completed the UI audit.                                                         |
 
+## 8 November reload-performance follow-up
+
+Inspection confirmed that catalogue pagination was unchanged by the interaction work, but every page refresh discarded its memory-only cache and fetched the complete collection again. The UI bundle had grown from approximately 348 kB to 430 kB with the interaction dependency. A validated, versioned, one-hour session cache now restores only completed catalogues. Expired/corrupt/partial data and failures are never treated as cached success; blocked storage preserves ordinary browsing. Initial selector output makes a restored collection render before the search debounce completes.
+
+`npm test` passed 59 tests across 17 files, covering successful reload reuse, expiry/corruption/incomplete cache rejection, uncached failures, and unavailable storage. Eight focused desktop/mobile browser checks passed reload reuse, same-input recovery, loading layouts, and visual flows; final reload/recovery checks also passed after immediate selector initialization. The reload test blocks upstream catalogue traffic after the first success and confirms zero additional catalogue requests while search still works. Production build, formatting, TypeScript, and whitespace checks passed; no budget was raised.
+
+Two terminal availability probes returned HTTP 403 with `error code: 1010`, so current real API latency could not be measured from this environment. This does not establish that the user's browser receives the same response. Cold-load speed still depends on the upstream service; no fixture fallback or authentication workaround was introduced.
+
 ## 8 November interactive follow-up
 
 `npm run build` passed within unchanged budgets (approximately 431 kB initial / 109 kB transfer). `npm test` passed **53 tests across 17 files**, including reorder persistence, dual-type immunities, and coverage counts. `AUDIT_CAPTURE=interactive npm run test:e2e` passed **40 desktop/mobile Chromium checks**, including direct hero selection, drag-to-copy, duplicate-drop rejection, drag/keyboard reordering, focus after DOM moves, saved draft order, mobile cards/sorting, axe scans, and recovery states. Final focused accessibility/selection and visual/order checks also passed after refinements. Formatting, e2e TypeScript and whitespace checks passed.
