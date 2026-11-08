@@ -1,15 +1,7 @@
 <a class="shell__skip" href="#main">Skip to Pokédex</a>
 <div class="shell" [class.shell--detail]="panelOpen()">
-  <header class="shell__topbar">
-    <a class="shell__brand" href="#main"
-      ><span class="pokeball-mark" aria-hidden="true"></span><span>Pokédex</span></a
-    >
-    <nav aria-label="Main navigation">
-      <a href="#pokedex-title">Browse</a><a href="#teams-title">Your teams</a>
-    </nav>
-  </header>
   <main class="device" id="main">
-    <app-pokedex-header [status]="catalogue().status" />
+    <app-pokedex-header />
     <div class="device__body">
       <div class="device__left">
         <app-pokemon-scanner
@@ -36,12 +28,6 @@
         <app-team-panel />
       </div>
     </div>
-    <footer class="device__footer">
-      <span
-        >Data by
-        <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer">PokéAPI</a></span
-      ><span>Demo teams are temporary.</span>
-    </footer>
   </main>
 </div>
 @if (panelOpen()) {

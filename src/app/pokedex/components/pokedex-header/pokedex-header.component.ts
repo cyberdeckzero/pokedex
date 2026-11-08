@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { RequestStatus } from '../../../common/models/request-state.model';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-pokedex-header',
@@ -8,18 +7,4 @@ import { RequestStatus } from '../../../common/models/request-state.model';
   styleUrl: './pokedex-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PokedexHeaderComponent {
-  readonly status = input.required<RequestStatus>();
-  readonly label = computed(() => {
-    switch (this.status()) {
-      case 'success':
-        return 'Database ready';
-      case 'error':
-        return 'Connection interrupted';
-      case 'loading':
-        return 'Synchronizing';
-      default:
-        return 'Standby';
-    }
-  });
-}
+export class PokedexHeaderComponent {}

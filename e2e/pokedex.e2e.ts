@@ -301,9 +301,8 @@ test('touch: controls have useful hit areas and inputs avoid small-text zoom', a
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openCatalogue(page);
-  const browse = page.getByRole('link', { name: /^Browse/ });
-  await expect(browse).toBeVisible();
-  await browse.click();
+  await page.getByRole('button', { name: 'Focus Pokémon search' }).click();
+  await expect(page.getByLabel('Search Pokémon', { exact: true })).toBeFocused();
   await expect(page.getByLabel('Search Pokémon', { exact: true })).toBeInViewport();
   const sizes = await page
     .locator('.scanner__key, .teams__delete, .button, input, select')
