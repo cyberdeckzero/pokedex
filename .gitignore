@@ -46,3 +46,6 @@ Thumbs.db
 # Browser test artifacts
 /test-results/
 /playwright-report/
+
+# Local mock database
+/mock/data.local.json*
