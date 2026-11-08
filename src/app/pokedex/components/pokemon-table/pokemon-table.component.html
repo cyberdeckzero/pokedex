@@ -1,7 +1,7 @@
 <section class="pokedex" aria-labelledby="pokedex-title">
   <header class="pokedex__heading">
     <div>
-      <h2 id="pokedex-title">Pokédex</h2>
+      <h2 id="pokedex-title"><span class="pokeball-mark" aria-hidden="true"></span> Pokédex</h2>
     </div>
     <span class="pokedex__count"
       >{{
@@ -153,7 +153,7 @@
                       ><button
                         type="button"
                         class="pokedex__name"
-                        [attr.aria-expanded]="selectedId() === pokemon.id"
+                        [attr.aria-expanded]="detailOpen() && selectedId() === pokemon.id"
                         aria-controls="pokemon-detail"
                         [attr.data-pokemon-id]="pokemon.id"
                       >

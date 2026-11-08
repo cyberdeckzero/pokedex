@@ -1,167 +1,170 @@
 <aside class="teams" aria-labelledby="teams-title">
-  <header class="teams__heading">
-    <div>
-      <h2 id="teams-title">Your teams</h2>
-      <p>
-        <span class="teams__avatar" aria-hidden="true">AK</span> Ash Ketchum
-        <span class="muted">· Kanto</span>
-      </p>
-    </div>
-    <button
-      class="button button--small"
-      type="button"
-      (click)="retryTeams()"
-      [disabled]="state().busy || state().status === 'loading'"
-      aria-label="Reload teams"
-    >
-      ↻
-    </button>
-  </header>
-  <div class="teams__list" [attr.aria-busy]="state().status === 'loading'">
-    @switch (state().status) {
-      @case ('idle') {
-        <div class="status" role="status">
-          <app-skeleton kind="teams" />
-          <p class="visually-hidden">Preparing teams…</p>
-        </div>
-      }
-      @case ('loading') {
-        <div class="status" role="status">
-          <app-skeleton kind="teams" />
-          <p class="visually-hidden">Loading your teams…</p>
-        </div>
-      }
-      @case ('error') {
-        <div class="status status--error" role="alert">
-          <p>{{ state().error }}</p>
-          <button class="button" type="button" (click)="retryTeams()">Retry teams</button>
-        </div>
-      }
-      @case ('success') {
-        @if (!teams().length) {
+  <section class="teams__saved">
+    <header class="teams__heading">
+      <div>
+        <h2 id="teams-title">Your teams</h2>
+        @if (state().status === 'success') {
+          <span class="teams__count"
+            >{{ teams().length }} saved {{ teams().length === 1 ? 'squad' : 'squads' }}</span
+          >
+        }
+      </div>
+      <button
+        class="button button--small"
+        type="button"
+        (click)="retryTeams()"
+        [disabled]="state().busy || state().status === 'loading'"
+        aria-label="Reload teams"
+      >
+        ↻
+      </button>
+    </header>
+    <div class="teams__list" [attr.aria-busy]="state().status === 'loading'">
+      @switch (state().status) {
+        @case ('idle') {
           <div class="status" role="status">
-            <p>No teams yet. Choose a name and add your first Pokémon below.</p>
+            <app-skeleton kind="teams" />
+            <p class="visually-hidden">Preparing teams…</p>
           </div>
-        } @else {
-          @let memberState = hydration();
-          @if (memberState.status === 'loading') {
-            <p class="visually-hidden" role="status">Loading team Pokémon…</p>
-          } @else if (memberState.status === 'error') {
-            <div class="status status--error teams__member-status" role="alert">
-              <p>{{ memberState.message }}</p>
-              <button class="button button--small" type="button" (click)="retryHydration()">
-                Retry team Pokémon
-              </button>
+        }
+        @case ('loading') {
+          <div class="status" role="status">
+            <app-skeleton kind="teams" />
+            <p class="visually-hidden">Loading your teams…</p>
+          </div>
+        }
+        @case ('error') {
+          <div class="status status--error" role="alert">
+            <p>{{ state().error }}</p>
+            <button class="button" type="button" (click)="retryTeams()">Retry teams</button>
+          </div>
+        }
+        @case ('success') {
+          @if (!teams().length) {
+            <div class="status" role="status">
+              <p>No teams yet. Choose a name and add your first Pokémon below.</p>
             </div>
-          }
-          @for (team of teams(); track team.id) {
-            <article
-              class="teams__card"
-              [class.teams__card--selected]="selectedTeamId() === team.id"
-              [attr.aria-busy]="team.pending || memberState.status === 'loading'"
-            >
-              <div class="teams__card-heading">
-                <button
-                  class="teams__select"
-                  type="button"
-                  [attr.aria-pressed]="selectedTeamId() === team.id"
-                  [disabled]="state().busy || team.pending"
-                  (click)="selectTeam(team.id)"
-                >
-                  {{ team.name }}</button
-                ><button
-                  class="teams__delete"
-                  type="button"
-                  [disabled]="state().busy || team.pending"
-                  [attr.aria-label]="'Delete team ' + team.name"
-                  (click)="requestDelete(team.id, $event)"
-                >
-                  Delete
+          } @else {
+            @let memberState = hydration();
+            @if (memberState.status === 'loading') {
+              <p class="visually-hidden" role="status">Loading team Pokémon…</p>
+            } @else if (memberState.status === 'error') {
+              <div class="status status--error teams__member-status" role="alert">
+                <p>{{ memberState.message }}</p>
+                <button class="button button--small" type="button" (click)="retryHydration()">
+                  Retry team Pokémon
                 </button>
               </div>
-              @if (pendingDeleteId() === team.id) {
-                <div
-                  class="teams__confirmation"
-                  role="group"
-                  [attr.aria-labelledby]="'delete-question-' + team.id"
-                  (keydown.escape)="cancelDelete(); $event.stopPropagation()"
-                >
-                  <p [id]="'delete-question-' + team.id">Delete “{{ team.name }}”?</p>
-                  <div>
-                    <button
-                      #cancelDeleteControl
-                      class="button button--small"
-                      type="button"
-                      [attr.aria-label]="'Cancel deleting team ' + team.name"
-                      (click)="cancelDelete()"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      class="button button--small teams__confirm-delete"
-                      type="button"
-                      [attr.aria-label]="'Confirm delete team ' + team.name"
-                      (click)="confirmDelete(team.id)"
-                      [disabled]="state().busy"
-                    >
-                      Delete
-                    </button>
-                  </div>
+            }
+            @for (team of teams(); track team.id) {
+              <article
+                class="teams__card"
+                [class.teams__card--selected]="selectedTeamId() === team.id"
+                [attr.aria-busy]="team.pending || memberState.status === 'loading'"
+              >
+                <div class="teams__card-heading">
+                  <button
+                    class="teams__select"
+                    type="button"
+                    [attr.aria-pressed]="selectedTeamId() === team.id"
+                    [disabled]="state().busy || team.pending"
+                    (click)="selectTeam(team.id)"
+                  >
+                    {{ team.name }}</button
+                  ><button
+                    class="teams__delete"
+                    type="button"
+                    [disabled]="state().busy || team.pending"
+                    [attr.aria-label]="'Delete team ' + team.name"
+                    (click)="requestDelete(team.id, $event)"
+                  >
+                    Delete
+                  </button>
                 </div>
-              }
-              <div class="teams__sprites" [attr.aria-label]="team.name + ' members'">
-                @if (memberState.status === 'success') {
-                  @for (pokemon of membersFor(team); track pokemon.id) {
-                    <span role="img" [title]="pokemon.name" [attr.aria-label]="pokemon.name"
-                      ><app-pokemon-sprite [url]="pokemon.sprite" [size]="36"
-                    /></span>
-                  }
-                } @else {
-                  @for (id of team.pokemonIds; track id) {
-                    @if (memberState.status === 'loading') {
-                      <app-skeleton class="teams__placeholder" kind="image" />
-                    } @else {
-                      <span class="teams__placeholder" aria-hidden="true">?</span>
+                @if (pendingDeleteId() === team.id) {
+                  <div
+                    class="teams__confirmation"
+                    role="group"
+                    [attr.aria-labelledby]="'delete-question-' + team.id"
+                    (keydown.escape)="cancelDelete(); $event.stopPropagation()"
+                  >
+                    <p [id]="'delete-question-' + team.id">Delete “{{ team.name }}”?</p>
+                    <div>
+                      <button
+                        #cancelDeleteControl
+                        class="button button--small"
+                        type="button"
+                        [attr.aria-label]="'Cancel deleting team ' + team.name"
+                        (click)="cancelDelete()"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        class="button button--small teams__confirm-delete"
+                        type="button"
+                        [attr.aria-label]="'Confirm delete team ' + team.name"
+                        (click)="confirmDelete(team.id)"
+                        [disabled]="state().busy"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                }
+                <div class="teams__sprites" [attr.aria-label]="team.name + ' members'">
+                  @if (memberState.status === 'success') {
+                    @for (pokemon of membersFor(team); track pokemon.id) {
+                      <span role="img" [title]="pokemon.name" [attr.aria-label]="pokemon.name"
+                        ><app-pokemon-sprite [url]="pokemon.sprite" [size]="48"
+                      /></span>
+                    }
+                  } @else {
+                    @for (id of team.pokemonIds; track id) {
+                      @if (memberState.status === 'loading') {
+                        <app-skeleton class="teams__placeholder" kind="image" />
+                      } @else {
+                        <span class="teams__placeholder" aria-hidden="true">?</span>
+                      }
                     }
                   }
-                }
-              </div>
-              <footer class="teams__card-footer">
-                <span>{{ team.pokemonIds.length }} / 6 Pokémon</span>
-                @if (team.pending) {
-                  <span role="status">Saving…</span>
-                } @else if (memberState.status === 'loading') {
-                  <span>Loading Pokémon…</span>
-                } @else if (selectedTeamId() === team.id) {
-                  <span>Selected</span>
-                }
-              </footer>
-            </article>
+                </div>
+                <footer class="teams__card-footer">
+                  <span>{{ team.pokemonIds.length }} / 6 Pokémon</span>
+                  @if (team.pending) {
+                    <span role="status">Saving…</span>
+                  } @else if (memberState.status === 'loading') {
+                    <span>Loading Pokémon…</span>
+                  } @else if (selectedTeamId() === team.id) {
+                    <span>Selected</span>
+                  }
+                </footer>
+              </article>
+            }
           }
         }
       }
-    }
-  </div>
-  @if (state().mutationError) {
-    <div class="feedback feedback--error teams__feedback" role="alert">
-      <p>{{ state().mutationError }}</p>
-      @if (state().failedDeleteId; as id) {
-        <button
-          class="button button--small"
-          type="button"
-          [disabled]="state().busy"
-          (click)="deleteTeam(id)"
-        >
-          Retry delete
-        </button>
-      }
     </div>
-  }
+    @if (state().mutationError) {
+      <div class="feedback feedback--error teams__feedback" role="alert">
+        <p>{{ state().mutationError }}</p>
+        @if (state().failedDeleteId; as id) {
+          <button
+            class="button button--small"
+            type="button"
+            [disabled]="state().busy"
+            (click)="deleteTeam(id)"
+          >
+            Retry delete
+          </button>
+        }
+      </div>
+    }
+  </section>
   @if (selectedTeam(); as team) {
     <section class="teams__summary" aria-label="Selected team overview">
       <div class="teams__summary-heading">
         <h3>{{ team.name }}</h3>
-        <span>Overview</span>
+        <span>Team overview</span>
       </div>
       @if (hydration().status === 'loading') {
         <div class="status" role="status">

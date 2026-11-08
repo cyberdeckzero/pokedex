@@ -29,13 +29,13 @@
 
 :root {
   color-scheme: light;
-  --case: #cf304b;
+  --case: #c51f3e;
   --case-light: #eb5364;
   --case-dark: #a6213a;
-  --case-shadow: #8c2339;
+  --case-shadow: #9f1833;
   --case-print: #ffffff;
-  --screen: #f7faf7;
-  --screen-deep: #eaf1eb;
+  --screen: #fcfdfb;
+  --screen-deep: #f0f4f1;
   --screen-light: #ffffff;
   --screen-ink: #183b32;
   --screen-muted: #4b6255;
@@ -51,8 +51,8 @@
   --font-control: 1rem;
   --skeleton-base: #dce7de;
   --skeleton-shine: #f8fcf9;
-  --color-primary: #22563d;
-  --color-primary-soft: #e0eee3;
+  --color-primary: #b91d3c;
+  --color-primary-soft: #f8e9ec;
   --color-text: var(--screen-ink);
   --color-muted: var(--screen-muted);
   --color-surface: var(--screen);
@@ -60,7 +60,7 @@
   --color-border: var(--screen-line);
   --color-danger: #8b2531;
   --color-danger-soft: #f5d9cf;
-  --color-success: #245532;
+  --color-success: #12634f;
   --color-success-soft: #c6dfa9;
   --chart-stroke: #24573c;
   --chart-fill: #24573c26;
@@ -199,7 +199,7 @@ button {
   box-shadow: none;
 }
 .button--primary:hover:not(:disabled) {
-  background: #183f2d;
+  background: #9f1732;
   box-shadow: none;
 }
 .button--danger {

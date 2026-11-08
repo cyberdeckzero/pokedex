@@ -2,7 +2,7 @@ import { test, expect, openCatalogue } from './pokedex.fixture';
 
 test('inspection adds to a persistent draft without repeating a search', async ({ page, api }) => {
   await openCatalogue(page);
-  await page.getByRole('button', { name: 'Inspect entry' }).click();
+  await page.getByRole('button', { name: 'View details' }).click();
   await page.getByRole('button', { name: 'Add to team draft', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Already in draft', exact: true })).toBeDisabled();
   await page.keyboard.press('Escape');

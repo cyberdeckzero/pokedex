@@ -19,11 +19,11 @@
           </div>
         }
         <app-pokemon-table
-          [selectedId]="panelOpen() ? (selectedPokemon()?.id ?? null) : null"
+          [selectedId]="currentPokemon()?.id ?? null"
+          [detailOpen]="panelOpen()"
           (selected)="selectPokemon($event)"
         />
       </div>
-      <div class="device__hinge" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="device__right">
         <app-team-panel />
       </div>

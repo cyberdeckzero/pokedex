@@ -50,7 +50,7 @@ test('accessibility: resting, autocomplete and detail states have no axe AA viol
   await expect(page.getByRole('listbox').getByRole('option')).toHaveCount(3);
   await scan('autocomplete');
   await picker.press('Escape');
-  await page.getByRole('button', { name: 'Inspect entry' }).click();
+  await page.getByRole('button', { name: 'View details' }).click();
   await expect(page.getByText('Strengthens Grass moves')).toBeVisible();
   await scan('detail');
   expect(api.teams).toHaveLength(2);
@@ -66,7 +66,7 @@ test('layout: 320px, tablet, desktop and 200% text keep content and controls usa
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
       .toBe(true);
-    await expect(page.getByRole('button', { name: 'Inspect entry' })).toBeInViewport();
+    await expect(page.getByRole('button', { name: 'View details' })).toBeInViewport();
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
@@ -81,7 +81,7 @@ test('keyboard: details return focus to the opener and keep background focus vis
   api,
 }) => {
   await openCatalogue(page);
-  const inspect = page.getByRole('button', { name: 'Inspect entry' });
+  const inspect = page.getByRole('button', { name: 'View details' });
   await inspect.focus();
   await inspect.press('Enter');
   await expect(page.getByRole('button', { name: 'Close Pokémon details' })).toBeFocused();
@@ -225,7 +225,7 @@ test('details: failed abilities recover and rapid selections keep the latest cha
 }) => {
   api.detailsError = true;
   await openCatalogue(page);
-  await page.getByRole('button', { name: 'Inspect entry' }).click();
+  await page.getByRole('button', { name: 'View details' }).click();
   await expect(page.getByRole('button', { name: 'Retry details' })).toBeVisible();
   api.detailsError = false;
   await page.getByRole('button', { name: 'Retry details' }).click();
@@ -233,9 +233,9 @@ test('details: failed abilities recover and rapid selections keep the latest cha
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Next Pokémon', exact: true }).click();
   await page.getByRole('button', { name: 'Next Pokémon', exact: true }).click();
-  await page.getByRole('button', { name: 'Inspect entry' }).click();
+  await page.getByRole('button', { name: 'View details' }).click();
   await expect(page.getByRole('dialog')).toContainText('Venusaur');
-  await expect(page.locator('canvas')).toBeVisible();
+  await expect(page.locator('app-pokemon-detail canvas')).toBeVisible();
 });
 
 test('visual evidence: device, autocomplete, details, loading, error and empty states', async ({
@@ -259,17 +259,38 @@ test('visual evidence: device, autocomplete, details, loading, error and empty s
   await expect
     .poll(() =>
       page
-        .locator('app-pokemon-portrait img')
+        .locator('app-pokemon-scanner app-pokemon-portrait img')
         .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
     )
     .toBe(true);
+  if ((page.viewportSize()?.width ?? 0) > 1350)
+    await expect(page.locator('app-pokemon-scanner canvas')).toBeVisible();
   await capture('home');
+  for (let index = 0; index < 5; index++)
+    await page.getByRole('button', { name: 'Next Pokémon', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Charizard', exact: true })).toBeVisible();
+  await expect
+    .poll(() =>
+      page
+        .locator('app-pokemon-scanner img')
+        .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
+    )
+    .toBe(true);
+  const activeRow = page.locator('.pokedex__row--selected');
+  await expect(activeRow).toContainText('Charizard');
+  await expect(activeRow.locator('th')).toHaveCSS(
+    'background-color',
+    await activeRow.evaluate((row) => getComputedStyle(row).backgroundColor),
+  );
+  await capture('hero-charizard');
+  for (let index = 0; index < 5; index++)
+    await page.getByRole('button', { name: 'Previous Pokémon', exact: true }).click();
   const picker = page.getByRole('combobox', { name: 'Add Pokémon' });
   await picker.fill('char');
   await expect(page.getByRole('listbox')).toBeVisible();
   await capture('autocomplete');
   await picker.press('Escape');
-  await page.getByRole('button', { name: 'Inspect entry' }).click();
+  await page.getByRole('button', { name: 'View details' }).click();
   await expect(page.getByText('Strengthens Grass moves')).toBeVisible();
   await capture('details');
   await page.getByRole('heading', { name: 'Abilities', exact: true }).scrollIntoViewIfNeeded();
@@ -305,7 +326,7 @@ test('touch: controls have useful hit areas and inputs avoid small-text zoom', a
   await expect(page.getByLabel('Search Pokémon', { exact: true })).toBeFocused();
   await expect(page.getByLabel('Search Pokémon', { exact: true })).toBeInViewport();
   const sizes = await page
-    .locator('.scanner__key, .teams__delete, .button, input, select')
+    .locator('.scanner button, .teams__delete, .button, input, select')
     .evaluateAll((elements) =>
       elements.map((element) => ({
         name: element.getAttribute('aria-label') ?? element.textContent?.trim(),
@@ -371,23 +392,27 @@ test('motion: chart updates in place and the drawer changes modality across size
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await openCatalogue(page);
-  await page.getByRole('button', { name: 'Inspect entry' }).click();
+  await page.getByRole('button', { name: 'View details' }).click();
   await expect(page.getByRole('dialog')).toHaveAttribute('aria-modal', 'false');
-  const canvas = await page.locator('canvas').elementHandle();
+  const canvas = await page.locator('app-pokemon-detail canvas').elementHandle();
   const before = await page
-    .locator('canvas')
+    .locator('app-pokemon-detail canvas')
     .evaluate((element: HTMLCanvasElement) => element.toDataURL());
   await page.getByRole('button', { name: 'Next Pokémon', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Ivysaur', exact: true })).toHaveCount(2);
   expect(
-    await page.locator('canvas').evaluate((element, original) => element === original, canvas),
+    await page
+      .locator('app-pokemon-detail canvas')
+      .evaluate((element, original) => element === original, canvas),
   ).toBe(true);
   await expect
     .poll(() =>
-      page.locator('canvas').evaluate((element: HTMLCanvasElement) => element.toDataURL()),
+      page
+        .locator('app-pokemon-detail canvas')
+        .evaluate((element: HTMLCanvasElement) => element.toDataURL()),
     )
     .not.toBe(before);
-  await expect(page.locator('canvas')).toHaveAttribute('aria-label', /ivysaur/);
+  await expect(page.locator('app-pokemon-detail canvas')).toHaveAttribute('aria-label', /ivysaur/);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
   await page.getByRole('button', { name: 'Close Pokémon details' }).focus();

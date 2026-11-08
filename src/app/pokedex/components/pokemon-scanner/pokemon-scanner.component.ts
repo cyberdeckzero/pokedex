@@ -1,3 +1,4 @@
+import { StatRadarComponent } from '../stat-radar/stat-radar.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { Pokemon } from '../../models/pokemon.model';
@@ -15,6 +16,7 @@ import { SkeletonComponent } from '../../../common/components/skeleton/skeleton.
     PokemonPortraitComponent,
     TypeBadgesComponent,
     SkeletonComponent,
+    StatRadarComponent,
   ],
   templateUrl: './pokemon-scanner.component.html',
   styleUrl: './pokemon-scanner.component.scss',
@@ -28,4 +30,8 @@ export class PokemonScannerComponent {
   readonly step = output<-1 | 1>();
   readonly search = output<void>();
   readonly buildTeam = output<void>();
+
+  reloadPage(): void {
+    window.location.reload();
+  }
 }

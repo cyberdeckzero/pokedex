@@ -11,7 +11,10 @@
     padding: 17px 18px 13px;
     border-bottom: 1px solid var(--screen-line);
     h2 {
-      font-size: 1.2rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin: 0;
     }
   }
@@ -38,13 +41,9 @@
   }
   &__status {
     min-height: 540px;
-    h3 {
-      margin: 0;
-    }
     progress {
-      accent-color: var(--screen-ink);
-      width: min(260px, 80%);
-      height: 10px;
+      accent-color: var(--color-primary);
+      width: 80%;
     }
     small {
       font: 0.875rem var(--font-data);
@@ -64,7 +63,7 @@
     border-spacing: 0;
     th,
     td {
-      padding: 5px 9px;
+      padding: 8px 10px;
       text-align: left;
       border-bottom: 1px solid var(--screen-line);
     }
@@ -76,6 +75,13 @@
       color: var(--screen-muted);
       background: var(--screen-deep);
     }
+    th:nth-child(n + 4),
+    td:nth-child(n + 4) {
+      text-align: center;
+    }
+    abbr {
+      text-decoration: none;
+    }
     thead th:nth-child(2) {
       left: 0;
       z-index: 3;
@@ -84,7 +90,12 @@
       background: var(--screen-deep);
     }
     thead button {
+      font-size: 0.875rem;
+      white-space: nowrap;
       border: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       padding: 5px 0;
       background: transparent;
       color: inherit;
@@ -101,8 +112,7 @@
       width: 62px;
     }
     tbody tr {
-      height: 50px;
-      transition: background-color 120ms ease-out;
+      height: 56px;
     }
     tbody tr:hover {
       background: var(--screen-deep);
@@ -112,21 +122,15 @@
       left: 0;
       z-index: 2;
       background: var(--screen);
-      box-shadow: 2px 0 0 var(--screen-line);
-      min-width: 140px;
-    }
-    tbody td:nth-child(3) {
-      min-width: 126px;
+
+      min-width: 145px;
     }
   }
   &__row--selected {
     background: var(--color-primary-soft) !important;
-    th {
-      background: var(--color-primary-soft);
-    }
-    .pokedex__name::before {
-      content: '› ';
-    }
+  }
+  &__table &__row--selected th {
+    background: var(--color-primary-soft);
   }
   &__number {
     display: block;
@@ -144,10 +148,8 @@
   }
   &__stat {
     font: 0.875rem var(--font-data);
-    font-variant-numeric: tabular-nums;
     &--total {
-      color: #0c3024;
-      background: #173c3405;
+      font-weight: 600;
     }
   }
   &__pagination {
@@ -180,7 +182,6 @@
     width: 34px;
   }
   @media (max-width: 600px) {
-    border-width: 2px;
     &__scroll-hint {
       display: block;
       margin: 0;
@@ -216,6 +217,8 @@
     }
     &__table {
       thead button {
+        font-size: 0.875rem;
+        white-space: nowrap;
         min-height: 44px;
         min-width: 44px;
       }

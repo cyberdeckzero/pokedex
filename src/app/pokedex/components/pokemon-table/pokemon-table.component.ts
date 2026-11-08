@@ -44,6 +44,7 @@ import { TypeBadgesComponent } from '../type-badges/type-badges.component';
 })
 export class PokemonTableComponent {
   readonly selectedId = input<number | null>(null);
+  readonly detailOpen = input(false);
   readonly selected = output<Pokemon>();
   private readonly store = inject(PokemonStore);
   private readonly optionsSubject = new BehaviorSubject<TableOptions>(INITIAL_TABLE_OPTIONS);

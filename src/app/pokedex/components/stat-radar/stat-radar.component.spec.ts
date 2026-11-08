@@ -45,8 +45,10 @@ describe('radar chart lifecycle', () => {
     TestBed.configureTestingModule({ imports: [StatRadarComponent] });
     const fixture = TestBed.createComponent(StatRadarComponent);
     fixture.componentRef.setInput('pokemon', pokemon);
+    fixture.componentRef.setInput('showValues', true);
     await fixture.whenStable();
     expect(chart.created).toHaveBeenCalledOnce();
+    expect(chart.created.mock.calls[0][0].data.labels?.[0]).toEqual(['HP', '1']);
     expect(chart.created.mock.calls[0][0].options.animation.duration).toBe(600);
     fixture.componentRef.setInput('pokemon', { ...pokemon, id: 6, name: 'charizard' });
     await fixture.whenStable();

@@ -31,6 +31,7 @@ Chart.register(RadarController, RadialLinearScale, LineElement, PointElement, Fi
 })
 export class StatRadarComponent {
   readonly pokemon = input.required<Pokemon>();
+  readonly showValues = input(false);
   private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
   private chart?: Chart<'radar'>;
 
@@ -41,7 +42,11 @@ export class StatRadarComponent {
       const pokemon = this.pokemon();
       if (!canvas) return;
       const values = STAT_KEYS.map((key) => pokemon.stats[key]);
+      const labels = STAT_COLUMNS.slice(0, 6).map((stat, index) =>
+        this.showValues() ? [stat.label, String(values[index])] : stat.label,
+      );
       if (this.chart) {
+        this.chart.data.labels = labels;
         this.chart.data.datasets[0].data = values;
         this.chart.data.datasets[0].label = pokemon.name;
         this.chart.update();
@@ -54,7 +59,7 @@ export class StatRadarComponent {
       this.chart = new Chart(canvas, {
         type: 'radar',
         data: {
-          labels: STAT_COLUMNS.slice(0, 6).map((stat) => stat.label),
+          labels,
           datasets: [
             {
               label: pokemon.name,
@@ -81,7 +86,7 @@ export class StatRadarComponent {
               angleLines: { color: color('--chart-grid', '#9eb28e') },
               pointLabels: {
                 color: color('--chart-label', '#3e5846'),
-                font: { size: 14, family: 'IBM Plex Mono, monospace' },
+                font: { size: 14, family: 'IBM Plex Sans, sans-serif' },
               },
             },
           },

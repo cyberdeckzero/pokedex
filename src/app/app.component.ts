@@ -49,7 +49,7 @@ export class AppComponent {
   readonly panelOpen = signal(false);
   private detailOpener: HTMLElement | null = null;
 
-  readonly currentPokemon = computed(
+  readonly currentPokemon = computed<Pokemon | null>(
     () => this.selectedPokemon() ?? this.catalogue().items[0] ?? null,
   );
   movePokemon(direction: -1 | 1): void {

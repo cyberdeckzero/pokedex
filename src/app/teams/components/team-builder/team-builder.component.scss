@@ -8,7 +8,7 @@
     margin-bottom: 18px;
     h3 {
       margin: 0;
-      font-size: 1.05rem;
+      font-size: 1.25rem;
     }
     span {
       font: 0.875rem var(--font-data);
@@ -97,7 +97,8 @@
   &__submit {
     width: 100%;
     margin-top: 18px;
-    font-size: 0.875rem;
+    font-size: 1rem;
+    min-height: 48px;
   }
   &__saved {
     color: var(--color-success);
