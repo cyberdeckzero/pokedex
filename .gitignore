@@ -49,3 +49,6 @@ Thumbs.db
 
 # Local mock database
 /mock/data.local.json*
+
+# Local review notes and screenshots
+/docs/
