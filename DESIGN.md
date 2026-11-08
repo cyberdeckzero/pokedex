@@ -2,9 +2,9 @@
 
 ## Direction
 
-An open, red handheld Pokédex resting on a dark field desk. The enclosure, cyan optical lens, indicator lights, central hinge, green LCD displays, and tactile controls establish the Pokémon identity. Data remains the main interface; decorative hardware never impersonates a working button.
+A contemporary handheld Pokédex resting on a dark field desk. A compact red header, cyan optical lens, indicator lights, central hinge, and pale mint displays establish the Pokémon identity. Data remains the main interface; decorative hardware never impersonates a working button.
 
-The scene is a Pokémon fan comparing entries on a laptop or phone, in normal indoor light. Pale green displays provide readable data surfaces, while the saturated red enclosure carries the physical character.
+The scene is a Pokémon fan comparing entries on a laptop or phone, in normal indoor light. Pale mint screens provide readable data surfaces, while the red header and dark directional controls carry the physical character.
 
 ## References
 
@@ -19,30 +19,30 @@ The portrait interactions are original Angular implementations of these patterns
 
 ## Tokens
 
-- Enclosure: `#d9364f`; enclosure shadow: `#71172c`.
-- Display: `#d9e7c9`; secondary display: `#c7d9b7`; display ink: `#173c34`.
-- Bezel: `#202a2b`; desk: `#182a2a`.
-- Lens: `#45c8ed`; hardware action: `#f2cb54`.
+- Enclosure: `#cf304b`; enclosure outline: `#8c2339`.
+- Display: `#f7faf7`; secondary display: `#eaf1eb`; display ink: `#183b32`.
+- Bezel: `#202a2b`; desk: `#142822`.
+- Lens: `#45c8ed`; indicator amber: `#f2cb54`; primary action: `#22563d`.
 - Shared variables live in `src/styles.scss`; semantic status colors remain distinct from type colors.
 
 ## Typography
 
-- Chakra Petch 600 for device branding and section headings.
-- IBM Plex Sans 400/600 for controls, labels, descriptions, and feedback.
+- Chakra Petch 600 for device branding.
+- IBM Plex Sans 400/600 for section headings, controls, labels, descriptions, and feedback.
 - IBM Plex Mono 400 for catalogue numbers, stats, and small device readouts.
 - Fonts are served locally under `public/assets/fonts/` with their OFL licenses. System fallbacks keep the app readable if font loading fails.
 
 ## Components
 
-- The device shell uses defined, short shadows and full outlines to suggest molded plastic.
-- Screen frames have dark bezels, restrained corners, and a pale green content surface.
-- Buttons use a consistent pressed state, visible focus, and sufficiently large hit areas.
+- The device shell uses a slim outline and a compact red header. The removed navigation, connection readout, and attribution footer stay absent.
+- Screens use a single subtle border, 12px corners, and pale mint content surfaces. Dark material is reserved for directional controls.
+- Flat buttons use restrained hover/press feedback, visible focus, and sufficiently large hit areas. Primary actions use dark green with white text.
 - Type badges retain their recognizable colors with dark, contrasting text.
 - The catalogue retains the complete stat table, accessible sort buttons, and client pagination. Its screen scrolls horizontally on narrow displays.
 - Team entries are roster rows; the builder and autocomplete share the display/control vocabulary.
 - The detail drawer repeats the enclosure, screen, portrait, and radar materials. It reserves space on wide screens and becomes a native modal below 1200px.
-- Form controls share a font-size token; touch controls target 44px, with 16px input/select text. Both navigation links remain available on phones.
-- Muted display ink is `#3e5843`; opacity is not used to fade informative text.
+- Form controls share a font-size token; touch controls target 44px, with 16px input/select text. The device search control focuses the catalogue search on every viewport.
+- Muted display ink is `#4b6255`; opacity is not used to fade informative text.
 
 ## Motion and accessibility
 

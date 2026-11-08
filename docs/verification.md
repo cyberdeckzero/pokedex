@@ -17,6 +17,10 @@ Verified locally on 7 November 2026 (Asia/Kolkata), with Node 22.14.0 and npm 11
 | `npm run check:poke`                                    | Passed against public `v1beta2`: pagination/count, six stats/types/sprites, all 12 default-trainer seed IDs, and regular/hidden abilities with English descriptions. |
 | Browser inventory                                       | Native browser host unavailable; local Playwright Chromium subsequently launched and completed the UI audit.                                                         |
 
+## 8 November contemporary refresh
+
+After removing the navigation/status/footer copy and modernizing the screens, `npm run build` passed without budget warnings (approximately 348 kB initial / 91 kB estimated transfer). The updated touch-control checks passed both projects. A subsequent full `AUDIT_CAPTURE=modern npm run test:e2e` run passed all **34 desktop/mobile Chromium checks**, and `npm test` passed **50 tests across 16 files**. Formatting and whitespace checks passed. See the [current refresh report](ui-audit/MODERN.md) for fourteen fresh captures and visual inspection notes. Existing app/mock processes were preserved; no live API operations changed.
+
 ## 8 November flow and loading follow-up
 
 The current follow-up uses the same Node/npm setup. `npm test` passed **50 tests across 16 files**. `npm run test:e2e` passed **34 checks across desktop/mobile Chromium**, using isolated GraphQL/image fixtures on its own production-configuration server at port 4300. Existing app/mock servers were preserved.

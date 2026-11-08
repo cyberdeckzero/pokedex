@@ -1,5 +1,7 @@
 # Pokédex UI/UX audit
 
+See the [contemporary refresh](MODERN.md) for the latest visual system, screenshots, and verification.
+
 The [8 November flow and loading follow-up](POLISH.md) records the subsequent critique fixes and current screenshots. This page preserves the initial audit.
 
 Reviewed on **7 November 2026**. Scope: the complete single-page application, including the catalogue, scanner, details/abilities/radar, team roster and overview, team form, autocomplete, and recovery states.

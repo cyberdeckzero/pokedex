@@ -55,9 +55,11 @@ The detail panel is **non-modal on wide screens** (1200px and above), with room 
 
 ## Pokédex device interface
 
-The red enclosure, cyan lens, green LCD screens, hinge, and tactile controls carry through the catalogue, team roster, builder, autocomplete, and detail drawer. The D-pad steps through the cached national catalogue, focuses search, or adds the displayed Pokémon to the team draft. Inspect an entry to open its stats, abilities, and animated radar.
+The compact red header, cyan lens, pale mint screens, hinge, and tactile controls give the catalogue and team builder a contemporary Pokédex identity. Slim borders, flat buttons, and consistent sans-serif section headings reduce visual noise. The top navigation, connection readout, and attribution footer have been removed. The D-pad steps through the cached national catalogue, focuses search, or adds the displayed Pokémon to the team draft. Inspect an entry to open its stats, abilities, and animated radar.
 
 Portraits use official PokéAPI artwork, then the cached sprite and a local fallback. Bounded pointer tilt adapts the React Bits portrait pattern to Angular. The pixel transition was removed; shaped skeletons use a restrained CSS shimmer and become static with reduced motion. Fonts and their licenses are included locally.
+
+The [contemporary refresh report](docs/ui-audit/MODERN.md) includes current desktop/mobile screenshots and verification.
 
 [DESIGN.md](DESIGN.md) records the Behance, Dribbble, and React Bits references, tokens, and component decisions. Narrow screens stack the device halves and keep the complete stats table horizontally scrollable.
 
