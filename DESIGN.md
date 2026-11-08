@@ -2,11 +2,13 @@
 
 ## Direction
 
-A contemporary handheld Pokédex resting on a dark field desk. A compact red header, cyan optical lens, indicator lights, central hinge, and pale mint displays establish the Pokémon identity. Data remains the main interface; decorative hardware never impersonates a working button.
+A contemporary Pokédex workspace inspired by the supplied premium dashboard reference. A compact red header, cyan optical lens, dark featured-entry display, and pale mint workspace establish the Pokémon identity. Data remains the main interface; decorative hardware never impersonates a working button.
 
-The scene is a Pokémon fan comparing entries on a laptop or phone, in normal indoor light. Pale mint screens provide readable data surfaces, while the red header and dark directional controls carry the physical character.
+The scene is a Pokémon fan comparing entries on a laptop or phone, in normal indoor light. The dark green hero gives the selected Pokémon the strongest visual weight. Light catalogue and team panels keep dense comparisons readable. A compact toolbar places search and previous/next entry controls directly beneath the hero.
 
 ## References
+
+The user-supplied “Premium Pokédex team builder dashboard.png” is the current composition reference: dark artwork hero, red actions, spacious stats table, and a distinct squad sidebar. UI data always comes from the actual selected Pokémon and loaded teams.
 
 - [Behance — Pokédex Electronic Device & UI Concept, Ilia Lushnikov](https://www.behance.net/gallery/196406557/Pokdex-Electronic-Device-UI-Concept): device-oriented reference discovered in research; the full case study was access-restricted.
 - [Behance — Pokedex UI Study](https://www.behance.net/gallery/146710797/Pokedex-Ui-Study): inspected project preview; prominent Pokémon illustrations, compact entry information, and type-specific color.
@@ -19,10 +21,10 @@ The portrait interactions are original Angular implementations of these patterns
 
 ## Tokens
 
-- Enclosure: `#cf304b`; enclosure outline: `#8c2339`.
-- Display: `#f7faf7`; secondary display: `#eaf1eb`; display ink: `#183b32`.
+- Enclosure: `#c51f3e`; enclosure outline: `#9f1833`.
+- Display: `#fcfdfb`; secondary display: `#f0f4f1`; display ink: `#183b32`.
 - Bezel: `#202a2b`; desk: `#142822`.
-- Lens: `#45c8ed`; indicator amber: `#f2cb54`; primary action: `#22563d`.
+- Lens: `#45c8ed`; indicator amber: `#f2cb54`; primary action: `#b91d3c`.
 - Shared variables live in `src/styles.scss`; semantic status colors remain distinct from type colors.
 
 ## Typography
@@ -35,11 +37,11 @@ The portrait interactions are original Angular implementations of these patterns
 ## Components
 
 - The device shell uses a slim outline and a compact red header. The removed navigation, connection readout, and attribution footer stay absent.
-- Screens use a single subtle border, 12px corners, and pale mint content surfaces. Dark material is reserved for directional controls.
-- Flat buttons use restrained hover/press feedback, visible focus, and sufficiently large hit areas. Primary actions use dark green with white text.
+- Screens use a single subtle border, 12px corners, and pale mint content surfaces. The featured-entry hero uses `#0c3028`, with pale technical labels and a teal radar chart.
+- Flat buttons use restrained hover/press feedback, visible focus, and sufficiently large hit areas. Primary actions use Pokédex red with white text; active squads use a green outline, mint fill, and explicit Selected badge.
 - Type badges retain their recognizable colors with dark, contrasting text.
 - The catalogue retains the complete stat table, accessible sort buttons, and client pagination. Its screen scrolls horizontally on narrow displays.
-- Team entries are roster rows; the builder and autocomplete share the display/control vocabulary.
+- Saved squads, the active-team overview, and the builder occupy three distinct panels. Larger sprites strengthen squad identity; the builder and autocomplete share the control vocabulary.
 - The detail drawer repeats the enclosure, screen, portrait, and radar materials. It reserves space on wide screens and becomes a native modal below 1200px.
 - Form controls share a font-size token; touch controls target 44px, with 16px input/select text. The device search control focuses the catalogue search on every viewport.
 - Muted display ink is `#4b6255`; opacity is not used to fade informative text.
@@ -50,4 +52,4 @@ Portrait tilt is limited to five degrees and is enabled only for a mouse pointer
 
 All original loading/empty/error/Retry/success states, keyboard interaction, form feedback, drawer Escape handling, and focus return remain required. Every focusable control performs a real action. Decorative lenses, screws, vents, and hinges are hidden from assistive technology.
 
-The mobile scanner is compact so search and initial rows are visible sooner. Its 22px SVG icons retain 44px controls; plus adds the current entry to the team draft. Meaningful helper text uses at least 14px. Horizontal table scrolling pins the name/number column, and autocomplete uses a positioned native popover that can open above the input.
+The mobile hero keeps artwork, identity, and primary actions visible, with 44px search and previous/next controls below. Measurements and the second radar remain available in details. On wide screens the hero shows all three measurements and a radar with exact values. Plus adds the current entry to the shared draft. Meaningful helper text uses at least 14px. Horizontal table scrolling pins the name/number column, and autocomplete uses a positioned native popover that can open above the input.

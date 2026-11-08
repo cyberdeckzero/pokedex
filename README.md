@@ -55,15 +55,15 @@ The detail panel is **non-modal on wide screens** (1200px and above), with room 
 
 ## Pokédex device interface
 
-The compact red header, cyan lens, pale mint screens, hinge, and tactile controls give the catalogue and team builder a contemporary Pokédex identity. Slim borders, flat buttons, and consistent sans-serif section headings reduce visual noise. The top navigation, connection readout, and attribution footer have been removed. The D-pad steps through the cached national catalogue, focuses search, or adds the displayed Pokémon to the team draft. Inspect an entry to open its stats, abilities, and animated radar.
+The compact red header, cyan lens, dark featured-Pokémon hero, and pale mint screens give the catalogue and team builder a contemporary Pokédex identity. Slim borders, flat buttons, and consistent sans-serif section headings reduce visual noise. The top navigation, connection readout, and attribution footer have been removed. The hero toolbar steps through the cached national catalogue or focuses search; the plus action adds the displayed Pokémon to the shared team draft. Inspect an entry to open its stats, abilities, and animated radar.
 
 Portraits use official PokéAPI artwork, then the cached sprite and a local fallback. Bounded pointer tilt adapts the React Bits portrait pattern to Angular. The pixel transition was removed; shaped skeletons use a restrained CSS shimmer and become static with reduced motion. Fonts and their licenses are included locally.
 
-The [contemporary refresh report](docs/ui-audit/MODERN.md) includes current desktop/mobile screenshots and verification.
+The [reference dashboard implementation](docs/ui-audit/REFERENCE.md) includes current desktop/mobile screenshots and verification.
 
 [DESIGN.md](DESIGN.md) records the Behance, Dribbble, and React Bits references, tokens, and component decisions. Narrow screens stack the device halves and keep the complete stats table horizontally scrollable.
 
-The [flow and loading follow-up](docs/ui-audit/POLISH.md) addresses the critique: Add to draft from details, draft restoration, guarded deletion, pinned mobile names, compact hardware, readable helper text, viewport-positioned suggestions, and shaped skeletons throughout. Chart.js loads only when details need the chart; a chunk-load failure keeps exact stats visible and offers Reload page.
+The [flow and loading follow-up](docs/ui-audit/POLISH.md) addresses the critique: Add to draft from details, draft restoration, guarded deletion, pinned mobile names, compact hardware, readable helper text, viewport-positioned suggestions, and shaped skeletons throughout. Chart.js loads when the wide-screen hero enters the viewport or details open. Both charts update with selection; chart download failures offer reload while exact stats remain available.
 
 ## Fetching and pagination tradeoff
 

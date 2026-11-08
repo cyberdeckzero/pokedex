@@ -17,6 +17,10 @@ Verified locally on 7 November 2026 (Asia/Kolkata), with Node 22.14.0 and npm 11
 | `npm run check:poke`                                    | Passed against public `v1beta2`: pagination/count, six stats/types/sprites, all 12 default-trainer seed IDs, and regular/hidden abilities with English descriptions. |
 | Browser inventory                                       | Native browser host unavailable; local Playwright Chromium subsequently launched and completed the UI audit.                                                         |
 
+## 8 November supplied dashboard reference
+
+The reference implementation adds a dark artwork hero with a shared deferred radar, contextual controls, aligned stat columns, persistent active-row highlighting, larger squad sprites, and three distinct team panels. `npm test` passed all 50 tests; `AUDIT_CAPTURE=reference npm run test:e2e` passed all 34 desktop/mobile Chromium checks and captured sixteen states, including Charizard. The shared radar test covers exact value labels as well as instance reuse/cleanup. Build passed within unchanged budgets at approximately 348 kB initial / 91 kB transfer; formatting, e2e TypeScript, and whitespace checks passed. A final visual capture run also passed both projects after correcting the pinned-name highlight. See the [implementation report](ui-audit/REFERENCE.md).
+
 ## 8 November contemporary refresh
 
 After removing the navigation/status/footer copy and modernizing the screens, `npm run build` passed without budget warnings (approximately 348 kB initial / 91 kB estimated transfer). The updated touch-control checks passed both projects. A subsequent full `AUDIT_CAPTURE=modern npm run test:e2e` run passed all **34 desktop/mobile Chromium checks**, and `npm test` passed **50 tests across 16 files**. Formatting and whitespace checks passed. See the [current refresh report](ui-audit/MODERN.md) for fourteen fresh captures and visual inspection notes. Existing app/mock processes were preserved; no live API operations changed.
