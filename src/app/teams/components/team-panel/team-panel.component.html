@@ -21,14 +21,14 @@
     @switch (state().status) {
       @case ('idle') {
         <div class="status" role="status">
-          <span class="spinner" aria-hidden="true"></span>
-          <p>Preparing teams…</p>
+          <app-skeleton kind="teams" />
+          <p class="visually-hidden">Preparing teams…</p>
         </div>
       }
       @case ('loading') {
         <div class="status" role="status">
-          <span class="spinner" aria-hidden="true"></span>
-          <p>Loading your teams…</p>
+          <app-skeleton kind="teams" />
+          <p class="visually-hidden">Loading your teams…</p>
         </div>
       }
       @case ('error') {
@@ -74,11 +74,41 @@
                   type="button"
                   [disabled]="state().busy || team.pending"
                   [attr.aria-label]="'Delete team ' + team.name"
-                  (click)="deleteTeam(team.id)"
+                  (click)="requestDelete(team.id, $event)"
                 >
-                  ×
+                  Delete
                 </button>
               </div>
+              @if (pendingDeleteId() === team.id) {
+                <div
+                  class="teams__confirmation"
+                  role="group"
+                  [attr.aria-labelledby]="'delete-question-' + team.id"
+                  (keydown.escape)="cancelDelete(); $event.stopPropagation()"
+                >
+                  <p [id]="'delete-question-' + team.id">Delete “{{ team.name }}”?</p>
+                  <div>
+                    <button
+                      #cancelDeleteControl
+                      class="button button--small"
+                      type="button"
+                      [attr.aria-label]="'Cancel deleting team ' + team.name"
+                      (click)="cancelDelete()"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      class="button button--small teams__confirm-delete"
+                      type="button"
+                      [attr.aria-label]="'Confirm delete team ' + team.name"
+                      (click)="confirmDelete(team.id)"
+                      [disabled]="state().busy"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              }
               <div class="teams__sprites" [attr.aria-label]="team.name + ' members'">
                 @if (memberState.status === 'success') {
                   @for (pokemon of membersFor(team); track pokemon.id) {
@@ -88,7 +118,11 @@
                   }
                 } @else {
                   @for (id of team.pokemonIds; track id) {
-                    <span class="teams__placeholder" aria-hidden="true"></span>
+                    @if (memberState.status === 'loading') {
+                      <app-skeleton class="teams__placeholder" kind="image" />
+                    } @else {
+                      <span class="teams__placeholder" aria-hidden="true">?</span>
+                    }
                   }
                 }
               </div>
@@ -131,8 +165,8 @@
       </div>
       @if (hydration().status === 'loading') {
         <div class="status" role="status">
-          <span class="spinner" aria-hidden="true"></span>
-          <p>Loading team overview…</p>
+          <app-skeleton kind="overview" />
+          <p class="visually-hidden">Loading team overview…</p>
         </div>
       } @else if (hydration().status === 'error') {
         <div class="status status--error">

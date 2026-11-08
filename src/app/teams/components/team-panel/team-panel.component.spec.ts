@@ -28,7 +28,14 @@ function setup(
   TestBed.configureTestingModule({
     imports: [TeamPanelComponent],
     providers: [
-      { provide: TeamStore, useValue: { state$, load$: () => of(undefined), delete$: vi.fn() } },
+      {
+        provide: TeamStore,
+        useValue: {
+          state$,
+          load$: () => of(undefined),
+          delete$: vi.fn().mockReturnValue(of(true)),
+        },
+      },
       { provide: PokemonStore, useValue: { pokemon$: of([]), ensurePokemon$ } },
     ],
   });
@@ -49,6 +56,64 @@ describe('selected-team persistence', () => {
     localStorage.clear();
     vi.restoreAllMocks();
   });
+  it('requires confirmation, returns focus on cancel, and deletes only after confirmation', async () => {
+    const fixture = setup(new BehaviorSubject<TeamState>({ ...initial, status: 'success', teams }));
+    await fixture.whenStable();
+    const element: HTMLElement = fixture.nativeElement;
+    const deleteButton = element.querySelector<HTMLButtonElement>(
+      '[aria-label="Delete team Kanto Starters"]',
+    )!;
+    const store = TestBed.inject(TeamStore);
+    deleteButton.click();
+    await fixture.whenStable();
+    expect(store.delete$).not.toHaveBeenCalled();
+    expect(element.textContent).toContain('Delete “Kanto Starters”?');
+    expect(document.activeElement?.getAttribute('aria-label')).toBe(
+      'Cancel deleting team Kanto Starters',
+    );
+    const cancel = Array.from(element.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Cancel',
+    )!;
+    cancel.click();
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(deleteButton);
+    deleteButton.click();
+    await fixture.whenStable();
+    element
+      .querySelector<HTMLButtonElement>('[aria-label="Confirm delete team Kanto Starters"]')!
+      .click();
+    await fixture.whenStable();
+    expect(store.delete$).toHaveBeenCalledExactlyOnceWith('1');
+  });
+
+  it('retries an already confirmed failed deletion without asking again', async () => {
+    const fixture = setup(
+      new BehaviorSubject<TeamState>({
+        ...initial,
+        status: 'success',
+        teams,
+        mutationError: 'Deletion failed. The team was restored.',
+        failedDeleteId: '1',
+      }),
+    );
+    await fixture.whenStable();
+    const element: HTMLElement = fixture.nativeElement;
+    const retry = Array.from(element.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Retry delete',
+    )!;
+    retry.click();
+    await fixture.whenStable();
+    expect(TestBed.inject(TeamStore).delete$).toHaveBeenCalledExactlyOnceWith('1');
+    expect(element.textContent).not.toContain('Delete “Kanto Starters”?');
+  });
+
+  it('keeps an accessible loading message beside a team-shaped skeleton', async () => {
+    const fixture = setup(new BehaviorSubject(initial));
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('app-skeleton')).not.toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Loading your teams');
+  });
+
   it('waits for teams before restoring and preserves selection through a failed optimistic delete', async () => {
     localStorage.setItem(SELECTED_TEAM_KEY, '2');
     const state$ = new BehaviorSubject(initial);

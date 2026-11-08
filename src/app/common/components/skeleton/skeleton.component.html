@@ -1,0 +1,73 @@
+<div class="skeleton" [attr.data-kind]="kind()">
+  @switch (kind()) {
+    @case ('table') {
+      <div class="skeleton__table-head"><i></i><i></i><i></i><i></i></div>
+      @for (row of tableRows; track row) {
+        <div class="skeleton__table-row">
+          <i class="skeleton__number"></i><i class="skeleton__avatar"></i>
+          <div class="skeleton__copy"><i></i><i class="skeleton__short"></i></div>
+          <div class="skeleton__badges"><i></i><i></i></div>
+          @for (stat of stats; track stat) {
+            <i class="skeleton__stat"></i>
+          }
+        </div>
+      }
+    }
+    @case ('profile') {
+      <div class="skeleton__profile">
+        <i class="skeleton__art"></i>
+        <div class="skeleton__copy">
+          <i class="skeleton__short"></i><i class="skeleton__title"></i>
+          <div class="skeleton__badges"><i></i><i></i></div>
+          <i class="skeleton__measurement"></i><i class="skeleton__short skeleton__measurement"></i
+          ><i class="skeleton__button"></i>
+        </div>
+      </div>
+    }
+    @case ('abilities') {
+      @for (row of rows; track row) {
+        <div class="skeleton__ability">
+          <i class="skeleton__subtitle"></i><i></i><i class="skeleton__short"></i>
+        </div>
+      }
+    }
+    @case ('teams') {
+      @for (row of rows; track row) {
+        <div class="skeleton__team">
+          <div class="skeleton__team-head">
+            <i class="skeleton__subtitle"></i><i class="skeleton__number"></i>
+          </div>
+          <div class="skeleton__roster">
+            @for (slot of stats; track slot) {
+              <i class="skeleton__avatar"></i>
+            }
+          </div>
+          <i class="skeleton__short"></i>
+        </div>
+      }
+    }
+    @case ('overview') {
+      <div class="skeleton__overview">
+        <div class="skeleton__copy">
+          <i class="skeleton__title"></i>
+          @for (stat of stats; track stat) {
+            <div class="skeleton__stat-line"><i></i><i></i><i></i></div>
+          }
+        </div>
+        <i class="skeleton__radar"></i>
+      </div>
+    }
+    @case ('suggestions') {
+      @for (row of rows; track row) {
+        <div class="skeleton__suggestion">
+          <i class="skeleton__avatar"></i>
+          <div class="skeleton__copy"><i></i><i class="skeleton__short"></i></div>
+          <i class="skeleton__number"></i>
+        </div>
+      }
+    }
+    @case ('image') {
+      <i class="skeleton__image"></i>
+    }
+  }
+</div>

@@ -11,7 +11,7 @@
       font-size: 1.05rem;
     }
     span {
-      font: 0.7rem var(--font-data);
+      font: 0.875rem var(--font-data);
       border: 1px solid var(--screen-line);
       border-radius: 3px;
       padding: 3px 6px;
@@ -44,7 +44,7 @@
     border-radius: 4px;
     padding: 2px 3px 2px 0;
     background: var(--screen-deep);
-    font-size: 0.67rem;
+    font-size: 0.875rem;
     > span {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -73,7 +73,7 @@
     border: 1px dashed #a0b48e;
     border-radius: 4px;
     padding: 5px 10px;
-    font: 0.6rem var(--font-data);
+    font: 0.875rem var(--font-data);
     color: var(--screen-muted);
     span {
       display: block;
@@ -86,28 +86,28 @@
   }
   &__empty {
     color: var(--screen-muted);
-    font-size: 0.72rem;
+    font-size: 0.875rem;
     margin: 10px 0 0;
   }
   &__hint {
-    font-size: 0.72rem;
+    font-size: 0.875rem;
     color: var(--screen-muted);
     margin: 7px 0;
   }
   &__submit {
     width: 100%;
     margin-top: 18px;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
   }
   &__saved {
     color: var(--color-success);
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     margin: 13px 0 0;
   }
   @media (max-width: 600px) {
     padding: 20px 13px;
     &__chip {
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       min-height: 48px;
       button {
         flex-basis: 44px;
@@ -122,4 +122,11 @@
       font-size: 0.875rem;
     }
   }
+}
+
+.builder__member-skeleton {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  --skeleton-image-min-height: 30px;
 }

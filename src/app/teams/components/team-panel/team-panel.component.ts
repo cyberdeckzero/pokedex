@@ -2,10 +2,12 @@ import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   computed,
   effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -18,6 +20,7 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
+import { SkeletonComponent } from '../../../common/components/skeleton/skeleton.component';
 import { LoadResult } from '../../../common/models/request-state.model';
 import { PokemonSpriteComponent } from '../../../pokedex/components/pokemon-sprite/pokemon-sprite.component';
 import { PokemonStore } from '../../../pokedex/state/pokemon.store';
@@ -29,7 +32,7 @@ import { TeamBuilderComponent } from '../team-builder/team-builder.component';
 @Component({
   selector: 'app-team-panel',
   standalone: true,
-  imports: [TitleCasePipe, PokemonSpriteComponent, TeamBuilderComponent],
+  imports: [TitleCasePipe, PokemonSpriteComponent, TeamBuilderComponent, SkeletonComponent],
   templateUrl: './team-panel.component.html',
   styleUrl: './team-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +44,10 @@ export class TeamPanelComponent {
   private readonly hydrationRequests = new Subject<void>();
   private readonly deleteRequests = new Subject<string>();
   private readonly restored = signal(false);
+  readonly pendingDeleteId = signal<string | null>(null);
+  private deleteTrigger: HTMLElement | null = null;
+  private readonly cancelDeleteButton =
+    viewChild<ElementRef<HTMLButtonElement>>('cancelDeleteControl');
   readonly selectedTeamId = signal<string | null>(null);
   readonly state = toSignal(this.store.state$, { requireSync: true });
   readonly teams = computed(() =>
@@ -116,6 +123,7 @@ export class TeamPanelComponent {
   );
 
   constructor() {
+    effect(() => this.cancelDeleteButton()?.nativeElement.focus());
     effect(() => {
       const state = this.state();
       if (state.status !== 'success' || state.busy) return;
@@ -153,8 +161,23 @@ export class TeamPanelComponent {
   retryHydration(): void {
     this.hydrationRequests.next();
   }
-  deleteTeam(id: string): void {
+  requestDelete(id: string, event: Event): void {
+    if (this.state().busy) return;
+    this.deleteTrigger = event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
+    this.pendingDeleteId.set(id);
+  }
+  cancelDelete(): void {
+    this.pendingDeleteId.set(null);
+    this.deleteTrigger?.focus();
+  }
+  confirmDelete(id: string): void {
+    if (this.pendingDeleteId() !== id || this.state().busy) return;
+    this.pendingDeleteId.set(null);
     this.deleteRequests.next(id);
+  }
+  deleteTeam(id: string): void {
+    // A failed deletion was already confirmed, so Retry can repeat it immediately.
+    if (this.state().failedDeleteId === id) this.deleteRequests.next(id);
   }
   selectTeam(id: string): void {
     if (!this.state().busy) this.selectedTeamId.set(id);

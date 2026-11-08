@@ -1,13 +1,15 @@
 .picker {
   position: relative;
   &__help {
-    font-size: 0.68rem;
+    font-size: 0.875rem;
     color: var(--screen-muted);
     margin: 6px 0 0;
   }
   &__dropdown {
-    position: absolute;
-    top: 70px;
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: 0;
     width: 100%;
     max-height: 340px;
     overflow-y: auto;
@@ -30,7 +32,7 @@
     background: var(--screen-light);
     color: var(--screen-ink);
     text-align: left;
-    font-size: 0.76rem;
+    font-size: 1rem;
     > span {
       flex: 1;
       min-width: 0;
@@ -41,7 +43,7 @@
     }
     small {
       display: block;
-      font: 0.6rem var(--font-data);
+      font: 0.875rem var(--font-data);
       color: var(--screen-muted);
       margin-top: 2px;
     }
@@ -53,10 +55,10 @@
   &__status {
     min-height: 144px;
     padding: 18px;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
   }
   &__hint {
-    font-size: 0.62rem;
+    font-size: 0.875rem;
     color: var(--screen-muted);
     padding: 9px;
     margin: 0;

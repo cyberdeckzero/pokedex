@@ -1,4 +1,4 @@
-<section class="builder" aria-labelledby="builder-title">
+<section id="team-builder" class="builder" aria-labelledby="builder-title">
   <header class="builder__heading">
     <h3 id="builder-title">Build a team</h3>
     <span>{{ selectedIds().length }} / 6</span>
@@ -50,19 +50,27 @@
         (chosen)="addPokemon($event)"
       />
       <div class="builder__slots" role="group" aria-label="Selected Pokémon">
-        @for (pokemon of selectedPokemon(); track pokemon.id) {
-          <span class="builder__chip"
-            ><app-pokemon-sprite [url]="pokemon.sprite" [size]="30" /><span>{{
-              pokemon.name | titlecase
-            }}</span
-            ><button
+        @for (member of selectedPokemon(); track member.id) {
+          <span class="builder__chip">
+            @if (member.pokemon; as pokemon) {
+              <app-pokemon-sprite [url]="pokemon.sprite" [size]="30" />
+              <span>{{ pokemon.name | titlecase }}</span>
+            } @else {
+              @if (draft.hydration().status === 'loading') {
+                <app-skeleton class="builder__member-skeleton" kind="image" />
+              }
+              <span>Pokémon #{{ member.id }}</span>
+            }
+            <button
               type="button"
-              [attr.aria-label]="'Remove ' + pokemon.name + ' from team'"
-              (click)="removePokemon(pokemon.id)"
+              [attr.aria-label]="
+                'Remove ' + (member.pokemon?.name || 'Pokémon #' + member.id) + ' from team'
+              "
+              (click)="removePokemon(member.id)"
             >
               ×
-            </button></span
-          >
+            </button>
+          </span>
         }
         @for (slot of emptySlots(); track slot) {
           <span class="builder__slot" aria-hidden="true"
@@ -70,8 +78,15 @@
           >
         }
       </div>
-      @if (!selectedIds().length) {
-        <p class="builder__empty">Your team starts with one Pokémon.</p>
+      @if (draft.hydration().status === 'loading') {
+        <p class="builder__hint" role="status">Loading draft Pokémon…</p>
+      } @else if (draft.hydration().status === 'error') {
+        <div class="builder__hint" role="alert">
+          <p>Draft Pokémon could not load. Your choices are saved.</p>
+          <button type="button" class="button button--small" (click)="draft.retryHydration()">
+            Retry draft Pokémon
+          </button>
+        </div>
       }
       @if (
         (form.controls.pokemonIds.dirty || form.controls.pokemonIds.touched) &&

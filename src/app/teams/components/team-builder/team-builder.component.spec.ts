@@ -15,7 +15,35 @@ const ready: TeamState = {
 };
 
 describe('team builder submission', () => {
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.useRealTimers();
+    localStorage.clear();
+  });
+  it('restores an unfinished name and members before the catalogue has loaded', () => {
+    localStorage.setItem(
+      'mini-pokedex:team-draft',
+      JSON.stringify({ name: 'Weekend', pokemonIds: [1000] }),
+    );
+    const ensurePokemon$ = vi.fn().mockReturnValue(of([]));
+    TestBed.configureTestingModule({
+      imports: [TeamBuilderComponent],
+      providers: [
+        { provide: TeamStore, useValue: { state$: new BehaviorSubject(ready) } },
+        {
+          provide: PokemonStore,
+          useValue: { pokemon$: of([]), loadCatalogue$: () => of([]), ensurePokemon$ },
+        },
+      ],
+    });
+    const fixture = TestBed.createComponent(TeamBuilderComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.form.getRawValue()).toEqual({
+      name: 'Weekend',
+      pokemonIds: [1000],
+    });
+    expect(ensurePokemon$).toHaveBeenCalledWith([1000]);
+  });
+
   it('keeps useful form values after a failed create and submits a normalized name on retry', async () => {
     vi.useFakeTimers();
     const create$ = vi
@@ -30,7 +58,11 @@ describe('team builder submission', () => {
         { provide: TeamStore, useValue: { state$: new BehaviorSubject(ready), create$ } },
         {
           provide: PokemonStore,
-          useValue: { pokemon$: of([]), loadCatalogue$: vi.fn().mockReturnValue(of([])) },
+          useValue: {
+            pokemon$: of([]),
+            loadCatalogue$: vi.fn().mockReturnValue(of([])),
+            ensurePokemon$: vi.fn().mockReturnValue(of([])),
+          },
         },
       ],
     });

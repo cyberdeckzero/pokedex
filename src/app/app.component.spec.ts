@@ -84,6 +84,10 @@ describe('application team-building flow', () => {
 
     element.querySelector<HTMLButtonElement>('[aria-label="Delete team Fresh team"]')?.click();
     fixture.detectChanges();
+    element
+      .querySelector<HTMLButtonElement>('[aria-label="Confirm delete team Fresh team"]')
+      ?.click();
+    fixture.detectChanges();
     expect(element.querySelectorAll('.teams__card')).toHaveLength(1);
     http
       .expectOne((request) => request.body.operationName === 'DeleteTeam')
