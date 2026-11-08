@@ -100,3 +100,19 @@ test('dragging copies catalogue members into the draft and reorders existing slo
   );
   await expect.poll(() => memberIds(page)).toEqual([ids[1], ids[0]]);
 });
+
+test('a completed catalogue survives refresh without repeating upstream requests', async ({
+  page,
+  api,
+}) => {
+  await openCatalogue(page);
+  const requests = api.catalogueRequests;
+  expect(requests).toBeGreaterThan(0);
+  api.catalogueError = true;
+  await page.reload();
+  await expect(catalogueItems(page)).toHaveCount(10);
+  await page.getByLabel('Search Pokémon', { exact: true }).fill('pikachu');
+  await expect(catalogueItems(page)).toHaveCount(1);
+  await expect(catalogueItems(page).first()).toContainText('Pikachu');
+  expect(api.catalogueRequests).toBe(requests);
+});

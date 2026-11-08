@@ -1,3 +1,4 @@
+import { readCatalogueCache, writeCatalogueCache } from '../utils/catalogue-cache.util';
 import { Injectable, inject } from '@angular/core';
 import {
   BehaviorSubject,
@@ -31,12 +32,7 @@ export interface CatalogueState {
 @Injectable({ providedIn: 'root' })
 export class PokemonStore {
   private readonly api = inject(PokemonApiService);
-  private readonly stateSubject = new BehaviorSubject<CatalogueState>({
-    items: [],
-    status: 'idle',
-    error: null,
-    total: 0,
-  });
+  private readonly stateSubject = new BehaviorSubject<CatalogueState>(initialCatalogueState());
   private readonly loadedOffsets = new Set<number>();
   private catalogueRequest?: Observable<readonly Pokemon[]>;
   private readonly memberRequests = new Map<string, Observable<readonly Pokemon[]>>();
@@ -73,6 +69,7 @@ export class PokemonStore {
           }),
           map(() => {
             this.patch({ status: 'success', error: null });
+            writeCatalogueCache(this.stateSubject.value.items, this.stateSubject.value.total);
             return this.stateSubject.value.items;
           }),
           catchError((error: unknown) => {
@@ -164,4 +161,14 @@ export class PokemonStore {
   private patch(state: Partial<CatalogueState>): void {
     this.stateSubject.next({ ...this.stateSubject.value, ...state });
   }
+}
+
+function initialCatalogueState(): CatalogueState {
+  const items = readCatalogueCache();
+  return {
+    items: items ?? [],
+    status: items ? 'success' : 'idle',
+    error: null,
+    total: items?.length ?? 0,
+  };
 }

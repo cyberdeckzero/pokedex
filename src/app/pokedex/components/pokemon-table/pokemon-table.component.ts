@@ -76,6 +76,8 @@ export class PokemonTableComponent {
         catchError(() => of(query)),
       );
     }),
+    // Restored data can render before the initial search debounce completes.
+    startWith(''),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
   private readonly selectors = createPokemonSelectors(

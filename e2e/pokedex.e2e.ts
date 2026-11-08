@@ -312,6 +312,7 @@ test('visual evidence: device, autocomplete, details, loading, error and empty s
   api.catalogueGate = new Promise<void>((resolve) => {
     release = resolve;
   });
+  await page.evaluate(() => sessionStorage.removeItem('mini-pokedex:catalogue:v1beta2:v1'));
   await page.reload();
   await expect(page.getByText('Loading the Pokémon catalogue…')).toBeVisible();
   await capture('loading');

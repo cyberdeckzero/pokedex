@@ -28,6 +28,7 @@ interface MockTeam {
   created_at: string;
 }
 export interface MockApi {
+  catalogueRequests: number;
   catalogueError: boolean;
   teamsError: boolean;
   detailsError: boolean;
@@ -54,6 +55,7 @@ const json = (route: Route, data: object) => route.fulfill({ json: { data } });
 
 async function mockApi(page: Page): Promise<MockApi> {
   const state: MockApi = {
+    catalogueRequests: 0,
     catalogueError: false,
     teamsError: false,
     detailsError: false,
@@ -94,6 +96,7 @@ async function mockApi(page: Page): Promise<MockApi> {
   await page.route('https://graphql.pokeapi.co/v1beta2', async (route) => {
     const { operationName, variables }: Operation = route.request().postDataJSON();
     if (operationName === 'GetPokemon') {
+      state.catalogueRequests++;
       if (state.catalogueGate) await state.catalogueGate;
       if (state.catalogueError) return route.abort('failed');
       return json(route, {
