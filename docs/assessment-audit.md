@@ -2,7 +2,7 @@
 
 Reviewed on 8 November 2026 against all six pages of **Pokemon Task.pdf** and the complete **DEVELOPER_GUIDE.pdf**. The assessment takes precedence over guide samples. AWS, authentication, authorization, and unrelated sample features are excluded.
 
-**Result:** required application behavior is implemented locally, including the selected CDK drag-and-drop bonus. GitHub delivery remains pending: this repository has no remote, and publishing has not been authorized. The checks below distinguish automated evidence from remaining manual checks; they do not certify accessibility or the assessment's elapsed-time limit.
+**Result:** required application behavior is implemented locally, including the selected CDK drag-and-drop bonus. The authorized GitHub delivery target is [Redclawww/Pokedex](https://github.com/Redclawww/Pokedex), branch `main`. The subsequent [code quality review](code-quality-review.md) records an additional page-integrity fix and the latest checks. The checks below distinguish automated evidence from remaining manual checks; they do not certify accessibility or the assessment's elapsed-time limit.
 
 ## Issues found and corrected
 
@@ -35,7 +35,7 @@ Reviewed on 8 November 2026 against all six pages of **Pokemon Task.pdf** and th
 | Service/store documentation and types                 | Concise JSDoc for all 18 public service/store methods; typed API/domain models; no explicit `any` in application source                                                  | TypeScript AST inspection passed                                                |
 | SCSS and shared styles                                | BEM component names, CSS custom properties, local licensed fonts; substantive templates/styles separated                                                                 | Source inspection and production budgets passed                                 |
 | Conventional history                                  | Existing history preserved; commitlint hook and scoped conventional messages; task changes committed separately                                                          | Existing history passed commitlint validation                                   |
-| Minimum three meaningful unit tests                   | Optimistic rollback in `team.store.spec.ts`, immutable filtering/sorting in `pokemon.selectors.spec.ts`, completing async uniqueness in `team.validators.spec.ts`        | Included in 59 passing tests across 17 files                                    |
+| Minimum three meaningful unit tests                   | Optimistic rollback in `team.store.spec.ts`, immutable filtering/sorting in `pokemon.selectors.spec.ts`, completing async uniqueness in `team.validators.spec.ts`        | Included in 60 passing tests across 17 files                                    |
 | README and runnable Angular app                       | Root README includes versions, setup, app/mock commands, architecture, fetch tradeoff, persistence, recovery checklist and realistic improvements                        | Build passed; browser suite runs through `ng serve`                             |
 
 ## Async-state coverage
@@ -77,8 +77,8 @@ Virtual scrolling and a type-highlight directive were not added. Existing shimme
 
 ## Executed verification and delivery limits
 
-The latest command results are recorded in [verification.md](verification.md). The final audit run includes production compilation, all 59 unit/DOM tests, the full 46-check desktop/mobile Chromium suite, formatting, e2e TypeScript, whitespace checks, live PokéAPI queries, actual generated mock mutations, and isolated disk-persistence failures/restarts. Visual tests also capture loading, empty, error, hero, suggestions and detail states.
+The latest command results are recorded in [verification.md](verification.md). The audit and subsequent quality-review checks include production compilation, all 60 unit/DOM tests, the full 46-check desktop/mobile Chromium suite, formatting, e2e TypeScript, whitespace checks, live PokéAPI queries, actual generated mock mutations, and isolated disk-persistence failures/restarts. Visual tests also capture loading, empty, error, hero, suggestions and detail states.
 
 Automated axe checks, responsive layouts at 320px/tablet/desktop, 200% text, Escape/focus return, stale selection, unchanged-query Retry, optimistic rollback and selection persistence are covered. Actual device touch, screen readers, Firefox/WebKit, real network disconnection/throttling and low-end animation performance remain manual verification; simulated failures do not replace these checks.
 
-**Pending delivery:** create or connect the intended GitHub repository and push the local conventional history after explicit publication authorization. No remote was created, no history was rewritten and nothing was pushed. Unrelated local workspace changes were excluded from assessment commits.
+**Delivery target:** [Redclawww/Pokedex](https://github.com/Redclawww/Pokedex), branch `main`. The user authorized publication after the quality review. Conventional history is preserved; unrelated local workspace changes and mock database files are excluded from submission commits. Git remote refs establish the published revision.

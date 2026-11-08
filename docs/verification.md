@@ -2,6 +2,16 @@
 
 Latest assessment verification: **8 November 2026**, with Node 22.14.0 and npm 11.6.4 (Asia/Kolkata). Older dated sections below preserve earlier snapshots; their smaller test counts and former mock-reset behavior do not describe the current version. This records executed checks, not browser certification.
 
+## 8 November code quality review
+
+The complete supplied quality guide was checked against the implementation. See [code-quality-review.md](code-quality-review.md) for the material finding, complete flow traces, checklist outcomes and an in-memory default-page-size change rehearsal.
+
+A new regression first failed because a truncated page was incorrectly accepted as catalogue success. After a three-line page-size check, all 10 store tests and the full **60-test / 17-file unit suite** passed. Existing pagination recovery fixtures now represent a full first page rather than a one-record page with a total of 101; the offset/recovery assertions remain intact.
+
+`npm run build` passed unchanged budgets at **433.60 kB initial / 110.04 kB estimated transfer**. `npm run test:e2e` passed all **46 desktop/mobile Chromium checks** after the correction. `npm run format:check`, `npx tsc --project e2e/tsconfig.json`, and `git diff --check` passed. No separate ESLint target is configured.
+
+`npm run check:mock`, `npm run check:mock-persistence` and `npm run check:poke` passed again against the actual endpoints or isolated persistence server. No application dependency or lockfile changed. Real devices, assistive technologies, Firefox/WebKit and actual network throttling/disconnection remain unverified. Earlier statements below about publication being unauthorized describe their original review snapshots; the user subsequently authorized `Redclawww/Pokedex` on `main`.
+
 ## 8 November final assessment audit
 
 See [assessment-audit.md](assessment-audit.md) for the complete requirement matrix and the selected CDK drag-and-drop bonus. The PDF and developer guide were read completely. Row clicks once again open details as required, and team overview loading reserves space so the builder remains stable.
