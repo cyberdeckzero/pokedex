@@ -21,17 +21,19 @@ const memberIds = (page: Page) =>
     .locator('.builder__chip')
     .evaluateAll((elements) => elements.map((element) => element.getAttribute('data-member-id')));
 
-test('selection updates the featured Pokémon without forcing details open', async ({ page }) => {
+test('row selection opens the required details panel and updates the featured Pokémon', async ({
+  page,
+}) => {
   await openCatalogue(page);
-  await catalogueItems(page)
-    .filter({ hasText: 'Charizard' })
-    .getByRole('button', { name: 'Charizard', exact: true })
-    .click();
+  const entry = catalogueItems(page).filter({ hasText: 'Charizard' });
+  if ((page.viewportSize()?.width ?? 0) > 600) await entry.locator('td').last().click();
+  else await entry.getByRole('button', { name: 'Charizard', exact: true }).click();
   await expect(page.locator('.scanner__information h2')).toHaveText('Charizard');
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('app-pokemon-scanner img')).toHaveAttribute('src', /\/6.png$/);
-  await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByRole('dialog')).toContainText('Charizard');
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
 test('keyboard slot ordering persists and the server receives that order', async ({
@@ -115,4 +117,37 @@ test('a completed catalogue survives refresh without repeating upstream requests
   await expect(catalogueItems(page)).toHaveCount(1);
   await expect(catalogueItems(page).first()).toContainText('Pikachu');
   expect(api.catalogueRequests).toBe(requests);
+});
+
+test('bonus drag-and-drop rejects full drafts and pending submissions', async ({ page, api }) => {
+  await page.setViewportSize({ width: 1440, height: 2400 });
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      'mini-pokedex:team-draft',
+      JSON.stringify({ name: 'Guarded expedition', pokemonIds: [1, 2, 3, 4, 5, 6] }),
+    ),
+  );
+  await openCatalogue(page);
+  await expect(page.locator('.builder__chip')).toHaveCount(6);
+  const slots = page.locator('#team-draft-slots');
+  const squirtle = page.locator('tbody tr').filter({ hasText: 'Squirtle' }).locator('td').first();
+  await drag(page, squirtle, slots);
+  await expect.poll(() => memberIds(page)).toEqual(['1', '2', '3', '4', '5', '6']);
+  await page.getByRole('button', { name: 'Remove charizard from team', exact: true }).click();
+  await page.getByRole('button', { name: 'Remove charmeleon from team', exact: true }).click();
+  let release = () => {};
+  api.mutationGate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  try {
+    await page.getByRole('button', { name: 'Save team', exact: true }).click();
+    await expect(slots).toHaveClass(/cdk-drop-list-disabled/);
+    await drag(page, squirtle, slots);
+    await expect.poll(() => memberIds(page)).toEqual(['1', '2', '3', '4']);
+  } finally {
+    release();
+    api.mutationGate = null;
+  }
+  await expect(page.getByRole('button', { name: 'Guarded expedition', exact: true })).toBeEnabled();
+  await expect(page.locator('.builder__chip')).toHaveCount(0);
 });

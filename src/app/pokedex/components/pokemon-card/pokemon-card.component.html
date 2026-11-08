@@ -7,7 +7,7 @@
         type="button"
         class="pokedex__name"
         [attr.data-pokemon-id]="pokemon().id"
-        [attr.aria-pressed]="active()"
+        aria-haspopup="dialog"
         (click)="selected.emit(pokemon())"
       >
         {{ pokemon().name | titlecase }}

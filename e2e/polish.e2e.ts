@@ -45,6 +45,8 @@ test('mobile cards prioritize browsing and show initial suggestions', async ({ p
     .getByRole('button', { name: 'Bulbasaur', exact: true })
     .click();
   await expect(page.locator('.scanner__information h2')).toContainText('Bulbasaur');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
   const picker = page.getByRole('combobox', { name: 'Add Pokémon' });
   await picker.fill('char');
   await expect(page.getByRole('listbox').getByRole('option')).toHaveCount(3);
@@ -95,4 +97,31 @@ test('loading uses shaped skeletons, reserves the table, and respects reduced mo
   if ((page.viewportSize()?.width ?? 0) > 600)
     expect(Math.abs(after - before)).toBeLessThanOrEqual(2);
   else await expect(page.locator('.pokedex__cards')).toBeVisible();
+});
+
+test('team reload reserves overview and builder positions until data returns', async ({
+  page,
+  api,
+}) => {
+  await openCatalogue(page);
+  await expect(page.locator('.teams__totals')).toContainText('1033');
+  const position = () =>
+    page
+      .locator('#team-builder')
+      .evaluate((element) => element.getBoundingClientRect().top + window.scrollY);
+  const before = await position();
+  let release = () => {};
+  api.teamsGate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  try {
+    await page.getByRole('button', { name: 'Reload teams', exact: true }).click();
+    await expect(page.locator('app-skeleton [data-kind="team-summary"]')).toBeVisible();
+    expect(Math.abs((await position()) - before)).toBeLessThanOrEqual(2);
+  } finally {
+    release();
+    api.teamsGate = null;
+  }
+  await expect(page.locator('.teams__totals')).toContainText('1033');
+  expect(Math.abs((await position()) - before)).toBeLessThanOrEqual(2);
 });

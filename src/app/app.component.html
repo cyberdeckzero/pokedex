@@ -22,7 +22,7 @@
           [selectedId]="currentPokemon()?.id ?? null"
           [draftIds]="draft.selectedIds()"
           [draftBusy]="draft.isSubmitting() || draft.teamState().busy"
-          (selected)="featurePokemon($event)"
+          (selected)="selectPokemon($event)"
           (inspected)="selectPokemon($event)"
           (added)="draft.addPokemon($event)"
         />

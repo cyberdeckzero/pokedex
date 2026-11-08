@@ -1,5 +1,14 @@
 <div class="skeleton" [attr.data-kind]="kind()">
   @switch (kind()) {
+    @case ('team-summary') {
+      <div class="skeleton__copy">
+        <i class="skeleton__subtitle"></i><i class="skeleton__title"></i
+        ><i class="skeleton__short"></i>
+        <div class="skeleton__badges"><i></i><i></i><i></i></div>
+        <div class="skeleton__badges"><i></i><i></i></div>
+        <i class="skeleton__short"></i>
+      </div>
+    }
     @case ('cards') {
       @for (row of rows; track row) {
         <div class="skeleton__card">

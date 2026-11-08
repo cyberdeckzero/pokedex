@@ -27,7 +27,8 @@
     color: var(--screen-muted);
   }
   &__list {
-    min-height: 246px;
+    height: 320px;
+    overflow: auto;
     padding: 12px 14px 14px;
   }
   &__card {
@@ -126,7 +127,8 @@
     }
   }
   &__summary {
-    min-height: 236px;
+    height: 330px;
+    overflow: auto;
     padding: 16px;
     margin-top: 16px;
     h4 {
@@ -134,6 +136,9 @@
       font-weight: 600;
       margin: 0 0 8px;
     }
+  }
+  &__overview-status {
+    padding-top: 16px;
   }
   &__summary-heading {
     display: flex;

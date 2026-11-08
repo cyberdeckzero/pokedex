@@ -3,11 +3,15 @@
     <header class="teams__heading">
       <div>
         <h2 id="teams-title">Your teams</h2>
-        @if (state().status === 'success') {
-          <span class="teams__count"
-            >{{ teams().length }} saved {{ teams().length === 1 ? 'squad' : 'squads' }}</span
-          >
-        }
+        <span class="teams__count">
+          @if (state().status === 'success') {
+            {{ teams().length }} saved {{ teams().length === 1 ? 'squad' : 'squads' }}
+          } @else if (state().status === 'error') {
+            Squads unavailable
+          } @else {
+            Loading squads…
+          }
+        </span>
       </div>
       <button
         class="button button--small"
@@ -160,15 +164,35 @@
       </div>
     }
   </section>
-  @if (selectedTeam(); as team) {
-    <section class="teams__summary" aria-label="Selected team overview">
+  <section
+    class="teams__summary"
+    aria-label="Selected team overview"
+    tabindex="0"
+    [attr.aria-busy]="state().status === 'loading' || hydration().status === 'loading'"
+  >
+    @if (state().status === 'loading' || state().status === 'idle') {
+      <h3>Team overview</h3>
+      <div class="teams__overview-status" role="status">
+        <app-skeleton kind="team-summary" /><span class="visually-hidden"
+          >Loading team overview…</span
+        >
+      </div>
+    } @else if (state().status === 'error') {
+      <h3>Team overview</h3>
+      <div class="status status--error" role="alert">
+        <p>Load your teams to see their overview.</p>
+        <button class="button button--small" type="button" (click)="retryTeams()">
+          Retry overview
+        </button>
+      </div>
+    } @else if (selectedTeam(); as team) {
       <div class="teams__summary-heading">
         <h3>{{ team.name }}</h3>
         <span>Team overview</span>
       </div>
       @if (hydration().status === 'loading') {
-        <div class="status" role="status">
-          <app-skeleton kind="overview" />
+        <div class="teams__overview-status" role="status">
+          <app-skeleton kind="team-summary" />
           <p class="visually-hidden">Loading team overview…</p>
         </div>
       } @else if (hydration().status === 'error') {
@@ -205,7 +229,10 @@
           <app-type-coverage [members]="selectedMembers()" />
         </details>
       }
-    </section>
-  }
+    } @else {
+      <h3>Team overview</h3>
+      <p class="muted">Create a team below to see its total stats and type distribution.</p>
+    }
+  </section>
   <app-team-builder (created)="selectedTeamId.set($event)" (reloadTeams)="retryTeams()" />
 </aside>

@@ -140,8 +140,8 @@
           >
             <table class="pokedex__table">
               <caption class="visually-hidden">
-                Pokémon base stats. Select a Pokémon's name to feature it above. Stat headers sort
-                the full collection.
+                Pokémon base stats. Select a Pokémon's row to open details and feature it above.
+                Stat headers sort the full collection.
               </caption>
               <thead>
                 <tr>
@@ -208,7 +208,7 @@
                       ><button
                         type="button"
                         class="pokedex__name"
-                        [attr.aria-pressed]="selectedId() === pokemon.id"
+                        aria-haspopup="dialog"
                         [attr.data-pokemon-id]="pokemon.id"
                       >
                         {{ pokemon.name | titlecase }}

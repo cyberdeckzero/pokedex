@@ -71,9 +71,6 @@ export class AppComponent {
     if (!pokemon) return;
     this.draft.addPokemon(pokemon.id);
   }
-  featurePokemon(pokemon: Pokemon): void {
-    this.selectedPokemon.set(pokemon);
-  }
   selectPokemon(pokemon: Pokemon): void {
     const active = this.document.activeElement;
     if (
