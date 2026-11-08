@@ -154,17 +154,25 @@ async function mockApi(page: Page): Promise<MockApi> {
 }
 
 export const test = base.extend<{ api: MockApi }>({
-  api: async ({ page }, use) => {
-    const errors: string[] = [];
-    page.on('pageerror', (error) => errors.push(error.message));
-    await use(await mockApi(page));
-    base.expect(errors, 'uncaught browser errors').toEqual([]);
-  },
+  api: [
+    async ({ page }, use) => {
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      await use(await mockApi(page));
+      base.expect(errors, 'uncaught browser errors').toEqual([]);
+    },
+    { auto: true },
+  ],
 });
+export function catalogueItems(page: Page) {
+  return page.locator(
+    '.pokedex__scroll:visible tbody tr, .pokedex__cards:visible app-pokemon-card',
+  );
+}
 export { expect } from '@playwright/test';
 export async function openCatalogue(page: Page) {
   await page.goto('/');
-  await base.expect(page.locator('tbody tr')).toHaveCount(10);
+  await base.expect(catalogueItems(page)).toHaveCount(10);
   await base.expect(page.getByRole('button', { name: 'Forest Patrol', exact: true })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
 }

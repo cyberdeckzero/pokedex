@@ -71,6 +71,9 @@ export class AppComponent {
     if (!pokemon) return;
     this.draft.addPokemon(pokemon.id);
   }
+  featurePokemon(pokemon: Pokemon): void {
+    this.selectedPokemon.set(pokemon);
+  }
   selectPokemon(pokemon: Pokemon): void {
     const active = this.document.activeElement;
     if (
@@ -86,7 +89,9 @@ export class AppComponent {
     const id = this.selectedPokemon()?.id;
     this.panelOpen.set(false);
     const row = id
-      ? this.document.querySelector<HTMLButtonElement>(`[data-pokemon-id="${id}"]`)
+      ? [...this.document.querySelectorAll<HTMLButtonElement>(`[data-pokemon-id="${id}"]`)].find(
+          (button) => button.getClientRects().length,
+        )
       : null;
     const opener =
       this.detailOpener?.isConnected && this.detailOpener.getClientRects().length

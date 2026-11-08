@@ -70,6 +70,9 @@
           <div>
             <dt>{{ stat.label }}</dt>
             <dd>{{ displayed().stats[stat.key] }}</dd>
+            <span class="stat-track" aria-hidden="true"
+              ><i [style.width.%]="(displayed().stats[stat.key] / 255) * 100"></i
+            ></span>
           </div>
         }
       }

@@ -1,0 +1,54 @@
+<article class="pokemon-card" [class.pokemon-card--selected]="active()">
+  <header>
+    <app-pokemon-sprite [url]="pokemon().sprite" [size]="64" />
+    <div>
+      <span class="pokedex__number">#{{ pokemon().id.toString().padStart(4, '0') }}</span>
+      <button
+        type="button"
+        class="pokedex__name"
+        [attr.data-pokemon-id]="pokemon().id"
+        [attr.aria-pressed]="active()"
+        (click)="selected.emit(pokemon())"
+      >
+        {{ pokemon().name | titlecase }}
+      </button>
+      <app-type-badges [types]="pokemon().types" />
+    </div>
+    <strong>{{ pokemon().total }}<small>Total</small></strong>
+  </header>
+  <details>
+    <summary>All six base stats</summary>
+    <dl>
+      @for (stat of statColumns; track stat.key) {
+        @if (stat.key !== 'total') {
+          <div>
+            <dt>{{ stat.label }}</dt>
+            <dd>{{ pokemon().stats[stat.key] }}</dd>
+            <span class="stat-track" aria-hidden="true"
+              ><i [style.width.%]="(pokemon().stats[stat.key] / 255) * 100"></i
+            ></span>
+          </div>
+        }
+      }
+    </dl>
+  </details>
+  <footer>
+    <button
+      class="button button--small"
+      type="button"
+      [attr.aria-label]="'View details for ' + pokemon().name"
+      (click)="inspected.emit(pokemon())"
+    >
+      Details
+    </button>
+    <button
+      class="button button--small"
+      type="button"
+      [attr.aria-label]="'Add ' + pokemon().name + ' to team draft'"
+      [disabled]="addDisabled()"
+      (click)="added.emit(pokemon().id)"
+    >
+      + Add to team
+    </button>
+  </footer>
+</article>

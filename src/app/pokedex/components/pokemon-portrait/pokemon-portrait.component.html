@@ -19,6 +19,9 @@
   }
   <img
     class="portrait__image"
+    [class.portrait__image--loaded]="imageLoaded()"
+    decoding="async"
+    fetchpriority="high"
     [style.visibility]="imageUnavailable() || !imageLoaded() ? 'hidden' : 'visible'"
     [src]="imageUrl()"
     [alt]="pokemon().name + ' illustration'"

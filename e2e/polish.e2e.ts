@@ -1,8 +1,8 @@
-import { test, expect, openCatalogue } from './pokedex.fixture';
+import { test, expect, openCatalogue, catalogueItems } from './pokedex.fixture';
 
 test('inspection adds to a persistent draft without repeating a search', async ({ page, api }) => {
   await openCatalogue(page);
-  await page.getByRole('button', { name: 'View details' }).click();
+  await page.getByRole('button', { name: 'View details', exact: true }).click();
   await page.getByRole('button', { name: 'Add to team draft', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Already in draft', exact: true })).toBeDisabled();
   await page.keyboard.press('Escape');
@@ -34,19 +34,17 @@ test('delete requires a deliberate confirmation and can be canceled', async ({ p
   expect(api.teams).toHaveLength(1);
 });
 
-test('mobile prioritizes browsing, pins identity and shows initial suggestions', async ({
-  page,
-  api,
-}) => {
+test('mobile cards prioritize browsing and show initial suggestions', async ({ page, api }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openCatalogue(page);
   await expect(page.getByLabel('Search Pokémon', { exact: true })).toBeInViewport();
-  const region = page.getByRole('region', { name: 'Pokémon base stats table' });
-  await region.evaluate((element) => {
-    element.scrollLeft = element.scrollWidth;
-  });
-  const name = page.locator('tbody tr').first().getByRole('button');
-  await expect(name).toBeInViewport();
+  await expect(page.locator('.pokedex__cards')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Pokémon base stats table' })).toBeHidden();
+  await catalogueItems(page)
+    .first()
+    .getByRole('button', { name: 'Bulbasaur', exact: true })
+    .click();
+  await expect(page.locator('.scanner__information h2')).toContainText('Bulbasaur');
   const picker = page.getByRole('combobox', { name: 'Add Pokémon' });
   await picker.fill('char');
   await expect(page.getByRole('listbox').getByRole('option')).toHaveCount(3);
@@ -67,7 +65,11 @@ test('loading uses shaped skeletons, reserves the table, and respects reduced mo
     releaseTeams = resolve;
   });
   await page.goto('/');
-  for (const kind of ['table', 'profile', 'teams'])
+  for (const kind of [
+    (page.viewportSize()?.width ?? 0) <= 600 ? 'cards' : 'table',
+    'profile',
+    'teams',
+  ])
     await expect(page.locator(`app-skeleton [data-kind="${kind}"]`).first()).toBeVisible();
   const before = await page
     .locator('.pokedex__body')
@@ -86,9 +88,11 @@ test('loading uses shaped skeletons, reserves the table, and respects reduced mo
   releaseCatalogue();
   api.teamsGate = null;
   api.catalogueGate = null;
-  await expect(page.locator('tbody tr')).toHaveCount(10);
+  await expect(catalogueItems(page)).toHaveCount(10);
   const after = await page
     .locator('.pokedex__body')
     .evaluate((element) => element.getBoundingClientRect().height);
-  expect(Math.abs(after - before)).toBeLessThanOrEqual(2);
+  if ((page.viewportSize()?.width ?? 0) > 600)
+    expect(Math.abs(after - before)).toBeLessThanOrEqual(2);
+  else await expect(page.locator('.pokedex__cards')).toBeVisible();
 });

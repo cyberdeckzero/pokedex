@@ -1,3 +1,4 @@
+import { TypeCoverageComponent } from '../type-coverage/type-coverage.component';
 import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -32,7 +33,13 @@ import { TeamBuilderComponent } from '../team-builder/team-builder.component';
 @Component({
   selector: 'app-team-panel',
   standalone: true,
-  imports: [TitleCasePipe, PokemonSpriteComponent, TeamBuilderComponent, SkeletonComponent],
+  imports: [
+    TitleCasePipe,
+    PokemonSpriteComponent,
+    TeamBuilderComponent,
+    SkeletonComponent,
+    TypeCoverageComponent,
+  ],
   templateUrl: './team-panel.component.html',
   styleUrl: './team-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

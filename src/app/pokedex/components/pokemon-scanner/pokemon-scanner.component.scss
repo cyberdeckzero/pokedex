@@ -35,6 +35,14 @@
   }
   &__art {
     position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-top: 1px solid #65e0c380;
+      pointer-events: none;
+      animation: scan 450ms ease-out both;
+    }
     background: radial-gradient(ellipse at center, #2c6651 0, transparent 68%);
   }
   &__information {
@@ -164,5 +172,19 @@
       min-height: 200px;
       padding: 16px;
     }
+  }
+}
+
+@keyframes scan {
+  from {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
   }
 }

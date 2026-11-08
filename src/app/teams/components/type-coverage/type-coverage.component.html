@@ -1,0 +1,37 @@
+<section class="coverage" aria-label="Team type coverage">
+  <h4>Type coverage</h4>
+  @if (members().length) {
+    <details>
+      <summary>Offensive strengths · {{ coverage().strengths.length }} types</summary>
+      <p>Native types with super-effective attacks against each type.</p>
+      <div class="coverage__types">
+        @for (entry of coverage().strengths; track entry.type) {
+          <span
+            >{{ entry.type | titlecase }} <b>{{ entry.count }}</b></span
+          >
+        } @empty {
+          <p>No offensive strengths for these types.</p>
+        }
+      </div>
+    </details>
+    <details open>
+      <summary>Defensive weaknesses · {{ coverage().weaknesses.length }} types</summary>
+      <p>Members taking more than normal damage; dual types are combined.</p>
+      <div class="coverage__types coverage__types--weak">
+        @for (entry of coverage().weaknesses; track entry.type) {
+          <span
+            >{{ entry.type | titlecase }} <b>{{ entry.count }}</b></span
+          >
+        } @empty {
+          <p>No type weaknesses.</p>
+        }
+      </div>
+    </details>
+    <p>Type matchups only. Moves, abilities, held items and Terastallization can change results.</p>
+    @if (coverage().unsupported) {
+      <p>Unknown or special types are excluded.</p>
+    }
+  } @else {
+    <p>Add Pokémon to explore strengths and weaknesses.</p>
+  }
+</section>

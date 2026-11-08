@@ -126,12 +126,17 @@ export class TeamDraftService {
   }
 
   /** Adds one member to the shared draft and reports why an addition was blocked. */
-  addPokemon(id: number): 'added' | 'duplicate' | 'full' | 'busy' {
+  addPokemon(
+    id: number,
+    position = this.selectedIds().length,
+  ): 'added' | 'duplicate' | 'full' | 'busy' {
     const control = this.form.controls.pokemonIds;
     if (this.isSubmitting() || this.teamState().busy) return 'busy';
     if (control.value.includes(id)) return 'duplicate';
     if (control.value.length >= 6) return 'full';
-    control.setValue([...control.value, id]);
+    const ids = [...control.value];
+    ids.splice(Math.max(0, Math.min(position, ids.length)), 0, id);
+    control.setValue(ids);
     control.markAsDirty();
     control.markAsTouched();
     return 'added';
@@ -144,6 +149,25 @@ export class TeamDraftService {
     control.setValue(control.value.filter((item) => item !== id));
     control.markAsDirty();
     control.markAsTouched();
+  }
+
+  /** Moves an existing member to another slot without changing membership. */
+  movePokemon(id: number, position: number): void {
+    if (this.isSubmitting() || this.teamState().busy) return;
+    const control = this.form.controls.pokemonIds;
+    const previous = control.value.indexOf(id);
+    if (
+      previous < 0 ||
+      !Number.isInteger(position) ||
+      position < 0 ||
+      position >= control.value.length
+    )
+      return;
+    const ids = [...control.value];
+    ids.splice(previous, 1);
+    ids.splice(position, 0, id);
+    control.setValue(ids);
+    control.markAsDirty();
   }
 
   /** Trims extra spaces when the team name leaves focus. */

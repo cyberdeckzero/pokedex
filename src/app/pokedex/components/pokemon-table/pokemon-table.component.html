@@ -30,10 +30,21 @@
         }
       </select>
     </div>
+    <div class="pokedex__mobile-sort">
+      <label for="mobile-sort">Sort Pokémon</label
+      ><select
+        id="mobile-sort"
+        [value]="options().sort.key + ':' + options().sort.direction"
+        (change)="setMobileSort($event)"
+      >
+        @for (stat of statColumns; track stat.key) {
+          <option [value]="stat.key + ':desc'">{{ stat.label }}: high to low</option>
+          <option [value]="stat.key + ':asc'">{{ stat.label }}: low to high</option>
+        }
+      </select>
+    </div>
   </div>
-  <p class="pokedex__scroll-hint" id="table-scroll-help">
-    Scroll the table sideways to view all six stats.
-  </p>
+
   <div
     class="pokedex__body"
     [attr.aria-busy]="catalogue().status === 'loading' || catalogue().status === 'idle'"
@@ -41,13 +52,19 @@
     @switch (catalogue().status) {
       @case ('idle') {
         <div class="status pokedex__status pokedex__status--loading" role="status">
-          <app-skeleton kind="table" />
+          <app-skeleton class="pokedex__desktop-skeleton" kind="table" /><app-skeleton
+            class="pokedex__mobile-skeleton"
+            kind="cards"
+          />
           <p class="visually-hidden">Preparing your Pokédex…</p>
         </div>
       }
       @case ('loading') {
         <div class="status pokedex__status pokedex__status--loading" role="status">
-          <app-skeleton kind="table" />
+          <app-skeleton class="pokedex__desktop-skeleton" kind="table" /><app-skeleton
+            class="pokedex__mobile-skeleton"
+            kind="cards"
+          />
           <p class="visually-hidden">Loading the Pokémon catalogue…</p>
           @if (catalogue().total) {
             <progress
@@ -88,6 +105,33 @@
           </div>
         } @else {
           <div
+            class="pokedex__cards"
+            cdkDropList
+            id="pokemon-mobile"
+            [cdkDropListData]="page().items"
+            cdkDropListConnectedTo="team-draft-slots"
+            [cdkDropListSortingDisabled]="true"
+            [cdkDropListHasAnchor]="true"
+            aria-label="Pokémon cards"
+          >
+            @for (pokemon of page().items; track pokemon.id) {
+              <app-pokemon-card
+                [pokemon]="pokemon"
+                [active]="selectedId() === pokemon.id"
+                [addDisabled]="
+                  draftBusy() || draftIds().includes(pokemon.id) || draftIds().length >= 6
+                "
+                (selected)="selected.emit($event)"
+                (inspected)="inspected.emit($event)"
+                (added)="added.emit($event)"
+                cdkDrag
+                [cdkDragData]="pokemon.id"
+                [cdkDragStartDelay]="{ touch: 250, mouse: 0 }"
+                cdkDragPreviewClass="pokemon-drag-preview"
+              />
+            }
+          </div>
+          <div
             class="pokedex__scroll"
             role="region"
             aria-label="Pokémon base stats table"
@@ -96,8 +140,8 @@
           >
             <table class="pokedex__table">
               <caption class="visually-hidden">
-                Pokémon base stats. Select a Pokémon's name to open details. Stat headers sort the
-                full collection.
+                Pokémon base stats. Select a Pokémon's name to feature it above. Stat headers sort
+                the full collection.
               </caption>
               <thead>
                 <tr>
@@ -140,9 +184,20 @@
                   }
                 </tr>
               </thead>
-              <tbody>
+              <tbody
+                cdkDropList
+                id="pokemon-catalogue"
+                [cdkDropListData]="page().items"
+                cdkDropListConnectedTo="team-draft-slots"
+                [cdkDropListSortingDisabled]="true"
+                [cdkDropListHasAnchor]="true"
+              >
                 @for (pokemon of page().items; track pokemon.id) {
                   <tr
+                    cdkDrag
+                    [cdkDragData]="pokemon.id"
+                    [cdkDragStartDelay]="{ touch: 250, mouse: 0 }"
+                    cdkDragPreviewClass="pokemon-drag-preview"
                     (click)="selected.emit(pokemon)"
                     [class.pokedex__row--selected]="selectedId() === pokemon.id"
                   >
@@ -153,8 +208,7 @@
                       ><button
                         type="button"
                         class="pokedex__name"
-                        [attr.aria-expanded]="detailOpen() && selectedId() === pokemon.id"
-                        aria-controls="pokemon-detail"
+                        [attr.aria-pressed]="selectedId() === pokemon.id"
                         [attr.data-pokemon-id]="pokemon.id"
                       >
                         {{ pokemon.name | titlecase }}

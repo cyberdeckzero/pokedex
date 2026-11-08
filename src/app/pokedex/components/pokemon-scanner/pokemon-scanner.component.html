@@ -3,10 +3,14 @@
   @if (catalogue().status === 'success') {
     @if (pokemon(); as pokemon) {
       <div class="scanner__entry">
-        <div class="scanner__art"><app-pokemon-portrait [pokemon]="pokemon" /></div>
+        @for (id of [pokemon.id]; track id) {
+          <div class="scanner__art"><app-pokemon-portrait [pokemon]="pokemon" /></div>
+        }
         <div class="scanner__information">
           <span class="scanner__number">#{{ pokemon.id.toString().padStart(4, '0') }}</span>
-          <h2>{{ pokemon.name.replaceAll('-', ' ') | titlecase }}</h2>
+          <h2 aria-live="polite" aria-atomic="true">
+            {{ pokemon.name.replaceAll('-', ' ') | titlecase }}
+          </h2>
           <app-type-badges [types]="pokemon.types" />
           <dl class="scanner__measurements">
             <div>

@@ -1,0 +1,44 @@
+.coverage {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--screen-line);
+  font-size: 0.875rem;
+  h4 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+  }
+  p {
+    margin: 8px 0;
+    color: var(--screen-muted);
+  }
+  details {
+    margin: 12px 0;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 5px 0;
+  }
+  summary:focus-visible {
+    outline: 3px solid #08769d;
+    outline-offset: 3px;
+  }
+  &__types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  span {
+    padding: 3px 7px;
+    border-radius: 6px;
+    color: #15533b;
+    background: #e3f3ec;
+  }
+  b {
+    margin-left: 4px;
+  }
+  &__types--weak span {
+    color: var(--color-danger);
+    background: var(--color-danger-soft);
+  }
+}

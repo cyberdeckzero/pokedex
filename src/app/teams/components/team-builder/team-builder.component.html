@@ -49,9 +49,36 @@
         [disabled]="isSubmitting() || teamState().busy || selectedIds().length >= 6"
         (chosen)="addPokemon($event)"
       />
-      <div class="builder__slots" role="group" aria-label="Selected Pokémon">
-        @for (member of selectedPokemon(); track member.id) {
-          <span class="builder__chip">
+      <p class="builder__hint" id="slot-help">
+        Drag Pokémon here or use the picker. Move buttons reorder slots.
+      </p>
+      <div
+        class="builder__slots"
+        role="group"
+        aria-label="Selected Pokémon"
+        aria-describedby="slot-help"
+        cdkDropList
+        id="team-draft-slots"
+        [cdkDropListData]="selectedIds()"
+        cdkDropListOrientation="mixed"
+        [cdkDropListDisabled]="isSubmitting() || teamState().busy"
+        [cdkDropListEnterPredicate]="canEnter"
+        (cdkDropListDropped)="drop($event)"
+      >
+        @for (member of selectedPokemon(); track member.id; let index = $index) {
+          <div
+            class="builder__chip"
+            cdkDrag
+            [cdkDragData]="member.id"
+            [cdkDragStartDelay]="{ touch: 200, mouse: 0 }"
+            tabindex="-1"
+            [attr.data-member-id]="member.id"
+            role="group"
+            [attr.aria-label]="'Slot ' + (index + 1) + ': ' + (member.pokemon?.name || member.id)"
+            (keydown.alt.arrowup)="moveMember(member.id, -1, $event)"
+            (keydown.alt.arrowdown)="moveMember(member.id, 1, $event)"
+          >
+            <span cdkDragHandle class="builder__drag-handle" aria-hidden="true">⠿</span>
             @if (member.pokemon; as pokemon) {
               <app-pokemon-sprite [url]="pokemon.sprite" [size]="30" />
               <span>{{ pokemon.name | titlecase }}</span>
@@ -63,6 +90,22 @@
             }
             <button
               type="button"
+              [disabled]="index === 0"
+              [attr.aria-label]="'Move ' + (member.pokemon?.name || member.id) + ' earlier'"
+              (click)="moveMember(member.id, -1, $event)"
+            >
+              ↑
+            </button>
+            <button
+              type="button"
+              [disabled]="index === selectedIds().length - 1"
+              [attr.aria-label]="'Move ' + (member.pokemon?.name || member.id) + ' later'"
+              (click)="moveMember(member.id, 1, $event)"
+            >
+              ↓
+            </button>
+            <button
+              type="button"
               [attr.aria-label]="
                 'Remove ' + (member.pokemon?.name || 'Pokémon #' + member.id) + ' from team'
               "
@@ -70,7 +113,7 @@
             >
               ×
             </button>
-          </span>
+          </div>
         }
         @for (slot of emptySlots(); track slot) {
           <span class="builder__slot" aria-hidden="true"
@@ -78,6 +121,10 @@
           >
         }
       </div>
+      <p class="visually-hidden" role="status">{{ interactionMessage() }}</p>
+      @if (selectedIds().length && draft.hydration().status === 'success') {
+        <app-type-coverage [members]="coverageMembers()" />
+      }
       @if (draft.hydration().status === 'loading') {
         <p class="builder__hint" role="status">Loading draft Pokémon…</p>
       } @else if (draft.hydration().status === 'error') {

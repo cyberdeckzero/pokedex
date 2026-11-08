@@ -47,6 +47,18 @@ describe('shared team draft', () => {
     expect(draft.addPokemon(7)).toBe('busy');
     expect(draft.selectedIds()).toEqual([1, 2, 3, 4, 5, 6]);
   });
+  it('reorders and inserts members without duplicates, preserving order after refresh', () => {
+    const { draft } = setup();
+    draft.addPokemon(1);
+    draft.addPokemon(6);
+    draft.addPokemon(25, 1);
+    expect(draft.selectedIds()).toEqual([1, 25, 6]);
+    draft.movePokemon(6, 0);
+    expect(draft.selectedIds()).toEqual([6, 1, 25]);
+    draft.movePokemon(6, -1);
+    expect(draft.selectedIds()).toEqual([6, 1, 25]);
+    expect(JSON.parse(localStorage.getItem(TEAM_DRAFT_KEY)!).pokemonIds).toEqual([6, 1, 25]);
+  });
   it.each([
     '{',
     'null',

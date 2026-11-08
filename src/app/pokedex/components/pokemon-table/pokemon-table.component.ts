@@ -1,3 +1,5 @@
+import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
+import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { SkeletonComponent } from '../../../common/components/skeleton/skeleton.component';
 import { TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
@@ -37,6 +39,9 @@ import { TypeBadgesComponent } from '../type-badges/type-badges.component';
     PokemonSpriteComponent,
     TypeBadgesComponent,
     SkeletonComponent,
+    CdkDrag,
+    CdkDropList,
+    PokemonCardComponent,
   ],
   templateUrl: './pokemon-table.component.html',
   styleUrl: './pokemon-table.component.scss',
@@ -44,8 +49,11 @@ import { TypeBadgesComponent } from '../type-badges/type-badges.component';
 })
 export class PokemonTableComponent {
   readonly selectedId = input<number | null>(null);
-  readonly detailOpen = input(false);
+  readonly draftIds = input<readonly number[]>([]);
+  readonly draftBusy = input(false);
   readonly selected = output<Pokemon>();
+  readonly inspected = output<Pokemon>();
+  readonly added = output<number>();
   private readonly store = inject(PokemonStore);
   private readonly optionsSubject = new BehaviorSubject<TableOptions>(INITIAL_TABLE_OPTIONS);
   private readonly retryRequests = new Subject<void>();
@@ -107,6 +115,14 @@ export class PokemonTableComponent {
     const target = event.target;
     if (target instanceof HTMLSelectElement)
       this.updateOptions({ pageSize: Number(target.value), page: 1 });
+  }
+  setMobileSort(event: Event): void {
+    const target = event.target;
+    if (!(target instanceof HTMLSelectElement)) return;
+    const [key, direction] = target.value.split(':');
+    const column = this.statColumns.find((column) => column.key === key);
+    if (column && (direction === 'asc' || direction === 'desc'))
+      this.updateOptions({ sort: { key: column.key, direction }, page: 1 });
   }
   sort(key: StatKey | 'total'): void {
     const current = this.options().sort;

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 export type SkeletonKind =
-  'table' | 'profile' | 'abilities' | 'teams' | 'overview' | 'suggestions' | 'image';
+  'cards' | 'table' | 'profile' | 'abilities' | 'teams' | 'overview' | 'suggestions' | 'image';
 
 @Component({
   selector: 'app-skeleton',

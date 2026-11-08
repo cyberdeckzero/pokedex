@@ -20,8 +20,11 @@
         }
         <app-pokemon-table
           [selectedId]="currentPokemon()?.id ?? null"
-          [detailOpen]="panelOpen()"
-          (selected)="selectPokemon($event)"
+          [draftIds]="draft.selectedIds()"
+          [draftBusy]="draft.isSubmitting() || draft.teamState().busy"
+          (selected)="featurePokemon($event)"
+          (inspected)="selectPokemon($event)"
+          (added)="draft.addPokemon($event)"
         />
       </div>
       <div class="device__right">

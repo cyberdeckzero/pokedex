@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { test, expect, openCatalogue } from './pokedex.fixture';
+import { test, expect, openCatalogue, catalogueItems } from './pokedex.fixture';
 
 test('browse: search, empty recovery, type, sorting and page sizes use the collection', async ({
   page,
@@ -7,22 +7,24 @@ test('browse: search, empty recovery, type, sorting and page sizes use the colle
 }) => {
   await openCatalogue(page);
   await page.getByLabel('Rows per page').selectOption('25');
-  await expect(page.locator('tbody tr')).toHaveCount(25);
+  await expect(catalogueItems(page)).toHaveCount(25);
   await page.getByRole('button', { name: 'Next page', exact: true }).click();
   await expect(page.locator('.pokedex__page-controls')).toContainText('Page 2');
   await page.getByLabel('Search Pokémon', { exact: true }).fill('pikachu');
-  await expect(page.locator('tbody tr')).toHaveCount(1);
+  await expect(catalogueItems(page)).toHaveCount(1);
   await expect(page.locator('.pokedex__page-controls')).toContainText('Page 1 of 1');
   await page.getByLabel('Search Pokémon', { exact: true }).fill('no-such-pokemon');
   await expect(page.getByText('No Pokémon match your filters')).toBeVisible();
   await page.getByRole('button', { name: 'Clear filters' }).click();
   await page.getByLabel('Type', { exact: true }).selectOption('water');
-  await expect(page.locator('tbody tr')).toHaveCount(4);
-  await page.getByRole('button', { name: 'Sort by Total, descending', exact: true }).click();
-  await expect(page.locator('tbody tr').first()).toContainText('Lapras');
+  await expect(catalogueItems(page)).toHaveCount(4);
+  if ((page.viewportSize()?.width ?? 0) <= 600)
+    await page.getByLabel('Sort Pokémon', { exact: true }).selectOption('total:desc');
+  else await page.getByRole('button', { name: 'Sort by Total, descending', exact: true }).click();
+  await expect(catalogueItems(page).first()).toContainText('Lapras');
   await page.getByLabel('Type', { exact: true }).selectOption('');
   await page.getByLabel('Rows per page').selectOption('50');
-  await expect(page.locator('tbody tr')).toHaveCount(50);
+  await expect(catalogueItems(page)).toHaveCount(50);
   expect(api.teams).toHaveLength(2);
 });
 
@@ -50,7 +52,7 @@ test('accessibility: resting, autocomplete and detail states have no axe AA viol
   await expect(page.getByRole('listbox').getByRole('option')).toHaveCount(3);
   await scan('autocomplete');
   await picker.press('Escape');
-  await page.getByRole('button', { name: 'View details' }).click();
+  await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByText('Strengthens Grass moves')).toBeVisible();
   await scan('detail');
   expect(api.teams).toHaveLength(2);
@@ -66,7 +68,7 @@ test('layout: 320px, tablet, desktop and 200% text keep content and controls usa
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
       .toBe(true);
-    await expect(page.getByRole('button', { name: 'View details' })).toBeInViewport();
+    await expect(page.getByRole('button', { name: 'View details', exact: true })).toBeInViewport();
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
@@ -81,7 +83,7 @@ test('keyboard: details return focus to the opener and keep background focus vis
   api,
 }) => {
   await openCatalogue(page);
-  const inspect = page.getByRole('button', { name: 'View details' });
+  const inspect = page.getByRole('button', { name: 'View details', exact: true });
   await inspect.focus();
   await inspect.press('Enter');
   await expect(page.getByRole('button', { name: 'Close Pokémon details' })).toBeFocused();
@@ -138,7 +140,7 @@ test('autocomplete: all keyboard options stay visible and required membership ca
   expect(fits).toBe(true);
   await picker.press('Enter');
   await expect(page.locator('.builder__chip')).toHaveCount(1);
-  await page.locator('.builder__chip button').click();
+  await page.getByRole('button', { name: /^Remove .* from team$/ }).click();
   await expect(page.locator('.builder__chip')).toHaveCount(0);
   expect(api.teams).toHaveLength(2);
 });
@@ -163,7 +165,7 @@ test('recovery: catalogue and autocomplete show loading/error then Retry succeed
   await page.getByRole('button', { name: 'Retry suggestions' }).click();
   await expect(page.getByRole('option', { name: /Pikachu/ })).toBeVisible();
   await picker.press('Escape');
-  await expect(page.locator('tbody tr')).toHaveCount(10);
+  await expect(catalogueItems(page)).toHaveCount(10);
 });
 
 test('team form: uniqueness, optimistic create/delete, rollback, retry and persistence', async ({
@@ -225,7 +227,7 @@ test('details: failed abilities recover and rapid selections keep the latest cha
 }) => {
   api.detailsError = true;
   await openCatalogue(page);
-  await page.getByRole('button', { name: 'View details' }).click();
+  await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Retry details' })).toBeVisible();
   api.detailsError = false;
   await page.getByRole('button', { name: 'Retry details' }).click();
@@ -233,7 +235,7 @@ test('details: failed abilities recover and rapid selections keep the latest cha
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Next Pokémon', exact: true }).click();
   await page.getByRole('button', { name: 'Next Pokémon', exact: true }).click();
-  await page.getByRole('button', { name: 'View details' }).click();
+  await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByRole('dialog')).toContainText('Venusaur');
   await expect(page.locator('app-pokemon-detail canvas')).toBeVisible();
 });
@@ -245,13 +247,13 @@ test('visual evidence: device, autocomplete, details, loading, error and empty s
   const capture = async (name: string) => {
     await page.screenshot({
       path: testInfo.outputPath(name + '.png'),
-      fullPage: !name.startsWith('details'),
+      fullPage: !name.startsWith('details') && !name.startsWith('mobile-cards'),
       animations: 'disabled',
     });
     if (process.env['AUDIT_CAPTURE'])
       await page.screenshot({
         path: `docs/ui-audit/screenshots/${process.env['AUDIT_CAPTURE']}-${testInfo.project.name}-${name}.png`,
-        fullPage: !name.startsWith('details'),
+        fullPage: !name.startsWith('details') && !name.startsWith('mobile-cards'),
         animations: 'disabled',
       });
   };
@@ -266,6 +268,10 @@ test('visual evidence: device, autocomplete, details, loading, error and empty s
   if ((page.viewportSize()?.width ?? 0) > 1350)
     await expect(page.locator('app-pokemon-scanner canvas')).toBeVisible();
   await capture('home');
+  if ((page.viewportSize()?.width ?? 0) <= 600) {
+    await page.locator('.pokedex__cards').scrollIntoViewIfNeeded();
+    await capture('mobile-cards');
+  }
   for (let index = 0; index < 5; index++)
     await page.getByRole('button', { name: 'Next Pokémon', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Charizard', exact: true })).toBeVisible();
@@ -276,12 +282,15 @@ test('visual evidence: device, autocomplete, details, loading, error and empty s
         .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
     )
     .toBe(true);
-  const activeRow = page.locator('.pokedex__row--selected');
-  await expect(activeRow).toContainText('Charizard');
-  await expect(activeRow.locator('th')).toHaveCSS(
-    'background-color',
-    await activeRow.evaluate((row) => getComputedStyle(row).backgroundColor),
+  const activeRow = page.locator(
+    '.pokedex__scroll:visible .pokedex__row--selected, .pokedex__cards:visible .pokemon-card--selected',
   );
+  await expect(activeRow).toContainText('Charizard');
+  if ((page.viewportSize()?.width ?? 0) > 600)
+    await expect(activeRow.locator('th')).toHaveCSS(
+      'background-color',
+      await activeRow.evaluate((row) => getComputedStyle(row).backgroundColor),
+    );
   await capture('hero-charizard');
   for (let index = 0; index < 5; index++)
     await page.getByRole('button', { name: 'Previous Pokémon', exact: true }).click();
@@ -290,7 +299,7 @@ test('visual evidence: device, autocomplete, details, loading, error and empty s
   await expect(page.getByRole('listbox')).toBeVisible();
   await capture('autocomplete');
   await picker.press('Escape');
-  await page.getByRole('button', { name: 'View details' }).click();
+  await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByText('Strengthens Grass moves')).toBeVisible();
   await capture('details');
   await page.getByRole('heading', { name: 'Abilities', exact: true }).scrollIntoViewIfNeeded();
@@ -313,7 +322,7 @@ test('visual evidence: device, autocomplete, details, loading, error and empty s
   await capture('error');
   api.catalogueError = false;
   await page.getByRole('button', { name: 'Retry Pokédex', exact: true }).click();
-  await expect(page.locator('tbody tr')).toHaveCount(10);
+  await expect(catalogueItems(page)).toHaveCount(10);
 });
 
 test('touch: controls have useful hit areas and inputs avoid small-text zoom', async ({
@@ -326,7 +335,9 @@ test('touch: controls have useful hit areas and inputs avoid small-text zoom', a
   await expect(page.getByLabel('Search Pokémon', { exact: true })).toBeFocused();
   await expect(page.getByLabel('Search Pokémon', { exact: true })).toBeInViewport();
   const sizes = await page
-    .locator('.scanner button, .teams__delete, .button, input, select')
+    .locator(
+      '.scanner button:visible, .teams__delete:visible, .button:visible, input:visible, select:visible',
+    )
     .evaluateAll((elements) =>
       elements.map((element) => ({
         name: element.getAttribute('aria-label') ?? element.textContent?.trim(),
@@ -339,7 +350,7 @@ test('touch: controls have useful hit areas and inputs avoid small-text zoom', a
     expect(size.height, size.name ?? '').toBeGreaterThanOrEqual(44);
   }
   for (const size of await page
-    .locator('input,select')
+    .locator('input:visible,select:visible')
     .evaluateAll((elements) =>
       elements.map((element) => parseFloat(getComputedStyle(element).fontSize)),
     ))
@@ -392,7 +403,7 @@ test('motion: chart updates in place and the drawer changes modality across size
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await openCatalogue(page);
-  await page.getByRole('button', { name: 'View details' }).click();
+  await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveAttribute('aria-modal', 'false');
   const canvas = await page.locator('app-pokemon-detail canvas').elementHandle();
   const before = await page

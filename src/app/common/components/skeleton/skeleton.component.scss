@@ -27,6 +27,13 @@
     opacity: 0.65;
     animation: shimmer 1.6s ease-in-out infinite;
   }
+  &__card {
+    padding: 16px;
+    display: grid;
+    gap: 14px;
+    border: 1px solid var(--screen-line);
+    border-radius: 10px;
+  }
   &__copy {
     display: grid;
     gap: 12px;

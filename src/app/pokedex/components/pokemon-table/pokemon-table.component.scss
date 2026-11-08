@@ -23,7 +23,6 @@
     background: var(--screen-deep);
     border-radius: 6px;
     padding: 5px 8px;
-    font: 0.875rem var(--font-data);
   }
   &__filters {
     display: grid;
@@ -32,7 +31,9 @@
     padding: 15px 18px 18px;
     background: var(--screen-deep);
   }
-  &__scroll-hint {
+  &__cards,
+  &__mobile-sort,
+  &__mobile-skeleton {
     display: none;
   }
   &__body {
@@ -99,9 +100,6 @@
       padding: 5px 0;
       background: transparent;
       color: inherit;
-      span {
-        color: var(--screen-ink);
-      }
       &:hover {
         color: #051f18;
       }
@@ -112,7 +110,7 @@
       width: 62px;
     }
     tbody tr {
-      height: 56px;
+      animation: catalogue-in 150ms ease-out;
     }
     tbody tr:hover {
       background: var(--screen-deep);
@@ -178,23 +176,31 @@
       width: 62px;
     }
   }
-  &__page-controls .button {
-    width: 34px;
-  }
   @media (max-width: 600px) {
-    &__scroll-hint {
+    &__scroll {
+      display: none;
+    }
+    &__mobile-sort,
+    &__mobile-skeleton {
       display: block;
-      margin: 0;
-      padding: 0 12px 12px;
-      background: var(--screen-deep);
-      color: var(--screen-muted);
+    }
+    &__desktop-skeleton {
+      display: none;
+    }
+    &__search {
+      grid-column: 1 / -1;
+    }
+    &__cards {
+      display: grid;
+      gap: 12px;
+      padding: 12px;
     }
     &__heading {
       padding: 14px 12px 12px;
     }
     &__filters {
       padding: 12px;
-      grid-template-columns: minmax(100px, 1fr) 100px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 9px;
     }
     &__pagination {
