@@ -1,6 +1,6 @@
 # Pokédex UI/UX audit
 
-See the [reference dashboard implementation](REFERENCE.md) for the latest visual system, screenshots, and verification.
+See the [interaction follow-up](INTERACTIONS.md) for the latest mobile cards, drag-and-drop, coverage, persistence, screenshots, and verification.
 
 The [8 November flow and loading follow-up](POLISH.md) records the subsequent critique fixes and current screenshots. This page preserves the initial audit.
 

@@ -40,7 +40,7 @@ The portrait interactions are original Angular implementations of these patterns
 - Screens use a single subtle border, 12px corners, and pale mint content surfaces. The featured-entry hero uses `#0c3028`, with pale technical labels and a teal radar chart.
 - Flat buttons use restrained hover/press feedback, visible focus, and sufficiently large hit areas. Primary actions use Pokédex red with white text; active squads use a green outline, mint fill, and explicit Selected badge.
 - Type badges retain their recognizable colors with dark, contrasting text.
-- The catalogue retains the complete stat table, accessible sort buttons, and client pagination. Its screen scrolls horizontally on narrow displays.
+- The desktop catalogue retains its complete stat table, accessible sort buttons, and client pagination. Below 600px, compact cards expose all six stats in an expandable section, with a separate sort select. Selection updates the hero; opening details is an explicit action.
 - Saved squads, the active-team overview, and the builder occupy three distinct panels. Larger sprites strengthen squad identity; the builder and autocomplete share the control vocabulary.
 - The detail drawer repeats the enclosure, screen, portrait, and radar materials. It reserves space on wide screens and becomes a native modal below 1200px.
 - Form controls share a font-size token; touch controls target 44px, with 16px input/select text. The device search control focuses the catalogue search on every viewport.
@@ -48,8 +48,12 @@ The portrait interactions are original Angular implementations of these patterns
 
 ## Motion and accessibility
 
-Portrait tilt is limited to five degrees and is enabled only for a mouse pointer without reduced-motion preference. Content-shaped skeletons replace spinner-only and pixel-flash states. Shimmer uses a 1.6-second CSS transform loop with a static reduced-motion alternative. Loading, empty, and error remain distinct. Buttons respond in 120–180 ms. The chart retains its 600 ms data animation and respects reduced motion.
+A keyed artwork area gives each selection a single 450 ms scanner sweep. Loaded images fade/settle over 200 ms. New catalogue entries fade in over 150 ms and stat bars animate for 300 ms; no transition delays input. Portrait tilt is limited to five degrees and is enabled only for a mouse pointer without reduced-motion preference. Content-shaped skeletons replace spinner-only and pixel-flash states. Shimmer uses a 1.6-second CSS transform loop with a static reduced-motion alternative. Loading, empty, and error remain distinct. Buttons respond in 120–180 ms. The chart retains its 600 ms data animation and respects reduced motion.
 
 All original loading/empty/error/Retry/success states, keyboard interaction, form feedback, drawer Escape handling, and focus return remain required. Every focusable control performs a real action. Decorative lenses, screws, vents, and hinges are hidden from assistive technology.
 
 The mobile hero keeps artwork, identity, and primary actions visible, with 44px search and previous/next controls below. Measurements and the second radar remain available in details. On wide screens the hero shows all three measurements and a radar with exact values. Plus adds the current entry to the shared draft. Meaningful helper text uses at least 14px. Horizontal table scrolling pins the name/number column, and autocomplete uses a positioned native popover that can open above the input.
+
+## Team interactions
+
+Drag-to-copy entries into the draft and drag handles to reorder members use Angular CDK. Every reorder has labeled keyboard buttons and a focused-slot Alt+Arrow alternative, with focus restored after DOM movement. Drop targets reject duplicates, full drafts, and busy mutations. Offensive/defensive summaries use counted type chips with explanatory labels and explicit calculation limits. Saved teams persist through the existing mock server's disk-backed launcher.

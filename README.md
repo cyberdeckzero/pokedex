@@ -35,6 +35,7 @@ npm test               # Angular CLI + Vitest, one deterministic run; no live ne
 npm run format:check   # Prettier; no separate ESLint setup
 npm run test:e2e       # Playwright desktop/mobile Chromium; isolated fixtures
 npm run check:mock     # live schema introspection + create/read/delete; cleans its test team
+npm run check:mock-persistence # isolated restart, empty-schema and failed-write checks
 npm run check:poke     # live pagination, seeded-team IDs, stats/sprites, and abilities
 ```
 
@@ -59,11 +60,19 @@ The compact red header, cyan lens, dark featured-Pokémon hero, and pale mint sc
 
 Portraits use official PokéAPI artwork, then the cached sprite and a local fallback. Bounded pointer tilt adapts the React Bits portrait pattern to Angular. The pixel transition was removed; shaped skeletons use a restrained CSS shimmer and become static with reduced motion. Fonts and their licenses are included locally.
 
-The [reference dashboard implementation](docs/ui-audit/REFERENCE.md) includes current desktop/mobile screenshots and verification.
+The [interaction follow-up](docs/ui-audit/INTERACTIONS.md) includes current desktop/mobile screenshots and verification.
 
-[DESIGN.md](DESIGN.md) records the Behance, Dribbble, and React Bits references, tokens, and component decisions. Narrow screens stack the device halves and keep the complete stats table horizontally scrollable.
+[DESIGN.md](DESIGN.md) records the Behance, Dribbble, and React Bits references, tokens, and component decisions. Below 600px, compact Pokémon cards replace the table. Each card offers selection, Details, Add to team, and expandable six-stat bars. A mobile sort select exposes all seven stat sorts in both directions. Wider layouts retain the complete horizontally scrollable table.
 
 The [flow and loading follow-up](docs/ui-audit/POLISH.md) addresses the critique: Add to draft from details, draft restoration, guarded deletion, pinned mobile names, compact hardware, readable helper text, viewport-positioned suggestions, and shaped skeletons throughout. Chart.js loads when the wide-screen hero enters the viewport or details open. Both charts update with selection; chart download failures offer reload while exact stats remain available.
+
+## Selection, team slots and type coverage
+
+Selecting a row or card updates the featured entry; View details opens the drawer explicitly. Loaded artwork fades in over 200 ms, a single scanner sweep marks selection, and stat bars/results use short transitions. All motion respects reduced motion. Images keep reserved dimensions, async decoding, lazy sprite loading, and bounded fallbacks.
+
+Angular CDK 21.2.14 supplies connected drag lists and touch hold behavior. Drag a catalogue entry/card into team slots to copy it; drag a selected member's handle to reorder. Original catalogue arrays remain unchanged. Duplicate/full/busy drops are rejected. Move earlier/later buttons and Alt+ArrowUp/Down on a focused slot provide keyboard equivalents, keep focus after reordering, and announce the new position. Draft order persists and is sent to the server unchanged.
+
+Coverage summaries appear for both the selected saved team and the draft. Offensive strengths count members whose native types can hit a target type super effectively; defensive weaknesses count members taking more than normal damage after multiplying both defensive types, including immunities. They use a bundled snapshot of [PokéAPI's type efficacy data](https://github.com/PokeAPI/pokeapi/blob/master/data/v2/csv/type_efficacy.csv), interpreted using the [official damage-relation documentation](https://pokeapi.co/docs/v2#types). This avoids extra runtime requests. These are standard type matchups, not a battle simulator: moves, abilities, held items, and Terastallization are excluded. Unknown/special types are explicitly excluded.
 
 ## Fetching and pagination tradeoff
 
@@ -84,20 +93,20 @@ createTeam(trainer_id: ID!, name: String!, pokemon_ids: [Int]!, created_at: Stri
 removeTeam(id: ID!): Team
 ```
 
-Team queries use 100-record pages because the generated `allTeams` resolver defaults to 25. The mock stores changes **in memory only**: app reloads retain them while the server runs; restarting the mock restores the seed. The selected team ID and unfinished team name/member draft are stored in localStorage. The shared typed draft form is the single source of truth for picker and detail additions. Valid stored IDs hydrate independently; failures show Retry and block saving until members load. Successful saving clears the draft; failed saving preserves it. Delete uses explicit confirmation before its existing optimistic flow. Restoration waits for teams, ignores invalid IDs, handles deletion, and tolerates unavailable storage. Optimistic deletes do not overwrite the saved selection before their outcome is known.
+Team queries use 100-record pages because the generated `allTeams` resolver defaults to 25. `npm run mock` runs the pinned json-graphql-server through a small disk-persistence launcher. Successful mutations write `mock/data.local.json` atomically before the response finishes. Creates and deletes survive app and server restarts. Failed disk writes restore the prior in-memory data and fail the request so the optimistic UI rolls back. The generated schema is inferred from the supplied seed before loading saved records, so deleting every team does not remove fields on restart. Local data and migration backups are ignored by Git. On first start the file is seeded from `mock/db.cjs`; to reset deliberately, stop the mock, remove the local data file, and restart. A malformed file fails startup instead of silently erasing data. `POKEDEX_DATA_FILE` and `POKEDEX_MOCK_PORT` allow isolated checks. The selected team ID and unfinished team name/member draft are stored in localStorage. The shared typed draft form is the single source of truth for picker and detail additions. Valid stored IDs hydrate independently; failures show Retry and block saving until members load. Successful saving clears the draft; failed saving preserves it. Delete uses explicit confirmation before its existing optimistic flow. Restoration waits for teams, ignores invalid IDs, handles deletion, and tolerates unavailable storage. Optimistic deletes do not overwrite the saved selection before their outcome is known.
 
 ## Manual recovery checklist
 
 1. With both servers running, browse/search, try a nonsense search, filter by type, toggle each stat sort, and change pages/sizes. Confirm the result counts and page reset.
-2. Select rows quickly with details open; check that the name, abilities, and animated radar reflect the latest selection. Test keyboard opening, Escape, focus return, and horizontal table scrolling on a narrow screen.
+2. Select rows/cards quickly: the hero and its artwork update without forcing the drawer open. Open View details, then check latest abilities/radar, Escape and focus return. On phones expand all six stats and use the Sort Pokémon control.
 3. Enter a duplicate team name with different case/spacing. Add/remove Pokémon using keyboard autocomplete; verify empty teams, duplicates, and more than six cannot be saved.
 4. In browser DevTools, throttle and block the PokéAPI URL during a fresh load and when opening uncached details. To test autocomplete failure, reload with the catalogue unavailable before typing. Wait for bounded retries to finish; each affected view should show an error rather than “No results.” Unblock it and use Retry without changing the input/selection. A completed cache should remain searchable offline.
 5. Stop the mock, reload teams, then restart it and use Retry. Enter a name before recovery; it should be revalidated when teams load.
-6. After teams load, stop the mock and save/delete a team. Confirm immediate pending/removal, rollback, visible failure feedback, and retained form choices. Restart the mock and retry. Restarting resets all mock changes, so use DevTools request blocking instead when testing several successful mutations followed by a failed one.
+6. After teams load, stop the mock and save/delete a team. Confirm immediate pending/removal, rollback, visible failure feedback, and retained form choices. Restart the mock and retry. Restarting preserves saved changes. Use DevTools request blocking to exercise several successful mutations followed by a failed one.
 7. Select a team and reload the app. Delete the selected team successfully and check the fallback selection. Repeat with a failed delete; the original selection should remain. Disable localStorage and check that the app still works.
 
 ## Verification and limits
 
-See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 50 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. The [UI/UX audit](docs/ui-audit/README.md) includes before/after screenshots and 34 passing Playwright checks across desktop and mobile Chromium. Axe found no AA-rule violations in the tested states. Real-device, screen-reader, cross-browser, and actual disconnected/throttled checks remain manual. The application does not substitute fixture data during an API outage.
+See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 53 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. The [UI/UX audit](docs/ui-audit/README.md) includes before/after screenshots and 40 passing Playwright checks across desktop and mobile Chromium. Axe found no AA-rule violations in the tested states. Real-device, screen-reader, cross-browser, and actual disconnected/throttled checks remain manual. The application does not substitute fixture data during an API outage.
 
-With more time: extend the browser suite to Firefox/WebKit, test with assistive technologies and actual phones, measure low-end device performance, and, if catalogue size grows substantially, move global querying/pagination to the API. For a real multi-user backend, enforce uniqueness server-side and reconcile ambiguous mutation timeouts before resubmission. No optional bonus or unrelated feature is included.
+With more time: extend the browser suite to Firefox/WebKit, test with assistive technologies and actual phones, measure low-end device performance, and, if catalogue size grows substantially, move global querying/pagination to the API. For a real multi-user backend, enforce uniqueness server-side and reconcile ambiguous mutation timeouts before resubmission. These requested interactions are kept within the existing feature structure.
