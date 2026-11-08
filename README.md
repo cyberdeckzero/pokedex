@@ -49,17 +49,19 @@ Before the first browser test run, install Chromium with `npx playwright install
 - `pokedex/state/pokemon.selectors.ts` combines collection, search, type, sort, and page options. Filtering and immutable sorting happen before pagination. Shared derived streams use `shareReplay({bufferSize: 1, refCount: true})`.
 - `teams/state/team.store.ts` owns teams and explicit load/mutation status. Creates add a temporary pending team; successful responses replace it. Failed creates remove that item, and failed deletes restore only the affected team. Mutations are serialized, reloads are blocked during mutations, and creates are never retried automatically.
 - Standalone OnPush components use `inject()`, `input()`/`output()`, typed Reactive Forms, and modern template control flow. `toSignal()` subscriptions are created once per component and cleaned up with it. RxJS handles requests and cancellation; Signals handle local interaction, submission state, computed team totals/type counts, and selection persistence.
-- `common/` holds only shared request models and GraphQL error handling. SCSS uses BEM names and CSS custom properties. Chart.js provides a six-axis radar chart, updates the existing instance with a 600 ms animation, respects reduced motion, and destroys the instance on close.
+- `common/` holds shared request models, GraphQL error handling, and the shaped skeleton component. SCSS uses BEM names and CSS custom properties. Chart.js provides a six-axis radar chart, updates the existing instance with a 600 ms animation, respects reduced motion, and destroys the instance on close.
 
 The detail panel is **non-modal on wide screens** (1200px and above), with room reserved so it does not cover the app. On narrower screens it uses a native modal dialog to keep background controls out of the tab order. It focuses its close button on opening, closes on Escape, and returns focus to the opener, with a row/search fallback when needed. The autocomplete supports arrows, Enter, Escape, and Tab.
 
 ## Pokédex device interface
 
-The red enclosure, cyan lens, green LCD screens, hinge, and tactile controls carry through the catalogue, team roster, builder, autocomplete, and detail drawer. The D-pad steps through the cached national catalogue, focuses search, or focuses the team builder. Inspect an entry to open its stats, abilities, and animated radar.
+The red enclosure, cyan lens, green LCD screens, hinge, and tactile controls carry through the catalogue, team roster, builder, autocomplete, and detail drawer. The D-pad steps through the cached national catalogue, focuses search, or adds the displayed Pokémon to the team draft. Inspect an entry to open its stats, abilities, and animated radar.
 
-Portraits use official PokéAPI artwork, then the cached sprite and a local fallback. Bounded pointer tilt and a short pixel transition adapt React Bits interaction patterns to Angular without adding React or an animation library. Reduced-motion preferences disable these effects. Fonts and their licenses are included locally.
+Portraits use official PokéAPI artwork, then the cached sprite and a local fallback. Bounded pointer tilt adapts the React Bits portrait pattern to Angular. The pixel transition was removed; shaped skeletons use a restrained CSS shimmer and become static with reduced motion. Fonts and their licenses are included locally.
 
 [DESIGN.md](DESIGN.md) records the Behance, Dribbble, and React Bits references, tokens, and component decisions. Narrow screens stack the device halves and keep the complete stats table horizontally scrollable.
+
+The [flow and loading follow-up](docs/ui-audit/POLISH.md) addresses the critique: Add to draft from details, draft restoration, guarded deletion, pinned mobile names, compact hardware, readable helper text, viewport-positioned suggestions, and shaped skeletons throughout. Chart.js loads only when details need the chart; a chunk-load failure keeps exact stats visible and offers Reload page.
 
 ## Fetching and pagination tradeoff
 
@@ -80,7 +82,7 @@ createTeam(trainer_id: ID!, name: String!, pokemon_ids: [Int]!, created_at: Stri
 removeTeam(id: ID!): Team
 ```
 
-Team queries use 100-record pages because the generated `allTeams` resolver defaults to 25. The mock stores changes **in memory only**: app reloads retain them while the server runs; restarting the mock restores the seed. The selected team ID alone is stored in localStorage. Restoration waits for teams, ignores invalid IDs, handles deletion, and tolerates unavailable storage. Optimistic deletes do not overwrite the saved selection before their outcome is known.
+Team queries use 100-record pages because the generated `allTeams` resolver defaults to 25. The mock stores changes **in memory only**: app reloads retain them while the server runs; restarting the mock restores the seed. The selected team ID and unfinished team name/member draft are stored in localStorage. The shared typed draft form is the single source of truth for picker and detail additions. Valid stored IDs hydrate independently; failures show Retry and block saving until members load. Successful saving clears the draft; failed saving preserves it. Delete uses explicit confirmation before its existing optimistic flow. Restoration waits for teams, ignores invalid IDs, handles deletion, and tolerates unavailable storage. Optimistic deletes do not overwrite the saved selection before their outcome is known.
 
 ## Manual recovery checklist
 
@@ -94,6 +96,6 @@ Team queries use 100-record pages because the generated `allTeams` resolver defa
 
 ## Verification and limits
 
-See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 34 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. The [UI/UX audit](docs/ui-audit/README.md) includes before/after screenshots and 26 passing Playwright checks across desktop and mobile Chromium. Axe found no AA-rule violations in the tested states. Real-device, screen-reader, cross-browser, and actual disconnected/throttled checks remain manual. The application does not substitute fixture data during an API outage.
+See [verification notes](docs/verification.md) for commands and observed results. The `v1beta2` endpoint was verified live without authentication: paginated catalogue data, types, six stats, sprites, all 12 default-trainer seed IDs, and English ability descriptions passed. All 50 unit/DOM tests use mocked network access, including migration response shapes, full form/create/delete recovery, and stale responses. The [UI/UX audit](docs/ui-audit/README.md) includes before/after screenshots and 34 passing Playwright checks across desktop and mobile Chromium. Axe found no AA-rule violations in the tested states. Real-device, screen-reader, cross-browser, and actual disconnected/throttled checks remain manual. The application does not substitute fixture data during an API outage.
 
 With more time: extend the browser suite to Firefox/WebKit, test with assistive technologies and actual phones, measure low-end device performance, and, if catalogue size grows substantially, move global querying/pagination to the API. For a real multi-user backend, enforce uniqueness server-side and reconcile ambiguous mutation timeouts before resubmission. No optional bonus or unrelated feature is included.

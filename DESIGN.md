@@ -13,7 +13,7 @@ The scene is a Pokémon fan comparing entries on a laptop or phone, in normal in
 - [Dribbble — Pokémon / Pokédex Website Redesign Concept, AC1design](https://dribbble.com/shots/15128634-Pokemon-Pokedex-Website-Redesign-Concept): desktop Pokédex information layout and muted display colors.
 - [Dribbble — Mobile Pokédex App Design Exploration, Sulis Triyono](https://dribbble.com/shots/16833947-Mobile-Pokedex-App-Design-Exploration): compact entry hierarchy and readable mobile presentation.
 - [React Bits — Tilted Card](https://reactbits.dev/components/tilted-card): bounded pointer tilt and layered portrait depth.
-- [React Bits — Pixel Transition](https://reactbits.dev/animations/pixel-transition): a brief pixel overlay marks a change of displayed Pokémon.
+- React Bits Pixel Transition was explored in the initial design; the pixel overlay was subsequently removed to avoid distracting loading flashes.
 
 The portrait interactions are original Angular implementations of these patterns. No React runtime, copied commercial asset, or animation dependency is required. Reference artwork is not redistributed in the application.
 
@@ -46,6 +46,8 @@ The portrait interactions are original Angular implementations of these patterns
 
 ## Motion and accessibility
 
-Portrait tilt is limited to five degrees and is enabled only for a mouse pointer without reduced-motion preference. A brief, non-blocking pixel overlay marks entry changes; content is never hidden waiting for animation. Buttons respond in 120–180 ms. The chart retains its 600 ms data animation and respects reduced motion.
+Portrait tilt is limited to five degrees and is enabled only for a mouse pointer without reduced-motion preference. Content-shaped skeletons replace spinner-only and pixel-flash states. Shimmer uses a 1.6-second CSS transform loop with a static reduced-motion alternative. Loading, empty, and error remain distinct. Buttons respond in 120–180 ms. The chart retains its 600 ms data animation and respects reduced motion.
 
 All original loading/empty/error/Retry/success states, keyboard interaction, form feedback, drawer Escape handling, and focus return remain required. Every focusable control performs a real action. Decorative lenses, screws, vents, and hinges are hidden from assistive technology.
+
+The mobile scanner is compact so search and initial rows are visible sooner. Its 22px SVG icons retain 44px controls; plus adds the current entry to the team draft. Meaningful helper text uses at least 14px. Horizontal table scrolling pins the name/number column, and autocomplete uses a positioned native popover that can open above the input.

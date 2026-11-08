@@ -17,6 +17,16 @@ Verified locally on 7 November 2026 (Asia/Kolkata), with Node 22.14.0 and npm 11
 | `npm run check:poke`                                    | Passed against public `v1beta2`: pagination/count, six stats/types/sprites, all 12 default-trainer seed IDs, and regular/hidden abilities with English descriptions. |
 | Browser inventory                                       | Native browser host unavailable; local Playwright Chromium subsequently launched and completed the UI audit.                                                         |
 
+## 8 November flow and loading follow-up
+
+The current follow-up uses the same Node/npm setup. `npm test` passed **50 tests across 16 files**. `npm run test:e2e` passed **34 checks across desktop/mobile Chromium**, using isolated GraphQL/image fixtures on its own production-configuration server at port 4300. Existing app/mock servers were preserved.
+
+`npm run build` passed without budget warnings: approximately **353 kB initial / 92 kB estimated transfer**, plus a deferred chart chunk of approximately **160 kB / 50 kB transfer**. `npx tsc --project e2e/tsconfig.json`, `npm run format:check`, and `git diff --check` passed. No separate lint target is configured.
+
+New checks cover inspect-to-draft additions, duplicate control disabling, refresh restoration, invalid/unavailable storage, failed draft hydration and Retry, save guards, successful-save clearing, deliberate deletion/cancellation, pinned mobile identity, visible initial suggestions, shaped loading placeholders, stable table height, and reduced motion. Keyboard Escape from suggestion error feedback is also covered. `AUDIT_CAPTURE=polish npm run test:e2e -- --grep 'visual evidence'` also passed both projects and refreshed fourteen captures linked in the [follow-up report](ui-audit/POLISH.md).
+
+An intermediate browser run was invalidated by a source-triggered development-server reload during autocomplete entry; its trace showed a second page initialization clearing the input. Final verification ran with source files unchanged. The original audit and endpoint checks below remain historical records; this follow-up did not change API operations or re-run live mutations against user data.
+
 ## Behaviors covered by automated tests
 
 - Optimistic create rollback, temporary-record replacement, duplicate-submission guards, delete rollback that preserves an earlier successful create, and load recovery.
