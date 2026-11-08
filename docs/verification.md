@@ -1,6 +1,28 @@
 # Verification record
 
-Verified locally on 7 November 2026 (Asia/Kolkata), with Node 22.14.0 and npm 11.6.4. This records executed checks, not a claim of browser certification.
+Latest assessment verification: **8 November 2026**, with Node 22.14.0 and npm 11.6.4 (Asia/Kolkata). Older dated sections below preserve earlier snapshots; their smaller test counts and former mock-reset behavior do not describe the current version. This records executed checks, not browser certification.
+
+## 8 November final assessment audit
+
+See [assessment-audit.md](assessment-audit.md) for the complete requirement matrix and the selected CDK drag-and-drop bonus. The PDF and developer guide were read completely. Row clicks once again open details as required, and team overview loading reserves space so the builder remains stable.
+
+| Command / check                                                                   | Observed result                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run build`                                                                   | Passed without budget warnings; 433.49 kB initial / 109.97 kB estimated transfer, deferred radar 160.50 kB / 49.85 kB transfer.                                                                                |
+| `npm test`                                                                        | All **59 tests across 17 files** passed with mocked network access.                                                                                                                                            |
+| `npm run test:e2e`                                                                | All **46 checks** passed across desktop/mobile Chromium (1.8 minutes), through a test-owned production-configuration `ng serve` process.                                                                       |
+| `npm run check:poke`                                                              | Passed against the actual public endpoint without authentication: 1,351 records, pagination/types/six stats/sprites, all 12 Ash-team seed IDs, normal/hidden abilities and English descriptions.               |
+| `npm run check:mock`                                                              | Actual port-4000 schema, `ID!` mutation arguments, team query, create/read/delete and cleanup passed. The existing local database contained four teams; all three original seed teams remain in `mock/db.cjs`. |
+| `npm run check:mock-persistence`                                                  | Isolated file/port checks passed for create/delete restart persistence, empty saved database schema and failed-write rollback.                                                                                 |
+| `npm run format:check`, `npx tsc --project e2e/tsconfig.json`, `git diff --check` | All passed; no separate ESLint target is configured.                                                                                                                                                           |
+| Running development app                                                           | HTTP GET on port 4200 returned 200 with the Angular application root.                                                                                                                                          |
+| Visual inspection                                                                 | Inspected fresh desktop home and mobile-card captures from the full suite. The suite also captured hero, suggestions, detail/abilities, loading, empty and error states.                                       |
+
+The team-reload regression asserts that the builder moves at most two CSS pixels between success/loading/success. Bonus tests cover copying without source removal, duplicate/full/busy rejection, pointer and keyboard reordering, focus, draft restoration and submitted member order. All 15 components meet standalone/OnPush/separate-template-and-style conventions, and all 18 public service/store methods have JSDoc. Existing conventional commit messages passed commitlint validation.
+
+Current live API checks succeeded, superseding the earlier terminal 403 availability limitation recorded below. Real hardware touch, screen readers, Firefox/WebKit, real network throttling/disconnection and low-end frame rates remain manual. No Git remote exists and nothing was published; GitHub delivery remains pending authorization.
+
+## Original 7 November setup verification
 
 | Check                                                   | Observed result                                                                                                                                                      |
 | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -40,8 +40,9 @@ The portrait interactions are original Angular implementations of these patterns
 - Screens use a single subtle border, 12px corners, and pale mint content surfaces. The featured-entry hero uses `#0c3028`, with pale technical labels and a teal radar chart.
 - Flat buttons use restrained hover/press feedback, visible focus, and sufficiently large hit areas. Primary actions use Pokédex red with white text; active squads use a green outline, mint fill, and explicit Selected badge.
 - Type badges retain their recognizable colors with dark, contrasting text.
-- The desktop catalogue retains its complete stat table, accessible sort buttons, and client pagination. Below 600px, compact cards expose all six stats in an expandable section, with a separate sort select. Selection updates the hero; opening details is an explicit action.
-- Saved squads, the active-team overview, and the builder occupy three distinct panels. Larger sprites strengthen squad identity; the builder and autocomplete share the control vocabulary.
+- The desktop catalogue retains its complete stat table, accessible sort buttons, and client pagination. Below 600px, compact cards expose all six stats in an expandable section, with a separate sort select. Selecting the name opens details and updates the hero.
+- Row selection opens the detail panel and updates the featured entry. Hero previous/next controls preview entries without opening it.
+- Saved squads, the active-team overview, and the builder occupy three distinct panels. Saved-team and overview regions reserve height during reloads and scroll for overflow, keeping the builder stable. Larger sprites strengthen squad identity; the builder and autocomplete share the control vocabulary.
 - The detail drawer repeats the enclosure, screen, portrait, and radar materials. It reserves space on wide screens and becomes a native modal below 1200px.
 - Form controls share a font-size token; touch controls target 44px, with 16px input/select text. The device search control focuses the catalogue search on every viewport.
 - Muted display ink is `#4b6255`; opacity is not used to fade informative text.
