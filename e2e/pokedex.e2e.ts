@@ -63,14 +63,16 @@ test('layout: 320px, tablet, desktop and 200% text keep content and controls usa
   await openCatalogue(page);
   for (const width of [320, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-      true,
-    );
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+      .toBe(true);
     await expect(page.getByRole('button', { name: 'Inspect entry' })).toBeInViewport();
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+    .toBe(true);
   expect(api.teams).toHaveLength(2);
 });
 
@@ -151,6 +153,12 @@ test('recovery: catalogue and autocomplete show loading/error then Retry succeed
   const picker = page.getByRole('combobox', { name: 'Add Pokémon' });
   await picker.fill('pika');
   await expect(page.getByRole('button', { name: 'Retry suggestions' })).toBeVisible();
+  const retrySuggestions = page.getByRole('button', { name: 'Retry suggestions' });
+  await retrySuggestions.focus();
+  await retrySuggestions.press('Escape');
+  await expect(picker).toBeFocused();
+  await expect(picker).toHaveAttribute('aria-expanded', 'false');
+  await picker.press('ArrowDown');
   api.catalogueError = false;
   await page.getByRole('button', { name: 'Retry suggestions' }).click();
   await expect(page.getByRole('option', { name: /Pikachu/ })).toBeVisible();
@@ -190,6 +198,7 @@ test('team form: uniqueness, optimistic create/delete, rollback, retry and persi
   await expect(page.getByRole('button', { name: 'Field researchers', exact: true })).toBeEnabled();
   api.deleteError = true;
   await page.getByRole('button', { name: 'Delete team Field researchers' }).click();
+  await page.getByRole('button', { name: 'Confirm delete team Field researchers' }).click();
   await expect(page.getByText(/It has been restored/)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Field researchers', exact: true })).toBeVisible();
   api.deleteError = false;
@@ -350,9 +359,9 @@ test('edge content: a valid 30-character team name never widens the page', async
   await expect(page.getByRole('button', { name, exact: true })).toBeVisible();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-      true,
-    );
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+      .toBe(true);
   }
 });
 

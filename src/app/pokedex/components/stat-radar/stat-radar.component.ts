@@ -81,11 +81,11 @@ export class StatRadarComponent {
               angleLines: { color: color('--chart-grid', '#9eb28e') },
               pointLabels: {
                 color: color('--chart-label', '#3e5846'),
-                font: { size: 11, family: 'IBM Plex Mono, monospace' },
+                font: { size: 14, family: 'IBM Plex Mono, monospace' },
               },
             },
           },
-          plugins: { tooltip: { enabled: true } },
+          plugins: { tooltip: { enabled: true, bodyFont: { size: 14 }, titleFont: { size: 14 } } },
         },
       });
     });

@@ -10,10 +10,12 @@ import {
 } from '@angular/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { SPRITE_FALLBACK } from '../../constants/pokemon.constants';
+import { SkeletonComponent } from '../../../common/components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-pokemon-portrait',
   standalone: true,
+  imports: [SkeletonComponent],
   templateUrl: './pokemon-portrait.component.html',
   styleUrl: './pokemon-portrait.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +29,6 @@ export class PokemonPortraitComponent {
   private readonly pokemonId = computed(() => this.pokemon().id);
   readonly tilt = signal({ x: 0, y: 0 });
   private readonly failedImages = signal(0);
-  readonly pixels = Array.from({ length: 48 }, (_, index) => index);
   readonly imageUrl = computed(() => {
     if (this.failedImages() >= 2) return SPRITE_FALLBACK;
     if (this.failedImages() === 1) return this.pokemon().sprite || SPRITE_FALLBACK;

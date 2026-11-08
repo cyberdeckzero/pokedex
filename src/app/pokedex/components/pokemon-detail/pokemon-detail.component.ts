@@ -1,3 +1,4 @@
+import { SkeletonComponent } from '../../../common/components/skeleton/skeleton.component';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -31,6 +32,7 @@ import { StatRadarComponent } from '../stat-radar/stat-radar.component';
     PokemonPortraitComponent,
     TypeBadgesComponent,
     StatRadarComponent,
+    SkeletonComponent,
   ],
   templateUrl: './pokemon-detail.component.html',
   styleUrl: './pokemon-detail.component.scss',
@@ -40,6 +42,10 @@ import { StatRadarComponent } from '../stat-radar/stat-radar.component';
 export class PokemonDetailComponent {
   readonly pokemon = input.required<Pokemon>();
   readonly close = output<void>();
+  readonly addToDraft = output<void>();
+  readonly addLabel = input('Add to team draft');
+  readonly canAdd = input(true);
+  readonly draftCount = input(0);
   readonly modal = signal(false);
   private readonly destroyRef = inject(DestroyRef);
   private readonly panel = viewChild<ElementRef<HTMLDialogElement>>('panel');
@@ -110,6 +116,9 @@ export class PokemonDetailComponent {
   requestClose(): void {
     this.panel()?.nativeElement.close();
     this.close.emit();
+  }
+  reloadPage(): void {
+    window.location.reload();
   }
   retry(): void {
     this.retryRequests.next();

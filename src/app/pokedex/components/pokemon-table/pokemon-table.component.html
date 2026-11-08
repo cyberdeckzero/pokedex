@@ -2,7 +2,6 @@
   <header class="pokedex__heading">
     <div>
       <h2 id="pokedex-title">Pokédex</h2>
-      <p>Find your next team member.</p>
     </div>
     <span class="pokedex__count"
       >{{
@@ -41,15 +40,15 @@
   >
     @switch (catalogue().status) {
       @case ('idle') {
-        <div class="status pokedex__status" role="status">
-          <span class="spinner" aria-hidden="true"></span>
-          <p>Preparing your Pokédex…</p>
+        <div class="status pokedex__status pokedex__status--loading" role="status">
+          <app-skeleton kind="table" />
+          <p class="visually-hidden">Preparing your Pokédex…</p>
         </div>
       }
       @case ('loading') {
-        <div class="status pokedex__status" role="status">
-          <span class="spinner" aria-hidden="true"></span>
-          <p>Loading the Pokémon catalogue…</p>
+        <div class="status pokedex__status pokedex__status--loading" role="status">
+          <app-skeleton kind="table" />
+          <p class="visually-hidden">Loading the Pokémon catalogue…</p>
           @if (catalogue().total) {
             <progress
               [value]="catalogue().items.length"
@@ -68,7 +67,7 @@
       }
       @case ('success') {
         @if (!page().total) {
-          <div class="status pokedex__status" role="status">
+          <div class="status pokedex__status pokedex__status--loading" role="status">
             <h3>
               {{
                 catalogue().items.length
@@ -117,7 +116,18 @@
                           (ariaSort(stat.key) === 'descending' ? 'ascending' : 'descending')
                         "
                       >
-                        {{ stat.label }}
+                        <abbr
+                          [title]="
+                            stat.key === 'special-attack'
+                              ? 'Special Attack'
+                              : stat.key === 'special-defense'
+                                ? 'Special Defense'
+                                : stat.key === 'hp'
+                                  ? 'Hit Points'
+                                  : stat.label
+                          "
+                          >{{ stat.label }}</abbr
+                        >
                         <span aria-hidden="true">{{
                           ariaSort(stat.key) === 'ascending'
                             ? '↑'

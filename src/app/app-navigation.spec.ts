@@ -1,3 +1,5 @@
+import { signal } from '@angular/core';
+import { TeamDraftService } from './teams/services/team-draft.service';
 import { TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { AppComponent } from './app.component';
@@ -20,6 +22,15 @@ describe('Pokédex device navigation', () => {
   it('wraps through cached entries and retains the displayed record when the drawer closes', () => {
     TestBed.configureTestingModule({
       providers: [
+        {
+          provide: TeamDraftService,
+          useValue: {
+            selectedIds: signal([]),
+            isSubmitting: signal(false),
+            teamState: signal({ busy: false }),
+            addPokemon: vi.fn(),
+          },
+        },
         {
           provide: PokemonStore,
           useValue: {

@@ -47,9 +47,12 @@ describe('Pokédex portrait', () => {
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
     expect(element.textContent).toContain('Loading image…');
+    expect(element.querySelector('app-skeleton')?.getAttribute('aria-hidden')).toBe('true');
+    expect(element.querySelector('.spinner, .portrait__pixels')).toBeNull();
     element.querySelector('img')?.dispatchEvent(new Event('load'));
     fixture.detectChanges();
     expect(element.textContent).not.toContain('Loading image…');
+    expect(element.querySelector('app-skeleton')).toBeNull();
     fixture.componentRef.setInput('pokemon', { ...bulbasaur, id: 25 });
     fixture.detectChanges();
     expect(element.textContent).toContain('Loading image…');

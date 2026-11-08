@@ -5,8 +5,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 24px 28px 25px;
+  gap: 20px;
+  padding: 18px 24px;
   color: var(--case-print);
   border-bottom: 3px solid var(--case-shadow);
   background: linear-gradient(180deg, var(--case), #c82d46);
@@ -21,8 +21,8 @@
   &__lens {
     position: relative;
     display: block;
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     border: 6px solid #e2e6d5;
     outline: 3px solid var(--case-shadow);
     border-radius: 50%;
@@ -72,14 +72,9 @@
     flex: 1;
     padding-left: 6px;
     h1 {
-      font-size: 2.7rem;
+      font-size: 2.4rem;
       letter-spacing: -0.025em;
-      margin: 0 0 3px;
-    }
-    p {
       margin: 0;
-      font-size: 0.7rem;
-      color: var(--case-print);
     }
   }
   &__connection {
@@ -88,7 +83,7 @@
     border: 1px solid #8c1d32;
     border-radius: 5px;
     background: #b4273e;
-    font: 0.68rem var(--font-data);
+    font: 0.875rem var(--font-body);
     span {
       display: inline-block;
       width: 7px;
@@ -97,13 +92,6 @@
       border-radius: 50%;
       background: var(--amber);
     }
-    small {
-      display: block;
-      padding-left: 14px;
-      margin-top: 5px;
-      color: #ffded4;
-      font: 0.62rem var(--font-body);
-    }
     &[data-status='success'] span {
       background: #b9ee88;
     }
@@ -111,7 +99,7 @@
       background: #ffd6be;
     }
     &[data-status='loading'] span {
-      animation: link-pulse 1s steps(2, end) infinite;
+      animation: link-pulse 1.6s ease-in-out infinite;
     }
   }
 }
@@ -124,10 +112,12 @@
 }
 @media (max-width: 600px) {
   .device-header {
-    gap: 12px;
-    padding: 18px 14px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 16px;
+    row-gap: 2px;
+    padding: 14px;
     border-bottom-width: 2px;
-    flex-wrap: wrap;
     &__lens {
       width: 48px;
       height: 48px;
@@ -136,6 +126,9 @@
       margin-right: 4px;
     }
     &__instruments {
+      grid-row: 1 / span 2;
+      align-items: flex-start;
+      align-self: center;
       gap: 5px;
     }
     &__led {
@@ -147,25 +140,23 @@
       h1 {
         font-size: 1.65rem;
       }
-      p {
-        font-size: 0.6rem;
-      }
     }
     &__connection {
-      flex-basis: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 7px;
-      font-size: 0.6rem;
-      small {
-        display: none;
-      }
+      grid-column: 2;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      font-size: 0.875rem;
     }
   }
 }
 @keyframes link-pulse {
   50% {
-    opacity: 0.35;
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .device-header__connection[data-status='loading'] span {
+    animation: none;
   }
 }

@@ -23,6 +23,17 @@
     <h2 id="detail-title">{{ displayed().name | titlecase }}</h2>
     <app-type-badges [types]="displayed().types" />
   </div>
+  <div class="detail__draft">
+    <button
+      class="button button--primary"
+      type="button"
+      [disabled]="!canAdd()"
+      (click)="addToDraft.emit()"
+    >
+      {{ addLabel() }}
+    </button>
+    <span role="status">{{ draftCount() }} / 6 in team draft</span>
+  </div>
   <dl class="detail__measurements">
     <div>
       <dt>Height</dt>
@@ -39,7 +50,20 @@
   </dl>
   <section class="detail__section" aria-labelledby="stats-title">
     <h3 id="stats-title">Base stats</h3>
-    <app-stat-radar [pokemon]="displayed()" />
+    @defer (when true) {
+      <app-stat-radar [pokemon]="displayed()" />
+    } @placeholder {
+      <app-skeleton kind="overview" />
+    } @loading {
+      <div role="status">
+        <span class="visually-hidden">Loading radar chart…</span><app-skeleton kind="overview" />
+      </div>
+    } @error {
+      <div class="feedback feedback--error" role="alert">
+        The chart could not load. Exact stats are available below.
+        <button type="button" class="button" (click)="reloadPage()">Reload page</button>
+      </div>
+    }
     <dl class="detail__stats">
       @for (stat of statColumns; track stat.key) {
         @if (stat.key !== 'total') {
@@ -61,7 +85,7 @@
     @switch (state.status) {
       @case ('loading') {
         <div class="status" role="status">
-          <span class="spinner" aria-hidden="true"></span>
+          <app-skeleton kind="abilities" />
           <p>Loading abilities…</p>
         </div>
       }

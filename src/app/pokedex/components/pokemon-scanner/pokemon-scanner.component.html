@@ -1,9 +1,6 @@
 <section class="scanner" aria-labelledby="scanner-title">
   <div class="scanner__screen">
-    <div class="scanner__readout">
-      <span id="scanner-title">Pokémon profile</span
-      ><span>{{ catalogue().status === 'success' ? 'DATA RECEIVED' : 'AWAITING DATA' }}</span>
-    </div>
+    <div class="scanner__readout" id="scanner-title">Pokémon profile</div>
     @if (catalogue().status === 'success') {
       @if (pokemon(); as pokemon) {
         <div class="scanner__entry">
@@ -27,7 +24,8 @@
               </div>
             </dl>
             <button class="button scanner__inspect" type="button" (click)="inspect.emit(pokemon)">
-              Inspect entry <span aria-hidden="true">→</span>
+              Inspect entry
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
             </button>
           </div>
         </div>
@@ -36,16 +34,14 @@
           <p>No entries available. Browse the catalogue below.</p>
         </div>
       }
-    } @else {
+    } @else if (catalogue().status === 'error') {
       <div class="status scanner__status" role="status">
-        <span class="scanner__placeholder" aria-hidden="true">?</span>
-        <p>
-          {{
-            catalogue().status === 'error'
-              ? 'The profile display is waiting for the catalogue. Use Retry Pokédex below.'
-              : 'Connecting to the Pokémon database…'
-          }}
-        </p>
+        <p>The profile could not load. Use Retry Pokédex below to reconnect.</p>
+      </div>
+    } @else {
+      <div class="scanner__loading" role="status">
+        <app-skeleton kind="profile" />
+        <span class="visually-hidden">Loading Pokémon profile…</span>
       </div>
     }
   </div>
@@ -58,36 +54,40 @@
         title="Search Pokémon"
         (click)="search.emit()"
       >
-        ⌕</button
-      ><button
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5" />
+          <path d="m16 16 4.5 4.5" />
+        </svg>
+      </button>
+      <button
         class="scanner__key scanner__key--left"
         type="button"
         aria-label="Previous Pokémon"
         [disabled]="catalogue().status !== 'success' || catalogue().items.length < 2"
         (click)="step.emit(-1)"
       >
-        ←</button
-      ><span class="scanner__key-center" aria-hidden="true"></span
-      ><button
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg>
+      </button>
+      <span class="scanner__key-center" aria-hidden="true"></span>
+      <button
         class="scanner__key scanner__key--right"
         type="button"
         aria-label="Next Pokémon"
         [disabled]="catalogue().status !== 'success' || catalogue().items.length < 2"
         (click)="step.emit(1)"
       >
-        →</button
-      ><button
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+      </button>
+      <button
         class="scanner__key scanner__key--down"
         type="button"
-        aria-label="Focus team builder"
-        title="Build your team"
+        aria-label="Add current Pokémon to team draft"
+        title="Add current Pokémon to team draft"
+        [disabled]="!pokemon() || !canAdd()"
         (click)="buildTeam.emit()"
       >
-        ＋
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
       </button>
-    </div>
-    <div class="scanner__hardware-note">
-      <span>Browse</span><b>← →</b><span>Inspect any entry</span>
     </div>
     <div class="scanner__vents" aria-hidden="true"><i></i><i></i><i></i></div>
   </div>

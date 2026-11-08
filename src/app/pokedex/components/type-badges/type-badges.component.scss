@@ -5,11 +5,11 @@
   &__badge {
     display: inline-block;
     border-radius: 3px;
-    padding: 2px 8px;
-    font: 0.62rem var(--font-data);
-    font-weight: 400;
+    padding: 3px 7px;
+    font: 0.875rem var(--font-body);
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.015em;
+    line-height: 1.25;
     border: 1px solid #173c3426;
     background: #e9edf2;
     color: #455265;
@@ -69,5 +69,12 @@
       background: #dedfe7;
       color: #3e4057;
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .types__badge {
+    font-size: 0.875rem;
+    padding: 3px 6px;
   }
 }

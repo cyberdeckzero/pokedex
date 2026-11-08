@@ -35,6 +35,7 @@ export interface MockApi {
   createError: boolean;
   deleteError: boolean;
   catalogueGate: Promise<void> | null;
+  teamsGate: Promise<void> | null;
   mutationGate: Promise<void> | null;
   teams: MockTeam[];
 }
@@ -60,6 +61,7 @@ async function mockApi(page: Page): Promise<MockApi> {
     createError: false,
     deleteError: false,
     catalogueGate: null,
+    teamsGate: null,
     mutationGate: null,
     teams: [
       {
@@ -124,6 +126,7 @@ async function mockApi(page: Page): Promise<MockApi> {
   await page.route('http://localhost:4000/**', async (route) => {
     const { operationName, variables }: Operation = route.request().postDataJSON();
     if (operationName === 'GetTeams') {
+      if (state.teamsGate) await state.teamsGate;
       if (state.teamsError) return route.abort('failed');
       return json(route, { allTeams: state.teams, _allTeamsMeta: { count: state.teams.length } });
     }

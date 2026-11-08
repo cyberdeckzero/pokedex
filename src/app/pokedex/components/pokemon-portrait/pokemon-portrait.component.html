@@ -7,20 +7,19 @@
 >
   <div class="portrait__target" aria-hidden="true"><span></span></div>
   @if (imageUnavailable()) {
-    <span class="portrait__loading" role="status"
-      ><span>Image unavailable</span
-      ><button class="button button--small" type="button" (click)="retryImage()">
-        Retry image
-      </button></span
-    >
+    <div class="portrait__loading" role="status">
+      <span>Image unavailable</span>
+      <button class="button button--small" type="button" (click)="retryImage()">Retry image</button>
+    </div>
   } @else if (!imageLoaded()) {
-    <span class="portrait__loading" role="status"
-      ><span class="spinner" aria-hidden="true"></span><span>Loading image…</span></span
-    >
+    <div class="portrait__loading" role="status">
+      <app-skeleton kind="image" />
+      <span class="visually-hidden">Loading image…</span>
+    </div>
   }
   <img
     class="portrait__image"
-    [style.visibility]="imageUnavailable() ? 'hidden' : 'visible'"
+    [style.visibility]="imageUnavailable() || !imageLoaded() ? 'hidden' : 'visible'"
     [src]="imageUrl()"
     [alt]="pokemon().name + ' illustration'"
     width="240"
@@ -28,13 +27,6 @@
     (load)="imageLoaded.set(true)"
     (error)="onImageError()"
   />
-  @for (record of [pokemon()]; track record.id) {
-    <div class="portrait__pixels" aria-hidden="true">
-      @for (pixel of pixels; track pixel) {
-        <i [style.animation-delay.ms]="(pixel * 17) % 85"></i>
-      }
-    </div>
-  }
   <span class="portrait__corner portrait__corner--top" aria-hidden="true"></span
   ><span class="portrait__corner portrait__corner--bottom" aria-hidden="true"></span>
 </div>

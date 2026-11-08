@@ -1,3 +1,4 @@
+import { SkeletonComponent } from '../../../common/components/skeleton/skeleton.component';
 import { TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -30,7 +31,13 @@ import { TypeBadgesComponent } from '../type-badges/type-badges.component';
 @Component({
   selector: 'app-pokemon-table',
   standalone: true,
-  imports: [ReactiveFormsModule, TitleCasePipe, PokemonSpriteComponent, TypeBadgesComponent],
+  imports: [
+    ReactiveFormsModule,
+    TitleCasePipe,
+    PokemonSpriteComponent,
+    TypeBadgesComponent,
+    SkeletonComponent,
+  ],
   templateUrl: './pokemon-table.component.html',
   styleUrl: './pokemon-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

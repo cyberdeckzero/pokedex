@@ -36,6 +36,7 @@ describe('Pokémon detail recovery', () => {
     });
     // The chart has its own lifecycle; this test exercises HTTP state and cancellation.
     TestBed.overrideTemplate(StatRadarComponent, '');
+    await TestBed.compileComponents();
     const fixture = TestBed.createComponent(PokemonDetailComponent);
     fixture.componentRef.setInput('pokemon', first);
     await fixture.whenStable();

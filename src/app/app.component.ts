@@ -1,3 +1,4 @@
+import { TeamDraftService } from './teams/services/team-draft.service';
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { PokemonTableComponent } from './pokedex/components/pokemon-table/pokemon-table.component';
@@ -25,8 +26,26 @@ import { TeamPanelComponent } from './teams/components/team-panel/team-panel.com
 })
 export class AppComponent {
   private readonly document = inject(DOCUMENT);
+  readonly draft = inject(TeamDraftService);
+  readonly addLabel = computed(() => {
+    const id = this.currentPokemon()?.id;
+    if (id && this.draft.selectedIds().includes(id)) return 'Already in draft';
+    if (this.draft.selectedIds().length >= 6) return 'Team draft is full';
+    if (this.draft.isSubmitting() || this.draft.teamState().busy) return 'Team update pending';
+    return 'Add to team draft';
+  });
+  readonly canAdd = computed(
+    () => !!this.currentPokemon() && this.addLabel() === 'Add to team draft',
+  );
   readonly catalogue = toSignal(inject(PokemonStore).catalogue$, { requireSync: true });
   readonly selectedPokemon = signal<Pokemon | null>(null);
+  readonly draftMessage = computed(() => {
+    const pokemon = this.currentPokemon();
+    const ids = this.draft.selectedIds();
+    if (!pokemon || !ids.includes(pokemon.id)) return '';
+    const name = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1).replaceAll('-', ' ');
+    return `${name} is in your team draft (${ids.length} / 6).`;
+  });
   readonly panelOpen = signal(false);
   private detailOpener: HTMLElement | null = null;
 
@@ -47,8 +66,10 @@ export class AppComponent {
   focusSearch(): void {
     this.document.querySelector<HTMLInputElement>('#pokemon-search')?.focus();
   }
-  focusTeamBuilder(): void {
-    this.document.querySelector<HTMLInputElement>('#team-name')?.focus();
+  addCurrentPokemon(): void {
+    const pokemon = this.currentPokemon();
+    if (!pokemon) return;
+    this.draft.addPokemon(pokemon.id);
   }
   selectPokemon(pokemon: Pokemon): void {
     const active = this.document.activeElement;

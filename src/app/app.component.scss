@@ -26,7 +26,7 @@
       gap: 26px;
       a {
         color: #d4e4d9;
-        font-size: 0.8rem;
+        font-size: 0.875rem;
         min-height: 44px;
         display: inline-flex;
         align-items: center;
@@ -45,18 +45,6 @@
     text-decoration: none;
     font: 600 1.18rem var(--font-heading);
     min-height: 44px;
-  }
-  &__brand-note {
-    display: block;
-    color: #b1c6b8;
-    font: 0.64rem var(--font-data);
-    margin-top: 1px;
-  }
-  &__hint {
-    margin: 24px 0 0;
-    text-align: center;
-    color: #b1c6b8;
-    font-size: 0.78rem;
   }
 }
 .device {
@@ -102,14 +90,7 @@
       background: #bd2b44;
     }
   }
-  &__secondary-label {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 2px 12px;
-    color: var(--case-print);
-    font: 0.62rem var(--font-data);
-    letter-spacing: 0.06em;
-  }
+
   &__footer {
     display: flex;
     align-items: center;
@@ -117,16 +98,10 @@
     flex-wrap: wrap;
     padding: 0 26px 24px;
     color: var(--case-print);
-    font-size: 0.65rem;
+    font-size: 0.875rem;
     a {
       color: inherit;
     }
-  }
-  &__serial {
-    margin-left: auto;
-    font-family: var(--font-data);
-    font-size: 0.6rem;
-    letter-spacing: 0.07em;
   }
 }
 
@@ -179,17 +154,13 @@
         gap: 14px;
         margin-left: auto;
         a {
-          font-size: 0.7rem;
+          font-size: 0.875rem;
         }
       }
     }
     &__brand {
       font-size: 1rem;
       gap: 9px;
-    }
-    &__hint {
-      font-size: 0.7rem;
-      padding: 0 12px;
     }
   }
   .device {
@@ -204,11 +175,8 @@
     }
     &__footer {
       padding: 6px 16px 20px;
-      font-size: 0.6rem;
+      font-size: 0.875rem;
       gap: 8px;
-    }
-    &__serial {
-      display: none;
     }
   }
 }

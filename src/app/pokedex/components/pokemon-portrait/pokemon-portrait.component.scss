@@ -7,7 +7,7 @@
   display: grid;
   place-items: center;
   width: 100%;
-  min-height: 200px;
+  min-height: var(--portrait-min-height, 200px);
   isolation: isolate;
   transform: perspective(850px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: transform 180ms ease-out;
@@ -48,35 +48,25 @@
     inset: 0;
     z-index: 3;
     display: grid;
-    place-content: center;
+    align-content: center;
     justify-items: center;
     gap: 10px;
+    app-skeleton {
+      width: 100%;
+      height: var(--portrait-min-height, 200px);
+    }
     background: var(--screen);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
   }
   &__image {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 240px;
+    max-width: var(--portrait-size, 240px);
     height: auto;
     object-fit: contain;
     transform: translateZ(22px);
     filter: drop-shadow(0 9px 0 #173c341c);
-  }
-  &__pixels {
-    position: absolute;
-    z-index: 2;
-    inset: 0;
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(6, 1fr);
-    pointer-events: none;
-    i {
-      opacity: 0;
-      background: var(--screen-ink);
-      animation: pixel-read 240ms steps(3, end) both;
-    }
   }
   &__corner {
     position: absolute;
@@ -98,21 +88,9 @@
     }
   }
 }
-@keyframes pixel-read {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  35% {
-    opacity: 0.2;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .portrait {
     transform: none;
     transition: none;
-    &__pixels {
-      display: none;
-    }
   }
 }
