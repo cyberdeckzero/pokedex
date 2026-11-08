@@ -13,7 +13,7 @@
     span {
       font: 0.875rem var(--font-data);
       border: 1px solid var(--screen-line);
-      border-radius: 3px;
+      border-radius: 6px;
       padding: 3px 6px;
       background: var(--screen-deep);
     }
@@ -40,8 +40,8 @@
     display: flex;
     align-items: center;
     gap: 3px;
-    border: 1px solid #91a77d;
-    border-radius: 4px;
+    border: 1px solid var(--screen-line);
+    border-radius: 8px;
     padding: 2px 3px 2px 0;
     background: var(--screen-deep);
     font-size: 0.875rem;
@@ -70,8 +70,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    border: 1px dashed #a0b48e;
-    border-radius: 4px;
+    border: 1px dashed var(--screen-line);
+    border-radius: 8px;
     padding: 5px 10px;
     font: 0.875rem var(--font-data);
     color: var(--screen-muted);

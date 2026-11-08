@@ -18,11 +18,9 @@
     min-width: 0;
     min-height: 252px;
     background: var(--screen);
-    border: 7px solid var(--bezel);
-    border-radius: 9px 9px 24px 9px;
-    box-shadow:
-      0 3px 0 var(--case-shadow),
-      inset 0 0 0 1px #7f9876;
+    border: 1px solid var(--screen-line);
+    border-radius: 12px;
+    box-shadow: none;
   }
   &__readout {
     padding: 8px 13px;
@@ -83,7 +81,7 @@
     display: grid;
     grid-template-columns: repeat(3, var(--key-size));
     grid-template-rows: repeat(3, var(--key-size));
-    filter: drop-shadow(0 4px 0 #801b30);
+    filter: none;
   }
   &__key {
     display: grid;
@@ -147,7 +145,7 @@
       width: 7px;
       height: 27px;
       border-radius: 4px;
-      background: #961e35;
+      background: #afc3b6;
     }
   }
   &__status {
@@ -177,7 +175,7 @@
     --portrait-min-height: 112px;
     --portrait-size: 112px;
     &__screen {
-      border-width: 5px;
+      border-width: 2px;
       min-height: 0;
     }
     &__entry {

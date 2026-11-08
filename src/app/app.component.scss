@@ -1,7 +1,7 @@
 .shell {
   max-width: 1580px;
   margin: 0 auto;
-  padding: 0 32px 18px;
+  padding: 28px 32px;
   &__skip {
     position: fixed;
     top: -70px;
@@ -14,52 +14,16 @@
       top: 12px;
     }
   }
-  &__topbar {
-    min-height: 90px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    color: #d4e4d9;
-    nav {
-      display: flex;
-      gap: 26px;
-      a {
-        color: #d4e4d9;
-        font-size: 0.875rem;
-        min-height: 44px;
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-        &:hover {
-          color: var(--lens);
-        }
-      }
-    }
-  }
-  &__brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #f1f4e9;
-    text-decoration: none;
-    font: 600 1.18rem var(--font-heading);
-    min-height: 44px;
-  }
 }
 .device {
   position: relative;
-  border: 3px solid var(--case-shadow);
-  border-radius: 18px 18px 44px 18px;
-  background: var(--case);
-  box-shadow:
-    0 8px 0 #0c1c1b,
-    inset 0 2px 0 #f97683;
-
+  border: 2px solid var(--case-shadow);
+  border-radius: 16px;
+  background: var(--screen-deep);
   &__body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 22px 354px;
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) 8px 354px;
+    gap: 20px;
     padding: 24px;
     align-items: stretch;
   }
@@ -67,54 +31,33 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 24px;
   }
   &__right {
     min-width: 0;
   }
   &__hinge {
-    position: relative;
-    background: linear-gradient(90deg, #a31c35, #ed596b 38%, #ca2b45 62%, #8c1b31);
-    border: 2px solid var(--case-shadow);
-    border-radius: 9px;
+    border-radius: 4px;
+    background: #d2dfd6;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 70px 0;
-    box-shadow: 2px 0 0 #e95a6c;
+    padding: 60px 0;
     i {
-      height: 13px;
-      margin: 0 -3px;
-      border-top: 3px solid var(--case-shadow);
-      border-bottom: 2px solid var(--case-shadow);
-      background: #bd2b44;
-    }
-  }
-
-  &__footer {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    flex-wrap: wrap;
-    padding: 0 26px 24px;
-    color: var(--case-print);
-    font-size: 0.875rem;
-    a {
-      color: inherit;
+      height: 12px;
+      background: #a9bfb1;
+      border-radius: 3px;
     }
   }
 }
-
 @media (max-width: 1200px) {
   .shell {
-    padding: 0 20px 18px;
+    padding: 20px;
   }
-  .device {
-    &__body {
-      grid-template-columns: minmax(0, 1fr) 16px 320px;
-      gap: 12px;
-      padding: 18px;
-    }
+  .device__body {
+    grid-template-columns: minmax(0, 1fr) 6px 320px;
+    gap: 16px;
+    padding: 18px;
   }
 }
 @media (max-width: 1000px) {
@@ -123,64 +66,30 @@
       grid-template-columns: minmax(0, 1fr);
     }
     &__hinge {
-      height: 18px;
-      min-height: 18px;
-      padding: 0 50px;
+      height: 6px;
+      padding: 0 40px;
       flex-direction: row;
-      background: linear-gradient(180deg, #a31c35, #ed596b 38%, #8c1b31);
       i {
         width: 12px;
-        height: auto;
-        margin: -3px 0;
-        border: 0;
-        border-left: 2px solid var(--case-shadow);
-        border-right: 2px solid var(--case-shadow);
+        height: 6px;
       }
-    }
-    &__right {
-      padding-top: 4px;
     }
   }
 }
 @media (max-width: 600px) {
   .shell {
-    padding: 0 10px 14px;
-    &__topbar {
-      min-height: 74px;
-      flex-wrap: wrap;
-      padding: 12px 0;
-      row-gap: 8px;
-      nav {
-        gap: 14px;
-        margin-left: auto;
-        a {
-          font-size: 0.875rem;
-        }
-      }
-    }
-    &__brand {
-      font-size: 1rem;
-      gap: 9px;
-    }
+    padding: 12px 10px;
   }
   .device {
-    border-width: 2px;
-    border-radius: 13px 13px 26px 13px;
-
+    border-radius: 14px;
     &__body {
       padding: 12px;
     }
     &__left {
       gap: 18px;
     }
-    &__footer {
-      padding: 6px 16px 20px;
-      font-size: 0.875rem;
-      gap: 8px;
-    }
   }
 }
-
 @media (min-width: 1200px) {
   .shell--detail {
     margin-right: var(--panel-width);

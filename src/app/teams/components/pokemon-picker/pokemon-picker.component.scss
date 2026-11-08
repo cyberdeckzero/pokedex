@@ -14,10 +14,10 @@
     max-height: 340px;
     overflow-y: auto;
     z-index: var(--layer-dropdown);
-    border: 2px solid var(--screen-ink);
-    border-radius: 5px;
+    border: 1px solid var(--screen-line);
+    border-radius: 10px;
     background: var(--screen-light);
-    box-shadow: 0 4px 0 #173c3440;
+    box-shadow: 0 4px 8px #173c3420;
   }
   &__option {
     width: 100%;
@@ -49,7 +49,7 @@
     }
     &:hover,
     &--active {
-      background: #bbd59f;
+      background: var(--color-primary-soft);
     }
   }
   &__status {
